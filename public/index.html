@@ -51,14 +51,14 @@
         </div>
       </div>
     </nav>
-
+    <div style='display:none;'><img src='images/headerbg.jpg' alt=''></div>
     <div class="container" id="content">
       <header class="jumbotron my-4 headerbg" id='home'>
         <h1 class="display-3 text-white">Welcome to OS/Z!</h1>
         <p class="lead text-white">OS/Z is a modern, effective, and scalable Operating System. It's aim is to be small, elegant, portable and to handle enormous amounts of data in a user friendly way.</p>
         <div class="row text-center">
         <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/tree/master/bin/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/download.png' alt='Download'>Download Live Image</a></div>
-        <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/gitlab.png' alt='GitLab'>Browse Source</a></div>
+        <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/gitlab.png' alt='GitLab'>Browse the Source</a></div>
         </div>
       </header>
       <div class="card text-white bg-secondary my-4" id='features'>
@@ -72,7 +72,7 @@
           <div class="card">
             <h4 class="card-header">Micro-kernel</h4>
             <div class="card-body">
-              <p class="card-text">Only a very small portion of the OS is running with supervisor privileges. Everything else is separated and communicates through an effective message queue.</p>
+              <small class="card-text">Only a very small portion of the OS is running with supervisor privileges. Everything else is separated and communicates through a secure, effective message queue.</small>
             </div>
             <div class="card-footer">
               <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md" class="btn btn-primary" target='_new'>Find Out More!</a>
@@ -84,7 +84,7 @@
           <div class="card">
             <h4 class="card-header">Multiplatform</h4>
             <div class="card-body">
-              <p class="card-text">Currently it supports Intel x86_64 and ARM AArch64, but it's easy to port OS/Z to new platforms. Assembly is kept minimal, most of the source is written in C.</p>
+              <small class="card-text">Currently it supports Intel x86_64 and ARM AArch64, but it's easy to port OS/Z to new platforms. Assembly is kept minimal, most of the source is written in C.</small>
             </div>
             <div class="card-footer">
               <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md" class="btn btn-primary" target='_new'>Find Out More!</a>
@@ -96,7 +96,7 @@
           <div class="card">
             <h4 class="card-header">Multilingual</h4>
             <div class="card-body">
-              <p class="card-text">OS/Z was not designed by an English only speaker, so multilingual was always a goal. Internal character representation therefore is UTF-8 throughout the system.</p>
+              <small class="card-text">OS/Z was not designed by an English only speaker, so multilingual was always a goal. Internal character representation therefore is UTF-8 throughout the system.</small>
             </div>
             <div class="card-footer">
               <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.md" class="btn btn-primary" target='_new'>Find Out More!</a>
@@ -108,7 +108,7 @@
           <div class="card">
             <h4 class="card-header">Limitless</h4>
             <div class="card-body">
-              <p class="card-text">It was designed with scalability in mind. Most of the defines in POSIX limits.h are meaningless here. No limit on tasks, and can handle disks up to Yottabytes.</p>
+              <small class="card-text">It was designed with scalability in mind. Most of the defines in POSIX limits.h are meaningless here. No limit on tasks, and can handle disks up to Yottabytes.</small>
             </div>
             <div class="card-footer">
               <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md" class="btn btn-primary" target='_new'>Find Out More!</a>
