@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="OS/Z, operating system, micro-kernel, x86_64, AArch64">
+    <meta name="author" content="bzt">
+    <title>OS/Z</title>
+    <link href='logo.png' rel="shortcut icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/osz.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/osz/"><img src="images/oszhdr.png" height="30" alt="OS/Z"></a>
+        <input type='checkbox' id='menuchk' style='display:none;'><label for='menuchk' class="navbar-toggler">
+          <span class="navbar-toggler-icon"></span>
+        </label>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/osz/">Accueil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#features">Caractéristiques</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#documentation">Documentation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="screenshots.html">Captures d'écran</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="roadmap.html">Feuille de route</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://gitlab.com/bztsrc/osz/issues">Problèmes</a>
+            </li>
+            <li class="nav-item">
+              <input type='checkbox' id='langchk' style='display:none;'><label for='langchk' class="nav-link dropdown-toggle">Français</label>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="index.hu.html">Magyar</a>
+                <a class="dropdown-item" href="index.ru.html">русский</a>
+                <a class="dropdown-item" href="index.ch.html">中国</a>
+                <a class="dropdown-item" href="index.de.html">Deutch</a>
+                <a class="dropdown-item" href="index.es.html">Español</a>
+                <a class="dropdown-item" href="index.html">English</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div style='display:none;'><img src='images/headerbg.jpg' alt=''></div>
+    <div class="container" id="content">
+      <header class="jumbotron my-4 headerbg" id='home'>
+        <h1 class="display-3 text-white">Bienvenue sur OS/Z!</h1>
+        <p class="lead text-white">OS/Z est un système d'exploitation moderne, efficace et évolutif. Son objectif est d'être petit, élégant, portable et de gérer d'énormes quantités de données d'une manière conviviale.</p>
+        <div class="row text-center">
+        <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/tree/master/bin/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/download.png' alt='Download'>Télécharger l'image en direct</a></div>
+        <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/gitlab.png' alt='GitLab'>Parcourir la source</a></div>
+        </div>
+      </header>
+      <div class="card text-white bg-secondary my-4" id='features'>
+        <div class="card-body">
+          <p class="text-white m-0"><img src='images/cc-by-nc-sa.png' alt='CC-by-nc-sa' style='float:left;padding-right:20px;'>Bien que OS/Z soit Open Source, <b>ce n'est pas un logiciel libre</b>! Licencié sous <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/' class='text-white' target='_new'><b>CC-by-nc-sa</b></a>.</p>
+        </div>
+      </div>
+
+      <div class="row text-center">
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Micro-noyau</h4>
+            <div class="card-body">
+              <small class="card-text">Seule une très petite partie du système d'exploitation fonctionne avec des privilèges de superviseur. Tout le reste est séparé et communique via une file d'attente de messages sécurisée et efficace.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md" class="btn btn-primary" target='_new'>En savoir plus!</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Multi plateforme</h4>
+            <div class="card-body">
+              <small class="card-text">Actuellement, il prend en charge Intel x86_64 et ARM AArch64, mais il est facile de porter OS / Z sur de nouvelles plates-formes. Assembly est maintenu minimal, la plupart de la source est écrite en C.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md" class="btn btn-primary" target='_new'>En savoir plus!</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Multilingue</h4>
+            <div class="card-body">
+              <small class="card-text">OS/Z n'a pas été conçu par un seul orateur anglais, donc le multilinguisme était toujours un objectif. La représentation des caractères internes est donc UTF-8 dans tout le système.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.md" class="btn btn-primary" target='_new'>En savoir plus!</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Illimité</h4>
+            <div class="card-body">
+              <small class="card-text">Il a été conçu avec l'évolutivité en tête. La plupart des définitions dans POSIX limits.h sont sans signification ici. Pas de limite sur les tâches, et peut gérer des disques jusqu'à Yottabytes.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md" class="btn btn-primary" target='_new'>En savoir plus!</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <hr>
+      <div class="row" id='hardware'>
+        <div class="col-lg-4">
+          <img class="img-fluid rounded" src="images/easy.jpg" alt="">
+        </div>
+        <div class="col-lg-8">
+          <h2>Facile à utiliser</h2>
+          <ul>
+            <li>L'image de l'installateur unique <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md' target='_new'>démarre</a> sur le BIOS, UEFI et Raspberry Pi 3.</li>
+            <li>Fichier de <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md' target='_new'>configuration</a> simple pour le réglage.</li>
+            <li>Interface utilisateur cohérente pour les applications.</li>
+            <li>Chaîne d'outils GNU, règles Makefile sans dépendance pour la <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/compile.md' target='_new'>compilation</a>.</li>
+            <li>Simple, <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md' target='_new'>API</a> POSIXish.</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.md' target='_new'>Débogueur</a> intégré et console de débogage série.</li>
+          </ul>
+        </div>
+      </div>
+    <hr>
+      <div class="row" id='hardware'>
+        <div class="col-lg-8">
+          <h2>Garantir</h2>
+          <ul>
+            <li>Seul le <a href='https://gitlab.com/bztsrc/osz/tree/master/src/core/' target='_new'>core</a> fonctionne avec des privilèges de superviseur, pas plus de 9000 SLoC.</li>
+            <li>Le core ne stocke aucune donnée sensible et utilise une pile distincte.</li>
+            <li>Les <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/services.md' target='_new'>services système</a> s'exécutent dans l'espace utilisateur, comme n'importe quelle autre application.</li>
+            <li>Les <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/security.md' target='_new'>messages sont vérifiés</a> par le core.</li>
+            <li>OS/Z utilise les listes de contrôle d'accès au lieu des groupes POSIX.</li>
+            <li>Autorisations de fichier étendues.</li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <img class="img-fluid rounded" src="images/security.jpg" alt="">
+        </div>
+      </div>
+    <hr>
+      <div class="row" id='documentation'>
+        <div class="col-lg-6">
+          <h2>Documentation</h2>
+          <ul>
+            <li>Le <a href='https://gitlab.com/bztsrc/bootboot/' target='_new'>protocole BOOTBOOT</a> et sa <a href='https://gitlab.com/bztsrc/bootboot/raw/master/bootboot_spec_1st_ed.pdf' target='_new'>spécification</a>.</li>
+            <li>Le manuel OS/Z, Manuel de l'utilisateur.</li>
+            <li>Manuel du programmeur volume 1 - Programmation d'application.</li>
+            <li>Manuel du programmeur volume 2 - Programmation du système.</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/README.md' target='_new'>Documentation</a> source.</li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <h2>Exigences matérielles</h2>
+          <ul>
+            <li>10 Mo d'espace disque libre</li>
+            <li>32 Mo de RAM</li>
+            <li>Écran 800 x 600 / ARGB</li>
+            <li>64 bits IBM PC Compatible - ou - Raspberry Pi 3</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md' target='_new'>Périphériques compatibles</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <img src='images/cc-by-nc-sa-icon.png' alt='CC-by-nc-sa' style='float:left;'>
+        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2018.<br><small>Page Web sans JavaScript!</small></p>
+      </div>
+    </footer>
+  </body>
+</html>

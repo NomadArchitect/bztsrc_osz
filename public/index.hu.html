@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="OS/Z, operating system, micro-kernel, x86_64, AArch64">
+    <meta name="author" content="bzt">
+    <title>OS/Z</title>
+    <link href='logo.png' rel="shortcut icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/osz.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="/osz/"><img src="images/oszhdr.png" height="30" alt="OS/Z"></a>
+        <input type='checkbox' id='menuchk' style='display:none;'><label for='menuchk' class="navbar-toggler">
+          <span class="navbar-toggler-icon"></span>
+        </label>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/osz/">Főoldal</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#features">Jellemzők</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#documentation">Dokumentáció</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="screenshots.html">Képernyőképek</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="roadmap.html">Ütemterv</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://gitlab.com/bztsrc/osz/issues">Bugok</a>
+            </li>
+            <li class="nav-item">
+              <input type='checkbox' id='langchk' style='display:none;'><label for='langchk' class="nav-link dropdown-toggle">Magyar</label>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="index.ru.html">русский</a>
+                <a class="dropdown-item" href="index.ch.html">中国</a>
+                <a class="dropdown-item" href="index.de.html">Deutch</a>
+                <a class="dropdown-item" href="index.fr.html">Français</a>
+                <a class="dropdown-item" href="index.es.html">Español</a>
+                <a class="dropdown-item" href="index.html">English</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div style='display:none;'><img src='images/headerbg.jpg' alt=''></div>
+    <div class="container" id="content">
+      <header class="jumbotron my-4 headerbg" id='home'>
+        <h1 class="display-3 text-white">Üdvözli az OS/Z!</h1>
+        <p class="lead text-white">Az OS/Z egy modern, hatékony és skálázható Operációs Rendszer. Célja, hogy kicsi, elegáns, hordozható legyen és hatalmas mennyiségű adatot legyen képes kezelni felhasználóbarát módon.</p>
+        <div class="row text-center">
+        <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/tree/master/bin/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/download.png' alt='Download'>Live Image letöltése</a></div>
+        <div class="col-lg-6"><a href="https://gitlab.com/bztsrc/osz/" class="btn btn-primary btn-lg btn-block" target='_new'><img src='images/gitlab.png' alt='GitLab'>Forrás megtekintése</a></div>
+        </div>
+      </header>
+      <div class="card text-white bg-secondary my-4" id='features'>
+        <div class="card-body">
+          <p class="text-white m-0"><img src='images/cc-by-nc-sa.png' alt='CC-by-nc-sa' style='float:left;padding-right:20px;'>Habár az OS/Z Nyílt Forráskódú, de <b>nem Szabad Szoftver</b>! Licensze <a href='https://creativecommons.org/licenses/by-nc-sa/4.0/' class='text-white' target='_new'><b>CC-by-nc-sa</b></a>.</p>
+        </div>
+      </div>
+
+      <div class="row text-center">
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Mikro-kernel</h4>
+            <div class="card-body">
+              <small class="card-text">Az operációs rendszer csak nagyon kis része fut felügyeleti jogosultságokkal. Minden más el van választva és egy biztonságos, hatékony üzenetsoron keresztül kommunikál.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md" class="btn btn-primary" target='_new'>Tudj meg többet!</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Multiplatform</h4>
+            <div class="card-body">
+              <small class="card-text">Jelenleg az Intel x86_64 és az ARM AArch64 támogatott, de könnyű új platformokra portolni az OS/Z-t. Az Assembly kód minimális, a forrás nagy része C-ben van írva.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md" class="btn btn-primary" target='_new'>Tudj meg többet!</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Többnyelvű</h4>
+            <div class="card-body">
+              <small class="card-text">Mivel az OS/Z-t egy nemcsak angolt beszélő írta, a többnyelvűség mindig is cél volt. A belső karakterábrázolás UTF-8 az egész rendszerben.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.md" class="btn btn-primary" target='_new'>Tudj meg többet!</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <h4 class="card-header">Korlátlan</h4>
+            <div class="card-body">
+              <small class="card-text">A skálázhatóságot szem előtt tartva lett tervezve. Ezért a POSIX határértékek legtöbbször értelmezhetetlenek. Nincs korlátozás a feladatokra, és képes kezelni Yottabájtos lemezeket.</small>
+            </div>
+            <div class="card-footer">
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md" class="btn btn-primary" target='_new'>Tudj meg többet!</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <hr>
+      <div class="row" id='hardware'>
+        <div class="col-lg-4">
+          <img class="img-fluid rounded" src="images/easy.jpg" alt="">
+        </div>
+        <div class="col-lg-8">
+          <h2>Könnyű használat</h2>
+          <ul>
+            <li>Ugyanaz a teleptő <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md' target='_new'>bebootol</a> BIOS-on, UEFI-n és Raspberry Pi 3-on.</li>
+            <li>Egyszerű <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md' target='_new'>konfigurációs fájl</a> a finomhangoláshoz.</li>
+            <li>Egységes felhasználói felület.</li>
+            <li>GNU toolchain, függőséget nem tartalmazó Makefile szabályok a <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/compile.md' target='_new'>fordításhoz</a>.</li>
+            <li>Egyértelmű, POSIX-szerű <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md' target='_new'>API</a>.</li>
+            <li>Beépített <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.md' target='_new'>debugger</a> és soros debug konzol.</li>
+          </ul>
+        </div>
+      </div>
+    <hr>
+      <div class="row" id='hardware'>
+        <div class="col-lg-8">
+          <h2>Biztonságos</h2>
+          <ul>
+            <li>Csak a <a href='https://gitlab.com/bztsrc/osz/tree/master/src/core/' target='_new'>core</a> fut felügyeleti jogosultságokkal, nem több 9000 SLoC-nál.</li>
+            <li>A core nem tárol semmilyen érzékeny adatot, és szeparált vermet használ.</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/services.md' target='_new'>Rendszer szolgáltatások</a> ugyanúgy felhasználói térben futnak, mint bármely más alkalmazás.</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/security.md' target='_new'>Üzenetellenőrzés</a> a core-ban történik.</li>
+            <li>Az OS/Z a POSIX csoportok helyett Hozzáférési Listákat (Access Control List) használ.</li>
+            <li>Bővített fájl hozzáférési jogosultságok.</li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <img class="img-fluid rounded" src="images/security.jpg" alt="">
+        </div>
+      </div>
+    <hr>
+      <div class="row" id='documentation'>
+        <div class="col-lg-6">
+          <h2>Dokumentáció</h2>
+          <ul>
+            <li>A <a href='https://gitlab.com/bztsrc/bootboot/' target='_new'>BOOTBOOT Protokol</a> és a <a href='https://gitlab.com/bztsrc/bootboot/raw/master/bootboot_spec_1st_ed.pdf' target='_new'>Specifikációja</a>.</li>
+            <li>Az OS/Z Kézikönyv, Felhasználói Útmutató.</li>
+            <li>Fejlesztői Kézikönyv, 1. kötet - Alkalmazásprogramozás.</li>
+            <li>Fejlesztői Kézikönyv, 2. kötet - Rendszerprogramozás.</li>
+            <li>Forrás <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/README.md' target='_new'>dokumentációja</a>.</li>
+          </ul>
+        </div>
+        <div class="col-lg-6">
+          <h2>Hardver Követelmények</h2>
+          <ul>
+            <li>10 Mb szabad lemezterület</li>
+            <li>32 Mb RAM</li>
+            <li>800 x 600 / ARGB kijelző</li>
+            <li>64 bites IBM PC kompatíbilis - vagy - Raspberry Pi 3</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md' target='_new'>Támogatott eszközök</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <img src='images/cc-by-nc-sa-icon.png' alt='CC-by-nc-sa' style='float:left;'>
+        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2018.<br><small>JavaScript mentes weboldal!</small></p>
+      </div>
+    </footer>
+  </body>
+</html>
