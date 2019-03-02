@@ -1,6 +1,6 @@
 body { padding-top: 64px; }
 .card { height: 100%; }
-.headerbg {background: url(../images/headerbg.jpg) center;background-size: cover;}
+.headerbg {background: #808080 url(../images/headerbg.jpg) center;background-size: cover;}
 .headerbg p {text-shadow: 2px 2px 2px #000;}
 .headerbg h1 {text-shadow: 3px 3px 5px #000;}
 .headerbg div {padding-bottom:5px;}
