@@ -40,12 +40,12 @@
             <li class="nav-item">
               <input type='checkbox' id='langchk' style='display:none;'><label for='langchk' class="nav-link dropdown-toggle">Deutch</label>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="index.hu.html">Magyar</a>
+                <a class="dropdown-item" href="index.en.html">English</a>
                 <a class="dropdown-item" href="index.ru.html">русский</a>
                 <a class="dropdown-item" href="index.ch.html">中国</a>
                 <a class="dropdown-item" href="index.fr.html">Français</a>
                 <a class="dropdown-item" href="index.es.html">Español</a>
-                <a class="dropdown-item" href="index.html">English</a>
+                <a class="dropdown-item" href="index.html">Magyar</a>
               </div>
             </li>
           </ul>
@@ -76,7 +76,7 @@
               <small class="card-text">Nur ein sehr kleiner Teil des Betriebssystems läuft mit Supervisor-Rechten. Alles andere ist getrennt und kommuniziert über eine sichere, effektive Nachrichtenwarteschlange.</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.en.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
               <small class="card-text">Derzeit unterstützt es Intel x86_64 und ARM AArch64, aber es ist einfach, OS / Z auf neue Plattformen zu portieren. Die Assembly wird minimal gehalten, der Großteil der Quelle ist in C geschrieben.</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.en.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@
               <small class="card-text">OS/Z wurde nicht von einem englischsprachigen Redner entwickelt, daher war Mehrsprachigkeit immer ein Ziel. Die interne Zeichendarstellung ist daher UTF-8 im gesamten System.</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.en.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
               <small class="card-text">Es wurde im Hinblick auf Skalierbarkeit entwickelt. Die meisten Definitionen in POSIX limits.h sind hier bedeutungslos. Keine Begrenzung für Aufgaben und kann Festplatten bis zu Yottabytes verarbeiten.</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.en.md" class="btn btn-primary" target='_new'>Finde mehr heraus!</a>
             </div>
           </div>
         </div>
@@ -125,12 +125,12 @@
         <div class="col-lg-8">
           <h2>Einfach zu verwenden</h2>
           <ul>
-            <li>Einzelnes Installer-Image <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md' target='_new'>bootet</a> auf BIOS, UEFI und Raspberry Pi 3.</li>
-            <li>Einfache <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md' target='_new'>Konfigurationsdatei</a> für die Abstimmung.</li>
+            <li>Einzelnes Installer-Image <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/boot.en.md' target='_new'>bootet</a> auf BIOS, UEFI und Raspberry Pi 3.</li>
+            <li>Einfache <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.en.md' target='_new'>Konfigurationsdatei</a> für die Abstimmung.</li>
             <li>Konsistente Benutzeroberfläche für Anwendungen.</li>
-            <li>GNU-Toolchain, Abhängigkeitsfreie Makefile-Regeln für die <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/compile.md' target='_new'>Kompilierung</a>.</li>
-            <li>Einfach, POSIXish <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md' target='_new'>API</a>.</li>
-            <li>Eingebauter <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.md' target='_new'>Debugger</a> und serielle Debug-Konsole.</li>
+            <li>GNU-Toolchain, Abhängigkeitsfreie Makefile-Regeln für die <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/compile.en.md' target='_new'>Kompilierung</a>.</li>
+            <li>Einfach, POSIXish <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/posix.en.md' target='_new'>API</a>.</li>
+            <li>Eingebauter <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.en.md' target='_new'>Debugger</a> und serielle Debug-Konsole.</li>
           </ul>
         </div>
       </div>
@@ -141,8 +141,8 @@
           <ul>
             <li>Nur der <a href='https://gitlab.com/bztsrc/osz/tree/master/src/core/' target='_new'>Core</a> läuft mit Supervisor-Privilegien, nicht mehr als 6000 SLoC.</li>
             <li>Der Core speichert keine vertraulichen Daten und verwendet einen separaten Stapel.</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/services.md' target='_new'>Systemdienste</a> werden wie jede andere Anwendung im Benutzerbereich ausgeführt.</li>
-            <li>Nachrichten werden vom Core <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/security.md' target='_new'>verifiziert</a>.</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/services.en.md' target='_new'>Systemdienste</a> werden wie jede andere Anwendung im Benutzerbereich ausgeführt.</li>
+            <li>Nachrichten werden vom Core <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/security.en.md' target='_new'>verifiziert</a>.</li>
             <li>OS/Z verwendet Access Control Lists anstelle von POSIX-Gruppen.</li>
             <li>Erweiterte Dateiberechtigungen.</li>
           </ul>
@@ -160,7 +160,7 @@
             <li>Das OS/Z-Handbuch, Benutzerhandbuch.</li>
             <li>Programmierhandbuch Band 1 - Anwendungsprogrammierung.</li>
             <li>Programmierhandbuch Band 2 - Systemprogrammierung.</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/README.md' target='_new'>Quelldokumentation</a>.</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/README.en.md' target='_new'>Quelldokumentation</a>.</li>
           </ul>
         </div>
         <div class="col-lg-6">
@@ -170,7 +170,7 @@
             <li>32 Mb RAM</li>
             <li>800 x 600 / ARGB-Anzeige</li>
             <li>64 Bit IBM PC Kompatibel - oder - Raspberry Pi 3</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md' target='_new'>Unterstützte Geräte</a></li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.en.md' target='_new'>Unterstützte Geräte</a></li>
           </ul>
         </div>
       </div>
@@ -178,7 +178,7 @@
     <footer class="py-5 bg-dark">
       <div class="container">
         <img src='images/cc-by-nc-sa-icon.png' alt='CC-by-nc-sa' style='float:left;'>
-        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2018.<br><small>JavaScript-freie Webseite!</small></p>
+        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2019.<br><small>JavaScript-freie Webseite!</small></p>
       </div>
     </footer>
   </body>

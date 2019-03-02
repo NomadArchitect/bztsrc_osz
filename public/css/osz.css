@@ -9,3 +9,4 @@ body { padding-top: 64px; }
 #menuchk:checked ~ .navbar-collapse { display:block; }
 #langchk:checked ~ .dropdown-menu { display:block; }
 .nav-link { cursor:pointer; }
+.dropdown-menu { right: 5%; }

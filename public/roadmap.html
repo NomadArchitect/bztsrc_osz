@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="OS/Z, operating system, micro-kernel, x86_64, AArch64">
     <meta name="author" content="bzt">
-    <title>OS/Z Roadmap</title>
+    <title>OS/Z Ütemterv</title>
     <link href='logo.png' rel="shortcut icon">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/osz.css" rel="stylesheet">
@@ -20,28 +20,27 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link" href="/osz/">Home</a>
-              </a>
+              <a class="nav-link" href="/osz/">Főoldal</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="index.html#features">Features</a>
+              <a class="nav-link" href="index.html#features">Jellemzők</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="index.html#documentation">Documentation</a>
+              <a class="nav-link" href="index.html#documentation">Dokumentáció</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="screenshots.html">Screenshots</a>
+              <a class="nav-link" href="screenshots.html">Képernyőképek</a>
             </li>
             <li class="nav-item active">
-              <a class="nav-link" href="roadmap.html">Roadmap</a>
+              <a class="nav-link" href="roadmap.html">Ütemterv</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="https://gitlab.com/bztsrc/osz/issues">Issues</a>
+              <a class="nav-link" href="https://gitlab.com/bztsrc/osz/issues">Bugok</a>
             </li>
             <li class="nav-item">
-              <input type='checkbox' id='langchk' style='display:none;'><label for='langchk' class="nav-link dropdown-toggle">English</label>
+              <input type='checkbox' id='langchk' style='display:none;'><label for='langchk' class="nav-link dropdown-toggle">Magyar</label>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="index.hu.html">Magyar</a>
+                <a class="dropdown-item" href="index.en.html">English</a>
                 <a class="dropdown-item" href="index.ru.html">русский</a>
                 <a class="dropdown-item" href="index.ch.html">中国</a>
                 <a class="dropdown-item" href="index.de.html">Deutch</a>
@@ -55,15 +54,25 @@
     </nav>
 
     <div class="container" id="content">
-      <h1 class="my-4 text-center text-lg-left">Roadmap</h1>
+      <h1 class="my-4 text-center text-lg-left">Ütemterv</h1>
 
       <div class="card mb-4">
         <div class="card-body">
-          <h2 class="card-title">Alpha Release Announce</h2>
-          <p class="card-text">The pre-beta release (codename mArci) can boot, and has a limited shell. Although there's a long way to go, but now at least there's something to show. Under the hood lots of things are happening. In a micro-kernel architectue, considerable amount of coding had to be done just to get the character you type being displayed, including lfb based VT-compatible tty, stdin/stdout pipes etc.</p>
+          <h2 class="card-title">Refaktorálás</h2>
+          <p class="card-text">Átvizsgálom és újraírom a kódot, hogy rendesen támogassa a többmagos processzorokat.</p>
         </div>
         <div class="card-footer text-muted">
-          Posted on July 17, 2018 by <b>bzt</b>
+          Posztolta <b>bzt</b>, 2019 Feb 28
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h2 class="card-title">Alfa kiadás bejelentés</h2>
+          <p class="card-text">A béta kiadás előtti kiadás (kódneve mArci) bebootol, és limitált parancsértelmezője van. Bár még sok minden visszavan, de már van valami mutatóba. A színfalak mögött rengeteg minden történik. Egy mikro-kernel architektúrában rengeteg mindent kell megcsinálni ahhoz, hogy a leütött billentyű megjelenhessen, beleértve az LFB alapú, VT-kompatíbilis tty terminált és az stdin/stdout csővezetékeket stb.</p>
+        </div>
+        <div class="card-footer text-muted">
+          Posztolta <b>bzt</b>, 2018 Júl 17
         </div>
       </div>
 
@@ -71,7 +80,7 @@
     <footer class="py-5 bg-dark">
       <div class="container">
         <img src='images/cc-by-nc-sa-icon.png' alt='CC-by-nc-sa' style='float:left;'>
-        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2018.<br><small>JavaScript-free webpage!</small></p>
+        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2019.<br><small>JavaScript mentes weboldal!</small></p>
       </div>
     </footer>
   </body>

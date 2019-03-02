@@ -40,12 +40,12 @@
             <li class="nav-item">
               <input type='checkbox' id='langchk' style='display:none;'><label for='langchk' class="nav-link dropdown-toggle">中国</label>
               <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="index.hu.html">Magyar</a>
+                <a class="dropdown-item" href="index.en.html">English</a>
                 <a class="dropdown-item" href="index.ru.html">русский</a>
                 <a class="dropdown-item" href="index.de.html">Deutch</a>
                 <a class="dropdown-item" href="index.fr.html">Français</a>
                 <a class="dropdown-item" href="index.es.html">Español</a>
-                <a class="dropdown-item" href="index.html">English</a>
+                <a class="dropdown-item" href="index.html">Magyar</a>
               </div>
             </li>
           </ul>
@@ -76,7 +76,7 @@
               <small class="card-text">只有很小一部分操作系统以超级用户权限运行。其他所有内容都是分开的，并通过安全有效的消息队列进行通信。</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md" class="btn btn-primary" target='_new'>了解更多！</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/messages.en.md" class="btn btn-primary" target='_new'>了解更多！</a>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@
               <small class="card-text">目前它支持Intel x86_64和ARM AArch64，但很容易将OS / Z移植到新平台。汇编保持最小，大部分源代码都是用C语言编写的。</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md" class="btn btn-primary" target='_new'>了解更多！</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/porting.en.md" class="btn btn-primary" target='_new'>了解更多！</a>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@
               <small class="card-text">OS/Z 不是由英语演讲者设计的，所以多语言总是一个目标。因此，整个系统内部字符表示为UTF-8。</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.md" class="btn btn-primary" target='_new'>了解更多！</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/translate.en.md" class="btn btn-primary" target='_new'>了解更多！</a>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
               <small class="card-text">它的设计考虑了可扩展性。 POSIX limits.h中的大多数定义在这里都没有意义。对任务没有限制，可以处理最多Yottabytes的磁盘。</small>
             </div>
             <div class="card-footer">
-              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md" class="btn btn-primary" target='_new'>了解更多！</a>
+              <a href="https://gitlab.com/bztsrc/osz/blob/master/docs/fs.en.md" class="btn btn-primary" target='_new'>了解更多！</a>
             </div>
           </div>
         </div>
@@ -125,12 +125,12 @@
         <div class="col-lg-8">
           <h2>使用方便</h2>
           <ul>
-            <li>在BIOS，UEFI和Raspberry Pi 3 <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md' target='_new'>上启动单个安装程序映像</a>。</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md' target='_new'>用于调整的简单配置文件</a>。</li>
+            <li>在BIOS，UEFI和Raspberry Pi 3 <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/boot.en.md' target='_new'>上启动单个安装程序映像</a>。</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.en.md' target='_new'>用于调整的简单配置文件</a>。</li>
             <li>应用程序的一致用户界面。</li>
-            <li>GNU工具链，<a href='https://gitlab.com/bztsrc/osz/blob/master/docs/compile.md' target='_new'>用于编译的无依</a>赖Makefile规则。</li>
-            <li>直截了当，POSIX就像 <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md' target='_new'>API</a>一样。</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.md' target='_new'>内置调试器和串行调试控制台</a>。</li>
+            <li>GNU工具链，<a href='https://gitlab.com/bztsrc/osz/blob/master/docs/compile.en.md' target='_new'>用于编译的无依</a>赖Makefile规则。</li>
+            <li>直截了当，POSIX就像 <a href='https://gitlab.com/bztsrc/osz/blob/master/docs/posix.en.md' target='_new'>API</a>一样。</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.en.md' target='_new'>内置调试器和串行调试控制台</a>。</li>
           </ul>
         </div>
       </div>
@@ -141,8 +141,8 @@
           <ul>
             <li>只有<a href='https://gitlab.com/bztsrc/osz/tree/master/src/core/' target='_new'>core</a>以超级用户权限运行，不超过6000 SLoC。</li>
             <li>Core不存储任何敏感数据，并使用单独的堆栈。</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/services.md' target='_new'>系统服务在用户空间中运行</a>，就像任何其他应用程序一样。</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/security.md' target='_new'>消息由</a>core验证。</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/services.en.md' target='_new'>系统服务在用户空间中运行</a>，就像任何其他应用程序一样。</li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/security.en.md' target='_new'>消息由</a>core验证。</li>
             <li>OS/Z 使用访问控制列表而不是POSIX组。</li>
             <li>扩展文件权限。</li>
           </ul>
@@ -160,7 +160,7 @@
             <li>OS/Z 手册，用户手册。</li>
             <li>程序员手册第1卷 - 应用程序编程。</li>
             <li>程序员手册第2卷 - 系统编程。</li>
-            <li>来源<a href='https://gitlab.com/bztsrc/osz/blob/master/docs/README.md' target='_new'>文档</a>。</li>
+            <li>来源<a href='https://gitlab.com/bztsrc/osz/blob/master/docs/README.en.md' target='_new'>文档</a>。</li>
           </ul>
         </div>
         <div class="col-lg-6">
@@ -170,7 +170,7 @@
             <li>32 Mb RAM</li>
             <li>800 x 600 / ARGB显示屏</li>
             <li>64位IBM PC兼容 - 或 - Raspberry Pi 3</li>
-            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md' target='_new'>支持的设备</a></li>
+            <li><a href='https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.en.md' target='_new'>支持的设备</a></li>
           </ul>
         </div>
       </div>
@@ -178,7 +178,7 @@
     <footer class="py-5 bg-dark">
       <div class="container">
         <img src='images/cc-by-nc-sa-icon.png' alt='CC-by-nc-sa' style='float:left;'>
-        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2018.<br><small>无JavaScript的网页！</small></p>
+        <p class="m-0 text-center text-white">Copyright &copy; bzt (bztsrc@gitlab) 2019.<br><small>无JavaScript的网页！</small></p>
       </div>
     </footer>
   </body>
