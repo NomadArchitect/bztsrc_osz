@@ -12,13 +12,14 @@ Configuration
 
 The `core` is always compiled for a specific [machine](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md),
 which can be controlled in [Config](https://gitlab.com/bztsrc/osz/blob/master/Config) with `ARCH` and `PLATFORM` variables.
-Valid combinations are:
+Valid combinations are (note: the configurator collects these by examining directories in src/core):
 
 | ARCH    | PLATFORM | Description |
 | ------- | -------- | ----------- |
 | x86_64  | ibmpc    | For old legacy machines, uses PIC, PIT, RTC, enumerates PCI bus |
 | x86_64  | acpi     | For new machines, LAPIC, IOAPIC, HPET and parses ACPI tables |
-| aarch64 | rpi      | Raspberry Pi 3+ |
+| aarch64 | rpi3     | Raspberry Pi 3+ |
+| aarch64 | rpi4     | Raspberry Pi 4+ |
 
 If you have the "dialog" tool installed on your system, you can run the following to get a nice ncurses based interface.
 
@@ -84,12 +85,13 @@ IMAGES
   mkfs		bin/osZ-latest-x86_64-ibmpc.img
 ```
 
-Non-EFI loader
---------------
+Recompiling the Loader
+----------------------
 
 If you want to recompile `loader/boot.bin` and `loader/bootboot.bin`, you'll need [fasm](http://flatassembler.net).
 Unfortunately GAS is not good enough at mixing 16, 32 and 64 bit instuctions, which is necessary for BIOS booting. To keep
-my promise that you'll only need the GNU toolchain, I've added those pre-compiled BOOTBOOT binaries to the source.
+my promise that you'll only need the GNU toolchain, I've added those pre-compiled [BOOTBOOT](https://gitlab.com/bztsrc/bootboot)
+binaries to the source.
 
 See what you've done!
 ---------------------

@@ -39,7 +39,7 @@ fsZ-fuse: fsZ-fuse.c
 
 %.o: %.c
 	@echo "  src		$<"
-	@gcc $(OPT) $(CFLAGS) $< -o $@ $(LIBS)
+	@gcc $(OPT) $(CFLAGS) -g $< -o $@ $(LIBS)
 
 clean:
 	@rm *.o fsZ-fuse 2>/dev/null || true

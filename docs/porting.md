@@ -159,7 +159,7 @@ megvalósításokat (pl syscall/svc interfész) közvetlenül használni. A `lib
 Renszer szolgáltatások átültetése
 ---------------------------------
 
-Ezek platform függetlenek, kizárólag C-ben íródtak, így a fordításuk új plaforma nem szabadna, hogy bármi gondot okozzon.
+Ezek platform függetlenek, kizárólag C-ben íródtak, így a fordításuk új plaformra nem szabadna, hogy bármi gondot okozzon.
 
 Megosztott függvénykönyvtárak és alkalmazások átültetése
 --------------------------------------------------------

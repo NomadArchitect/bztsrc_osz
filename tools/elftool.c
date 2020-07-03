@@ -94,6 +94,152 @@ unsigned long int hextoi(char *s)
     return v;
 }
 
+/* funkció keresztreferencia készítés
+ * na jó, ez nem igazán ide tartozik, de nem akartam mégegy toolt csinálni */
+typedef struct {
+    int sub;
+    char *ifn;
+    char *brief;
+} files_t;
+typedef struct {
+    int sub;
+    int line;
+    int file;
+    char *name;
+    char *proto;
+    char *desc;
+} func_t;
+int srtcmp(const void *a, const void *b) { return strcmp(*(char * const *)a, *(char * const *)b); }
+int fnccmp(const void *a, const void *b) {
+    func_t *A = (func_t*)a;
+    func_t *B = (func_t*)b;
+    if(A->sub != B->sub) return B->sub - A->sub;
+    return strcmp(A->name, B->name);
+}
+void mkref(char *outmd, int argc, char **argv)
+{
+    int i, j, nfunc = 0, nsub = 0, ol = 1;
+    char *data, *c, *e, *d, *g, *n, *m, **subs = NULL;
+    files_t *files = NULL;
+    func_t *funcs = NULL;
+    FILE *f;
+
+    qsort(argv, argc, sizeof(char*), srtcmp);
+    files = (files_t*)malloc(argc * sizeof(files_t));
+    memset(files, 0, argc * sizeof(files_t));
+    for(i=0;i<argc;i++) {
+        data = readfileall(argv[i], 1);
+        /* fájllista */
+        for(e = c = data + 6; *e != '\n'; e++);
+        files[i].ifn = malloc(e - c + 1);
+        memcpy(files[i].ifn, c, e - c);
+        files[i].ifn[e - c] = 0;
+        if(strlen(argv[i]) < (size_t)(e - c) || strcmp(argv[i] + strlen(argv[i]) - (int)(e - c), files[i].ifn)) {
+            printf("Hibás fájlnév a kommentben: %s != %s\n", argv[i], files[i].ifn);
+            exit(1);
+        }
+        for(c = e; *c && memcmp(c, "@brief ", 7); c++);
+        if(!*c) {
+            printf("Nincs @brief a kommentben: %s\n", argv[i]);
+            exit(1);
+        }
+        c += 7;
+        for(e = c; *e != '\n'; e++);
+        files[i].brief = malloc(e - c + 1);
+        memcpy(files[i].brief, c, e - c);
+        files[i].brief[e - c] = 0;
+        for(c = data; *c && memcmp(c, "@subsystem ", 11); c++);
+        if(!*c) {
+            printf("Nincs @subsystem a kommentben: %s\n", argv[i]);
+            exit(1);
+        }
+        c += 11;
+        for(e = c; *e != '\n'; e++);
+        for(j = 0; j < nsub && strlen(subs[j]) != (size_t)(e - c) && memcmp(c, subs[j], e - c); j++);
+        if(j >= nsub) {
+            j = nsub++;
+            subs = (char**)realloc(subs, nsub * sizeof(char*));
+            subs[j] = malloc(e - c + 1);
+            memcpy(subs[j], c, e - c);
+            subs[j][e - c] = 0;
+        }
+        files[i].sub = j;
+        /* funkciólista */
+        for(c = d = data, ol = 1; *c; c++)
+            if(!memcmp(c, "/**\n", 4)) {
+                for(; d < c; d++) if(d[0] == '\n') ol++;
+                n = c + 4;
+                while(*c && memcmp(c, "*/", 2) && memcmp(c-1, "\n *\n", 4) && memcmp(c - 1, "\n * \n", 5)) c++;
+                m = c;
+                while(*c && *c != '\n') c++;
+                while(*c && *c == '\n') c++;
+                if(!memcmp(c, " * ", 3)) c += 3;
+                if(c[0] == '/' || !memcmp(c, "private", 7) || !memcmp(c, "extern", 6)) continue;
+                if(!memcmp(c, "public", 6)) c += 7;
+                for(e = c; *e && *e != '\n' && *e != ';' && *e != '{' && memcmp(e-1,") (",3); e++);
+                for(g = c; *g && *g != '('; g++);
+                if(*g=='(') {
+                    funcs = (func_t*)realloc(funcs, (nfunc+1)*sizeof(func_t));
+                    funcs[nfunc].sub = j;
+                    funcs[nfunc].line = ol;
+                    funcs[nfunc].file = i;
+                    funcs[nfunc].desc = malloc(m - n + 1);
+                    funcs[nfunc].proto = g = malloc(e - c + 3);
+                    if(!memcmp(c, "func ", 5)) {
+                        memcpy(g, "void ", 5); g += 5;
+                        memcpy(g, c + 5, e - c - 5);
+                        memcpy(g + (int)(e - c - 5), "()", 3);
+                    } else {
+                        for(; c < e; c++) {
+                            if(!memcmp(c, "__attribute__((malloc)) ", 24)) c += 23; else
+                            if(!memcmp(c, "__attribute__((unused)) ", 24)) c += 23; else
+                            if(!memcmp(c, " __attribute__((unused))", 24)) c += 23; else
+                            if(!memcmp(c, "__inline__", 10)) { c += 10; memcpy(g, "inline", 6); g += 6; } else {
+                                if(*c == '[' || *c == ']') *g++ = '\\';
+                                *g++ = *c;
+                            }
+                        }
+                        while(g > funcs[nfunc].proto && g[-1] == ' ') g--;
+                        *g = 0;
+                        for(g = funcs[nfunc].proto; *g && *g != '('; g++);
+                        for(; g > funcs[nfunc].proto && g[-1] != ' ' && g[-1] != '*'; g--);
+                    }
+                    funcs[nfunc].name = g;
+                    for(g = funcs[nfunc].desc; n < m; n++)
+                        if(!memcmp(n, " * ", 3)) { *g++ = ' '; n++; } else *g++ = *n;
+                    *g = 0;
+                    nfunc++;
+
+                }
+                c = e;
+            }
+    }
+    if(!funcs) { printf("Nincs egy funkció se???\n"); exit(1); }
+    qsort(funcs, nfunc, sizeof(func_t), fnccmp);
+    printf("%s: ", outmd);
+    /* ez csak magyarul van, mivel a forrásban a kommentek úgyis magyarul vannak */
+    f = fopen(outmd,"w");
+    if(f) {
+        fprintf(f, "OS/Z Függvényreferenciák\n========================\n\nPrototípusok\n------------\n\n");
+        for(j = -1, i = 0; i < nfunc; i++) {
+            if(j != funcs[i].sub) { j = funcs[i].sub; fprintf(f, "### %c%s\n",
+                subs[j][0] >= 'a' && subs[j][0] <= 'z' ? subs[j][0] - 32 : subs[j][0],
+                subs[j] + 1); }
+            fprintf(f, "[%s](https://gitlab.com/bztsrc/osz/blob/master/src/%s#L%d)\n%s\n",
+                funcs[i].proto, files[funcs[i].file].ifn, funcs[i].line, funcs[i].desc);
+        }
+        fprintf(f, "Fájlok\n------\n\n| Fájl | Alrendszer | Leírás |\n| ---- | ---------- | ------ |\n");
+        for(i = 0; i < argc; i++)
+            fprintf(f, "| [%s](https://gitlab.com/bztsrc/osz/blob/master/src/%s) | %s | %s |\n",
+                files[i].ifn, files[i].ifn, subs[files[i].sub], files[i].brief);
+        fprintf(f, "\n\n");
+        fclose(f);
+        printf("OK\n");
+    } else {
+        printf(hu?"Nem lehet írni\n":"Unable to write\n");
+    }
+}
+
 /* belépési pont */
 int main(int argc,char** argv)
 {
@@ -109,20 +255,23 @@ int main(int argc,char** argv)
     lang=getenv("LANG");
     if(lang && lang[0]=='h' && lang[1]=='u') hu=1;
     if(argc<2) {
-        if(hu)
+        if(hu) {
             printf("./elftool [elf]                 dunamikus szekció C headerré formázása\n"
                    "./elftool -b [elf]              hozzáadás a meghajtóprogram adatbázishoz\n"
                    "./elftool -c [elf]              ELF ellenőrzése és hedör beállítása\n"
                    "./elftool -d [elf]              szekciók listázása ember számára érhetően\n"
                    "./elftool -D [elf]              dynszekciók listázása ember számára érhetően\n"
                    "./elftool -s [reloff] [elf]     szimbólumok listázása relokált címekkel\n");
-        else
+            printf("./elftool -r <kimd> [be1... ]   keresztreferencia doksi készítése\n");
+        } else {
             printf("./elftool [elf]                 dumps dynamic section into C header\n"
                    "./elftool -b [elf]              add to the device driver database\n"
                    "./elftool -c [elf]              check ELF and set header\n"
                    "./elftool -d [elf]              dumps sections in human readable format\n"
                    "./elftool -D [elf]              dumps dynsections in human readable format\n"
-                   "./elftool -s [reloff] [elf]     dumps symbols with relocated addresses\n");
+                   "./elftool -s [reloff] [elf]     dumps symbols with relocated addresses\n"
+                   "./elftool -r <outmd> [in1... ]  createing cross-refernce documentation\n");
+        }
         return 1;
     }
     if(argc>2 && argv[1][0]=='-' && argv[1][1]=='s') {
@@ -166,6 +315,14 @@ int main(int argc,char** argv)
             printf("%s: %s\n", devdb, hu?"Nem lehet írni":"Unable to write\n");
             exit(1);
         }
+        exit(0);
+    } else if(argv[1][0]=='-' && argv[1][1]=='r') {
+        if(argc < 4) {
+            printf("./elftool -r <kimenet.md> <.c/.h/.s> [.c/.h/.s [.c/.h/.s [ ... ]]]\n");
+            exit(1);
+        }
+        /* átmásoljuk, mert az argv átrendezése UB lenne */
+        mkref(argv[2], argc - 3, argv + 3);
         exit(0);
     }
     /* ha van paraméter, aszt használjuk, egyébként magunkat */

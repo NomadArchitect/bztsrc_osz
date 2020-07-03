@@ -34,8 +34,9 @@ todogen:
 	@grep -n '[T][EO][ED][NO][DŐ]*:' `find . 2>/dev/null|grep -v './bin'` 2>/dev/null | grep -v Binary | grep -v grep >>TODO.txt || true
 
 refgen:
-	@./tools/mkref.php docs/refsys.md src/core/*.c src/core/*.h src/core/x86_64/*.c src/core/x86_64/*.h src/core/x86_64/*.S src/core/x86_64/ibmpc/*.c src/core/x86_64/ibmpc/*.h src/core/x86_64/ibmpc/*.S src/fs/*.c
-	@./tools/mkref.php docs/refusr.md include/osZ/stdlib.h src/libc/*.c src/libc/*.h src/libc/x86_64/*.h src/libc/x86_64/*.S
+	@make --no-print-directory -C tools elftool.o | grep -v 'Nothing to be done' | grep -v 'up to date' || true
+	@./tools/elftool.o -r docs/refsys.md src/core/*.c src/core/*.h src/core/x86_64/*.c src/core/x86_64/*.h src/core/x86_64/*.S src/core/x86_64/ibmpc/*.c src/core/x86_64/ibmpc/*.h src/core/x86_64/ibmpc/*.S src/fs/*.c
+	@./tools/elftool.o -r docs/refusr.md include/osZ/stdlib.h src/libc/*.c src/libc/*.h src/libc/x86_64/*.h src/libc/x86_64/*.S
 
 # fordításhoz szükséges eszközök
 

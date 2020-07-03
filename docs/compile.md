@@ -12,13 +12,14 @@ Konfigurálás
 
 A `core` mindig egy adott [gépre](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md) fordul, amit a
 [Config](https://gitlab.com/bztsrc/osz/blob/master/Config) fájlban az `ARCH` és `PLATFORM` változókkal állíthatunk be.
-Az érvényes kombinációk a következők:
+Az érvényes kombinációk a következők (megjegyyés: ezeket az src/core mappa bejárásával gyűjti össze a konfiguráló):
 
 | ARCH    | PLATFORM | Leírás |
 | ------- | -------- | ----------- |
 | x86_64  | ibmpc    | Régi gépekhez, PIC, PIT, RTC, PCI buszon detektál |
 | x86_64  | acpi     | Új gépekhez, LAPIC, IOAPIC, HPET és ACPI táblákat értelmez |
-| aarch64 | rpi      | Raspberry Pi 3+ |
+| aarch64 | rpi3     | Raspberry Pi 3+ |
+| aarch64 | rpi4     | Raspberry Pi 4+ |
 
 Ha van telepítve "dialog" segédprogram a gépedre, akkor a következő parancs egy kényelmes ncurses alapú felülettel segíti a beállítást:
 
@@ -83,12 +84,13 @@ LEMEZKÉPEK
   mkfs		bin/osZ-latest-x86_64-ibmpc.img
 ```
 
-Nem-EFI betöltő
----------------
+Betöltő újrafordítása
+---------------------
 
 Ha újra akarod fordítani a `loader/boot.bin` és `loader/bootboot.bin` fájlokat, akkor szükséged lesz a [fasm](http://flatassembler.net)-ra.
 Sajnos a GAS nem eléggé okos 16, 32 és 64 bites utasítások keverésében, ami elengedhetetlen a BIOS-ról induláskor. Hogy megtarthassam
-az ígéretem, hogy csak GNU eszköztárra lesz szükség, hozzáadtam az előre lefordított BOOTBOOT binárisokat a forrásokhoz.
+az ígéretem, hogy csak GNU eszköztárra lesz szükség, hozzáadtam az előre lefordított [BOOTBOOT](https://gitlab.com/bztsrc/bootboot)
+binárisokat a forrásokhoz.
 
 Nézd mit csináltál!
 -------------------

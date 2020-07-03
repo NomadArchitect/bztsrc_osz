@@ -1,26 +1,26 @@
-OS/Z - operációs rendszer hekkereknek
-=====================================
+OS/Z - operációs rendszer
+=========================
 
 <img align="left" style="margin-right:10px;" alt="OS/Z" src="https://gitlab.com/bztsrc/osz/raw/master/logo.png">
 <a href="https://gitlab.com/bztsrc/osz/tree/master/bin/">Élő képek letöltése</a>,  <small>(~8 Mbájt)</small><br>
-<a href="https://gitlab.com/bztsrc/osz/blob/master/docs/README.md">Dokumentáció</a><br>
+<a href="https://gitlab.com/bztsrc/osz/blob/master/docs/README.md">Dokumentáció</a> és <a href="https://bztsrc.gitlab.io/osz">weblap</a><br>
 <a href="https://gitlab.com/bztsrc/osz/issues">Támogatás</a><br><br>
 
-OS/Z egy POSIX-szerű hobbi OS projekt. Mint ilyen, különböző, [POSIX-tól eltérő](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md)
-megoldások alkalmazását demonstrálja, olyanok számára, akik szeretnek operációs rendszerekkel hekkelni.
+Az [OS/Z](https://bztsrc.gitlab.io/osz) egy modern, hatékony és skálázható Operációs Rendszer. Célja, hogy kicsi, elegáns,
+[hordozható](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md) legyen és hatalmas mennyiségű adatot legyen képes
+kezelni felhasználóbarát módon.
 
-Az OS-em célja, hogy kicsi, elegáns, [hordozható](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md) legyen és hatalmas
-mennyiségű adatot legyen képes kezelni felhasználóbarát módon. Hogy ezt elérje, kikukáztam annyi limitációt, amennyit csak lehetett.
+Hogy ezt elérje, kikukáztam annyi limitációt, amennyit csak lehetett, emiatt csupán POSIX-szerű, de a [nem POSIX szabványos](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md).
 Például csak a tárolókapacitás szab határt a tárolható fájlok számának, és csakis a RAM mennyisége szabja meg, hogy hány
 konkurens program futhat egyszerre. Ha nem sikerült kidobnom egy limitet, akkor [boot opciót](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md)
-csináltam belőle, így rendszer újrafordítás nélkül is átszabható. Emiatt az OS/Z egy rendkívül skálázható rendszer lett.
+csináltam belőle, így a rendszer újrafordítás nélkül is átszabható. Emiatt az OS/Z egy rendkívül skálázható rendszer lett.
 
 Jellemzők
 ---------
 
  - [GNU vagy LLVM eszköztár](https://gitlab.com/bztsrc/osz/blob/master/docs/compile.md)
  - Mikrokernel architektúra egy hatékony [üzenetküldő rendszer](https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md)rel
- - Ugyanaz a lemezkép [bootolható](https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md) BIOS, UEFI vagy Raspberry Pi 3 gépen
+ - Ugyanaz a lemezkép [bootolható](https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md) BIOS, UEFI vagy Raspberry Pi gépen
  - [Magas címterű kernel](https://gitlab.com/bztsrc/osz/blob/master/docs/memory.md), komplett 64 bites támogatás
  - A [fájlrendszer](https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md)e YottaBájtnyi adatot képes kezelni (jelenleg elképzelhetetlen mennyiség)
  - ELF64 formátum támogatás
@@ -58,9 +58,9 @@ licenszű. Az eszközmeghajtók külön kivételt képeznek, azoknál megengedet
 
 Ez azt jelenti, hogy bár az OS/Z **Nyílt Forráskódú**, de **nem Szabad Szoftver**. Használhatod és játszhatsz vele otthon, de nincs
 semmi garancia a megfelelő működésre. Nem használhatod fel üzleti célra vagy üzleti környezetben a szerző előzetes írásos
-hozzájárulása nélkül.
+hozzájárulása nélkül. Nyiss egy [jegyet](https://gitlab.com/bztsrc/osz/issues) vagy írj egy emailt, ha szükséged van erre.
 
- Copyright (c) 2016-2019 bzt (bztsrc@gitlab) [CC-by-nc-sa-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+ Copyright (c) 2016-2020 bzt (bztsrc@gitlab) [CC-by-nc-sa-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 **A művet szabadon**:
 

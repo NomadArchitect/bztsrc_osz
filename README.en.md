@@ -1,27 +1,26 @@
-OS/Z - an operating system for hackers
-======================================
+OS/Z - operating system
+=======================
 
 <img align="left" style="margin-right:10px;" alt="OS/Z" src="https://gitlab.com/bztsrc/osz/raw/master/logo.png">
 <a href="https://gitlab.com/bztsrc/osz/tree/master/bin/">Download live images</a>,  <small>(~8 Mbyte)</small><br>
-<a href="https://gitlab.com/bztsrc/osz/blob/master/docs/README.en.md">Documentation</a><br>
+<a href="https://gitlab.com/bztsrc/osz/blob/master/docs/README.en.md">Documentation</a> and <a href="https://bztsrc.gitlab.io/osz">homepage</a><br>
 <a href="https://gitlab.com/bztsrc/osz/issues">Support</a><br><br>
 
-OS/Z is a POSIXish hobby OS project. As such it demonstrates [different concepts to POSIX](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md)
-for those who like hacking with OSes.
+The [OS/Z](https://bztsrc.gitlab.io/osz) is a modern, effective, and scalable Operating System. It's aim is to be small, elegant,
+[portable](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.en.md) and to handle enormous amounts of data in a user friendly way.
 
-My OS' aim is to be small, elegant, [portable](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.en.md) and to be able to handle
-enormous amounts of data in a user friendly way. To achieve that goal, I've eliminated as many limits as possible by design.
-For example only storage capacity limits the number of inodes on a disk. And only amount of RAM limits the number of
-concurent tasks at any given time. If I couldn't eliminate a hard limit, I've
-created a [boot option](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.en.md) for it so that you can tweek it without
-recompilation. This makes OS/Z a very scalable system.
+To achieve its goal, I've eliminated as many limits as possible by design, therefore it is POSIX-ish, but deliberately
+[not POSIX compliant](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md). For example only storage capacity limits the number
+of inodes on a disk. And only amount of RAM limits the number of concurent tasks at any given time. If I couldn't eliminate a hard
+limit, I've created a [boot option](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.en.md) for it so that you can tweek it
+without recompilation. This makes OS/Z a very scalable system.
 
 Features
 --------
 
  - [GNU or LLVM toolchain](https://gitlab.com/bztsrc/osz/blob/master/docs/compile.en.md)
  - Microkernel architecture with an effective [messaging system](https://gitlab.com/bztsrc/osz/blob/master/docs/messages.en.md)
- - Single disk image for [booting](https://gitlab.com/bztsrc/osz/blob/master/docs/boot.en.md) from BIOS or from UEFI or on Raspberry Pi 3.
+ - Single disk image for [booting](https://gitlab.com/bztsrc/osz/blob/master/docs/boot.en.md) from BIOS or from UEFI or on Raspberry Pi.
  - [Higher half kernel](https://gitlab.com/bztsrc/osz/blob/master/docs/memory.en.md) mapping, full 64 bit support
  - It's [filesystem](https://gitlab.com/bztsrc/osz/blob/master/docs/fs.en.md) can handle YottaBytes of data (unimagineable as of writing)
  - ELF64 object format support
@@ -59,9 +58,9 @@ The device drivers are an exception, for them closed-source proprietary binary d
 
 This means although OS/Z is **Open Source**, it is **not a Free Software**. You can use it and play with it for your own pleasure at home, but
 there’s absolutely no warranty applied. You are not allowed to use it in business environment or for commertial purposes without preliminary
-written permission from the author.
+written permission from the author. Open an [issue](https://gitlab.com/bztsrc/osz/issues) or drop me an email if you need one.
 
- Copyright (c) 2016-2019 bzt (bztsrc@gitlab) [CC-by-nc-sa-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+ Copyright (c) 2016-2020 bzt (bztsrc@gitlab) [CC-by-nc-sa-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 **You are free to**:
 
