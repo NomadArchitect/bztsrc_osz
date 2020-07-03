@@ -7,9 +7,7 @@ OS/Z - operációs rendszer hekkereknek
 <a href="https://gitlab.com/bztsrc/osz/issues">Támogatás</a><br><br>
 
 OS/Z egy POSIX-szerű hobbi OS projekt. Mint ilyen, különböző, [POSIX-tól eltérő](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md)
-megoldások alkalmazását demonstrálja, olyanok számára, akik szeretnek operációs rendszerekkel hekkelni. Ez nem is olyan rég még
-az OSDEv.org-ot is jelentette, de sajnos 2018-ra teljesen átvették az irányítást felette a fizetett trollok, akik szándékosan
-rossz tanácsokat adnak és aláássák a közösséget. Kerüld el őket. Az már sajnos nem az a hely, ami egykoron volt.
+megoldások alkalmazását demonstrálja, olyanok számára, akik szeretnek operációs rendszerekkel hekkelni.
 
 Az OS-em célja, hogy kicsi, elegáns, [hordozható](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.md) legyen és hatalmas
 mennyiségű adatot legyen képes kezelni felhasználóbarát módon. Hogy ezt elérje, kikukáztam annyi limitációt, amennyit csak lehetett.

@@ -7,9 +7,7 @@ OS/Z - an operating system for hackers
 <a href="https://gitlab.com/bztsrc/osz/issues">Support</a><br><br>
 
 OS/Z is a POSIXish hobby OS project. As such it demonstrates [different concepts to POSIX](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md)
-for those who like hacking with OSes. This used to include the community at OSDev.org, but as of 2018 that site has been taken over
-by paid trolls, who are deliberatly giving bad advices and trying to undermine the community. Avoid them. Sadly it is not the place
-as it once was.
+for those who like hacking with OSes.
 
 My OS' aim is to be small, elegant, [portable](https://gitlab.com/bztsrc/osz/blob/master/docs/porting.en.md) and to be able to handle
 enormous amounts of data in a user friendly way. To achieve that goal, I've eliminated as many limits as possible by design.
