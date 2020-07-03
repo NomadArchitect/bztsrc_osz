@@ -25,7 +25,7 @@ Jellemzők
  - A [fájlrendszer](https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md)e YottaBájtnyi adatot képes kezelni (jelenleg elképzelhetetlen mennyiség)
  - ELF64 formátum támogatás
  - UNICODE támogatás UTF-8-al
- - TÖbbnyelvűség
+ - Többnyelvűség
 
 Hardver követelmények
 ---------------------
