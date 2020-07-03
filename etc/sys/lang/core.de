@@ -1,0 +1,50 @@
+Datum und Zeit?
+Nicht unterstützte FS/Z-Komplexität in initrd
+%s wird nicht unterstützt
+Dateiname zu lang
+Vermisst oder beschädigt
+Shared Library fehlt für
+Panik
+Neustart
+Herunterfahren beendet.
+SCHALTEN SIE IHREN COMPUTER AUS.
+UND NEUSTART IHREN COMPUTER
+Drücken Sie eine beliebige Taste, um fortzufahren
+sollte nicht passieren
+Aus physischem Speicher
+Nicht genug RAM. Mindestens %d MB RAM erforderlich, nur %d Mb frei.
+Keine DMA Speicher.
+Das Root-Dateisystem kann nicht gemountet werden
+Hauptstrukturzuordnungsfehler
+kritische UI-Systemaufgabe beendet
+Die Nutzung unterliegt den Lizenzbedingungen.
+Unbekannter Fehler
+Operation unzulässig
+Versuch es noch einmal
+Keine solche Aufgabe
+Schlechte Adresse
+Ungültiges Argument
+Gerät oder Ressource beschäftigt
+Zugriff abgelehnt
+Nicht genügend Speicher
+Exec Format Fehler
+Laufzeitlinkfehler
+Datei existiert
+Datei oder Verzeichnis existiert nicht
+Kein solches Gerät
+Kein Verzeichnis
+Ist ein Verzeichnis
+Keine Gewerkschaft
+Ist eine Union
+Unbekanntes Dateisystem
+Beschädigtes Dateisystem
+Nur-Lese-Dateisystem
+Kein Speicherplatz auf Gerät
+Dateityp wird vom Dateisystem nicht unterstützt
+E/A-Fehler
+Rohrbruch
+Illegale Suche
+Kein gemeinsamer Speicherpuffer
+Falsche Dateinummer
+Puffer nicht groß genug
+Nicht implementiert

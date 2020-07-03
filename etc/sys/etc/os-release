@@ -1,0 +1,9 @@
+NAME = "OS/Z mArci"
+ID = osZ
+VERSION = "0.0.1a"
+HOME_URL = "https://bztsrc.gitlab.com/osz"
+SUPPORT_URL = "https://gitlab.com/bztsrc/osz/issues"
+BUG_REPORT_URL = "https://gitlab.com/bztsrc/osz/issues"
+BUILD = "2020185"
+ARCH = "x86_64"
+PLATFORM = "ibmpc"

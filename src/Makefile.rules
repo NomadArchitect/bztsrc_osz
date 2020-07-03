@@ -1,0 +1,36 @@
+include ../../Config
+
+ifeq ($(TARGET),)
+TARGET = sys/$(notdir $(shell pwd))
+endif
+BINTARGET = ../../bin/initrd/$(TARGET)
+SRCS = $(wildcard *.c)
+OBJS = $(SRCS:.c=.o)
+LIBS += -lc
+ECHO ?= echo
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -fPIC -nostdinc -I../../include -I../../include/osZ -I../libc \
+ -I../libui -I../drivers/include
+LDFLAGS += -nostdlib -x -L../../bin/initrd/sys/lib --build-id=none --export-dynamic
+ifeq ($(DEBUG),1)
+LDFLAGS += -E
+endif
+ifeq ($(LINKER),sharedlib)
+LDFLAGS += -shared -Bsymbolic -Bshareable -e init
+else
+# LLVM lld nem támogatja a STARTUP()-ot a szkriptekben, úgyhogy inkább megadjuk a parancssorban
+LDFLAGS += ../../bin/initrd/sys/lib/crt0.o
+endif
+
+all: $(OBJS) $(BINTARGET)
+
+%.o: %.c ../../Config
+	@$(ECHO) "  src		$<"
+	$(O)$(CC) $(OPT) $(CFLAGS) -c $< -o $@
+
+$(BINTARGET): $(OBJS) $(EXTOBJ)
+	@echo "  lnk		$(TARGET)"
+	$(O)$(LD) $(LDFLAGS) $(EXTOBJ) $(OBJS) -T ../link.ld -o $(BINTARGET) $(LIBS)
+	@../../tools/elftool.o -c $(BINTARGET)
+
+clean:
+	@rm *.o $(BINTARGET) 2>/dev/null || true

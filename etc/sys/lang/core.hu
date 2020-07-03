@@ -1,0 +1,50 @@
+Pontos idő?
+Nem támogatott FS/Z komplexitás az initrdben
+%s nem támogatott
+Fájlnév túl hosszú
+Hiányzik vagy hibás
+nincs függvénykönyvtár ehhez
+pánik
+újraindítása
+leállítás befejezve.
+KIKAPCSOLHATOD A GÉPET.
+INDÍTSD ÚJRA A SZÁMÍTÓGÉPET
+Üss le egy billentyűt a folytatáshoz
+nem fordulhatna elő
+Elfogyott a szabad memória
+Nincs elég RAM. Legalább %d Mb RAM kéne, de csak %d Mb szabad.
+Nem lehet DMA buffert lefoglalni.
+nem lehet a gyökérfájlrendszert felcsatolni
+főstruktúra allokálási hiba
+kritikus UI szolgáltatás leállt
+Használata licenszhez kötött.
+Ismeretlen hiba
+Művelet megtagadva
+Próbáld újra
+Nincs ilyen feladat
+Hibás cím
+Hibás paraméter
+Eszköz foglalt
+Hozzáférés megtagadva
+Nincs elég memória
+Futtatható formátum hiba
+Futásidejű szerkesztési hiba
+Fájl már létezik
+Nincs ilyen fájl vagy könyvtár
+Nincs ilyen eszköz
+Nem könyvtár
+Könyvtár, nem fájl
+Nem unió
+Unió, nem fájl
+Ismeretlen fájlrendszer
+Hibás fájlrendszer
+Írásvédett fájlrendszer
+Nincs több hely az eszközön
+Fájlrendszer nem kezeli ezt a fájl típust
+Ki-bementi hiba
+Törött cső
+Érvénytelen pozicionálás
+Nem megosztott memóriacím
+Érvénytelen fájlhivatkozás
+Memóriatároló nem elég nagy
+Nincs implementálva

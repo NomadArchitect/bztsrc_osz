@@ -1,0 +1,39 @@
+include ../../../../Config
+
+ifeq ($(TARGET),)
+TARGET = $(notdir $(shell dirname $(shell pwd)))/$(notdir $(shell pwd)).so
+endif
+BINTARGET = ../../../../bin/initrd/sys/drv/$(TARGET)
+SRCS = $(wildcard *.c)
+SRCS += $(wildcard *.S)
+TMP = $(SRCS:.c=.o)
+OBJS = $(TMP:.S=.o)
+LIBS += -lc
+ECHO ?= echo
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -fPIC -nostdinc -I../../../../include \
+-I../../include -I../../include/$(ARCH) -I../../../libc -I../../../libui -I../../../fs -I../../../ui
+LDFLAGS += -nostdlib -shared -Bshareable -e drv_init -x -L../../../../bin/initrd/sys/lib --build-id=none
+
+all: $(BINTARGET)
+
+%.o: %.S
+	@$(ECHO) "  src		$<"
+	$(O)$(CC) $(OPT) $(CFLAGS) -c $< -o $@
+
+%.o: %.c
+	@$(ECHO) "  src		$<"
+	$(O)$(CC) $(OPT) $(CFLAGS) -c $< -o $@
+
+$(BINTARGET): $(OBJS) $(EXTOBJ)
+	@echo "  lnk		sys/drv/$(TARGET)"
+	@mkdir -p ../../../../bin/initrd/sys/drv/$(firstword $(subst /, ,$(TARGET)))
+	@../../../../tools/elftool.o -b $(TARGET)
+ifeq ($(wildcard $(ARCH).so),)
+	$(O)$(LD) $(LDFLAGS) $(EXTOBJ) $(OBJS) -T ../../../link.ld -o $(BINTARGET) $(LIBS)
+else
+	$(O)cp $(ARCH).so $(BINTARGET)
+endif
+	@../../../../tools/elftool.o -c $(BINTARGET)
+
+clean:
+	@rm *.o $(BINTARGET) 2>/dev/null || true

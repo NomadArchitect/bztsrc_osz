@@ -1,0 +1,10 @@
+    ----------------- Hibajavítások / Error fixes ------------------
+./src/drivers/fs/fsz/main.c:188:                /* JAV: blokk végére értünk, új blokkot kell betölteni sdblk-ból és átállítani rá a dirent mutatót */
+./src/core/aarch64/rpi4/intr.c:30: * FIXME: ARM GiC
+    ---------- Lefejlesztendő funkciók / Feature requests ----------
+./src/drivers/fs/fsz/main.c:142:            /* TEENDŐ: extentek */
+./src/drivers/fs/fsz/main.c:222:    /* TEENDŐ: ha loc->creat, akkor létre kell hozni a könyvtárakat az elérési út mentén */
+./src/fs/vfs.c:546:                /* TEENDŐ: fel könyvtár lekezelése */
+./src/fs/vfs.c:550:                /* TEENDŐ: fájlrendszer detektálása a képfájlban */
+./src/core/sched.c:178:            /* TEENDŐ: swap -> memória */
+./src/core/sched.c:256:    /* TEENDŐ: memória -> swap (kivéve a tcb) */

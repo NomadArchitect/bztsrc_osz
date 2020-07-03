@@ -1,0 +1,5 @@
+ifeq ($(OPTIMIZE),1)
+CFLAGS+=-mtune=core2
+else
+CFLAGS+=-mtune=pentium4
+endif

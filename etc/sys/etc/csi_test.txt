@@ -1,0 +1,9 @@
+[0;30mBlack	[1;30mGray	[0;40mBlack	[1;40mGray
+[0;31mRed	[1;31mLRed	[0;41mRed	[1;41mLRed
+[0;32mGreen	[1;32mLGreen	[0;42mGreen	[1;42mLGreen
+[0;33mBrown	[1;33mYellow	[0;43mBrown	[1;43mYellow
+[0;34mBlue	[1;34mLBlue	[0;44mBlue	[1;44mLBlue
+[0;35mPurple	[1;35mLPurple	[0;45mPurple	[1;45mLPurple
+[0;36mCyan	[1;36mLCyan	[0;46mCyan	[1;46mLCyan
+[0;37mWhite	[1;37mBrWhite	[0;47mWhite	[1;47mBrWhite
+[32;49m

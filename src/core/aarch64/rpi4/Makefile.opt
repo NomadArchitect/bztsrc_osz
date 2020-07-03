@@ -1,0 +1,1 @@
+CFLAGS+=-mtune=cortex-a53 -mstrict-align -march=armv8-a
