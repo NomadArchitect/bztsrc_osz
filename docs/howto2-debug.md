@@ -18,6 +18,8 @@ Erre való a `debug` opció az [indítási környezet](https://gitlab.com/bztsrc
 flageket megtalálod a [leírásban](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md).
 Azonban a `DEBUG = 1` megadásával az összes fontos információ bekerül a syslogba, ami a soros vonalra is kiküldésre kerül.
 
+<img height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszcfg2.png" alt="make config">
+
 Debuggolás GDB-vel
 ------------------
 
