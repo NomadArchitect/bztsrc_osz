@@ -11,7 +11,7 @@ megnézzük, mit lehet tenni, ha lehalt a rendszer.
 Vészhelyzeti parancssor aktiválása
 ----------------------------------
 
-<img align="left" style="margin-right:10px;" width="200" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszrsh.png" alt="OS/Z Vészhelyzeti parancssor">
+<img align="left" style="margin-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszrsh.png" alt="OS/Z Vészhelyzeti parancssor">
 
 Az induló környezeti [konfiguráció](https://gitlab.com/bztsrc/osz/blob/master/etc/config)ban kell engedélyezni a `rescueshell=true`
 beállítással. A következő boot alkalmával a szokásos `init` helyett egy felhasználói jogosultsággal futó `sh` fog elindulni. Ez

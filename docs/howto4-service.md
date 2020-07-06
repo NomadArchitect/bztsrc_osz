@@ -29,7 +29,7 @@ Szolgáltatások
 
 A szolgáltatások nagyon hasonlítanak a felhasználói programokra, azonban egy eseményértelmező ciklust tartalmaz a magjuk, mivel
 tipikusan eseményvezéreltek. A `main()` függvényük inicializál, majd meghívja az `mq_dispatch()` függvényt. Hiba esetén az exit()-nek
-egy jól definiált kóddal kell kilépnie, amik a [sysexits.h](https://gitlab.com/bztsrc/osz/blob/master/include/osz/sysexits.h)
+egy jól definiált kóddal kell kilépnie, amik a [sysexits.h](https://gitlab.com/bztsrc/osz/blob/master/include/osZ/sysexits.h)
 fejlécben vannak definiálva.
 
 ```c
@@ -51,7 +51,7 @@ Ha valaki nagyobb rugalmasságot szeretne, akkor használható egy végtelen ese
 ```c
 #include <osZ.h>
 
-public void init()
+public int main(int argc, char **argv)
 {
     /* Inicializálás. Hiba esetén exit()-et kell hívni */
 
@@ -64,7 +64,7 @@ public void init()
 
 ### Konfiguráció
 
-A konfigurációt az /usr/(csomagnév)/etc/ alatt kell tárolni, és onnan kell beolvasni.
+A konfigurációt az /usr/(csomagnév)/etc/ alatt fájlokban kell tárolni, és onnan kell beolvasni.
 
 Függvénykönyvtárak
 ------------------

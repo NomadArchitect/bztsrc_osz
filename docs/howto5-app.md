@@ -42,10 +42,10 @@ public int main(int argc, char **argv)
 Ablakos alkalmazások
 --------------------
 
-A felhasználói felület definíciói az ui.h-ban vannak, amiket az osZ.h már behúzott. Azonban az ablakos alkalmazások esetében
-szükség van a `libui`-val való szerkesztésre, ezért add hozzá a `-Lui` kapcsolót a gcc-hez. Az ablakos alkalmazások main()
-függvénye pont olyan, mint a többié. Nincs külön prototípus, de a máküdésben van eltérés. Inicializálnak (például ablakot nyitnak),
-majd egy `mq_recv()` diszpécsert tartalmaznak, mivel az ablakos alkalmazások elsősorban esemény-vezérelt természetűek.
+Az ablakos alkalmazások main() függvénye pont olyan, mint a többié. Nincs külön prototípus, de a működésben van eltérés.
+Inicializálnak (például ablakot nyitnak), majd egy `mq_recv()` diszpécsert tartalmaznak, mivel az ablakos alkalmazások
+elsősorban esemény-vezérelt természetűek. A felhasználói felület definíciói az ui.h-ban vannak, amiket az osZ.h már behúzott.
+Azonban az ablakos alkalmazások esetében szükség van a `libui`-val való szerkesztésre, ezért add hozzá a `-lui` kapcsolót a gcc-hez.
 
 ```c
 #include <osZ.h>
@@ -81,7 +81,13 @@ public int main(int argc, char **argv)
 
 Az alap ablak és eseménykezelést biztosítja a `libui`. Ez egy pixelbuffert jelent, amire rajzolhatsz, de semmi többet. Azok a
 függvények, melyek a buffert kezelik (rajzprimitívek, gombok, képek stb.) csak minimálisan vannak benne, az összetettebb
-funkciókhoz (például HTML megjelenítés) külön függvénykönyvtárakra van szükség.
+funkciókhoz (például HTML megjelenítés) külön függvénykönyvtárakra van szükség (kb. a Windowsos GDI-vel ekvivalens).
+
+### Konfiguráció
+
+A rendszer szintű konfigurációt az /usr/(csomagnév)/etc/ alatt fájlokban kell tárolni, és onnan kell beolvasni. A felhasználói
+szintű konfigurációs fájlok helye a /home/(felhasználó)/.etc/(csomagnév). Szigorúan tilos a felhasználó home-ját rejtett
+fájlokkal teleszemetelni.
 
 Csomagok
 --------

@@ -8,7 +8,7 @@ Legutóbb tisztáztuk, hogyan kell [debuggolni OS/Z alatt](https://gitlab.com/bz
 gépen. Ennek ismeretében már nyugodtan nekiállhatunk fejleszteni.
 
 Eszközmeghajtóra azért van szükség, hogy alacsonyszintű hozzáférést biztosítson a hardveres eszközökhöz, amit aztán egy egységes
-interfésszel elfed. Ez csak kevesek számára érdekes, nyugodtan ugord át és lépj tovább a [szolgáltatások fejlesztése](https://gitlab.com/bztsrc/osz/blob/master/docs/howto4-servie.md)
+interfésszel elfed. Ez csak kevesek számára érdekes, nyugodtan ugord át és lépj tovább a [szolgáltatások fejlesztése](https://gitlab.com/bztsrc/osz/blob/master/docs/howto4-service.md)
 anyagra.
 
 Fejlécek
@@ -48,7 +48,7 @@ public void drv_init()
     /* ha van értelme, eszközfájlok létrehozása mknod() hívás(ok)al. */
 }
 
-public void drv_irq(uint16_t irq, uint64Üt ticks)
+public void drv_irq(uint16_t irq, uint64_t ticks)
 {
     /* megszakítás lekezelése */
 }

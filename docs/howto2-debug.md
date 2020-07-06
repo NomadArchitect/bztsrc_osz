@@ -107,6 +107,7 @@ küldesz, a beépített debugger meghívódik.
 Ha beállítod a `debug=prompt` opciót az [indulási környezet](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md)ben, akkor
 a bootolás meg fog állni a legelső taszkkapcsolás előtt.
 
+
 Továbbá a kódodból is meghívhatod, ha a kívánt helyre a következő parancsot beszúrod:
 
 ```c
