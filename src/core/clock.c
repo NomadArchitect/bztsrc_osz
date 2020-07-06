@@ -49,8 +49,7 @@ uint64_t clock_pids;                    /* feliratkozott taszkok */
 void clock_init()
 {
     /* aktuális másodpercek beállítása */
-    clock_tz = bootboot.timezone;
-    clock_ts = env_getts((char *)&bootboot.datetime, bootboot.timezone) + 1;
+    clock_ts = env_getts((char *)&bootboot.datetime, clock_tz) + 1;
     clock_ns = clock_ticks = 0;
     /* falióra léptetésének kiszámítása nanoszekben */
     clock_step = 1000000000000UL/clock_freq;

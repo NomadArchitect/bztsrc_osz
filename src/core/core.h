@@ -112,9 +112,11 @@ extern uint32_t numcores;                           /* a CPU magok száma */
 extern uint64_t srand[4], systables[8];             /* véletlenszámgenerátor és rendszertáblák */
 extern uint64_t clock_ts, clock_ns, clock_ticks;    /* pontos idő másodperc, nanoszek és az indulás óta eltelt mikroszek */
 extern uint64_t clock_freq;                         /* pontos idő frissítési frekvenciája */
+extern int16_t clock_tz;                            /* aktuális időzóna percekben */
 extern uint16_t sched_irq, clock_irq;               /* megszakítási vonalak */
 extern tcb_t idle_tcb;                              /* rendszer taszk, üresjárat */
 extern virt_t fs_initrd;                            /* az initrd virtuális címe a core területén */
+extern uint64_t __stack_chk_guard;                  /* gcc-nek kell a stack canary-hoz */
 
 /*** Függvény prototípusok ***/
 /* ---- Alacsony szintű könyvtár (nincs libc) ----- */
@@ -128,6 +130,8 @@ char *strncpy(char *dst, const char *src, size_t n);
 char *sprintf(char *dst, char *fmt, ...);
 char *vsprintf(char *dst, char *fmt, va_list args);
 void kentropy();                                    /* entrópia növelése */
+void __stack_chk_guard_setup();
+void __stack_chk_fail();
 
 /* ----- Szinkronizálás ----- */
 void lockacquire(int bit, uint64_t *ptr);           /* addig vár, míg nem sikerül lefoglalnia a jelzőt */

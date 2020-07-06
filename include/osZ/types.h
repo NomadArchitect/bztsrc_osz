@@ -198,7 +198,7 @@ typedef struct {
             uint64_t attr0;
             uint64_t attr1;
             uint64_t attr2;
-        } ptr;
+        } buffer;
     } data;
     uint64_t serial;
 } __attribute__((packed)) msg_t;

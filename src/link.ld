@@ -50,9 +50,8 @@ SECTIONS
 /* adatszegmens. Fontos, hogy laphatáron kezdődjön a jogosultságok miatt, ez lemásolódik minden címtérbe */
     . = ALIGN(4096);
     .got : { *(.got) *(.igot) } :data                       /* a GOT és GOT.PLT szekciót az adatokhoz tesszük, mert a binárisok */
-    .got.plt : { *(.got.plt) *(.igot.plt) } :data           /* minden címtér esetén más és más címre töltődnek be (ASLR), ezért */
-    .dynamic : { *(.dynamic) } :data :dynamic               /* címterenként más offszetekkel kell feltölteni ezeket a táblákat */
-    .data : { *(.data .data.* .gnu.linkonce.d.*) } :data
+    .dynamic : { *(.dynamic) } :data :dynamic               /* minden címtér esetén más és más címre töltődnek be (ASLR), ezért */
+    .data : { *(.data .data.* .gnu.linkonce.d.*) } :data    /* címterenként más offszetekkel kell feltölteni ezeket a táblákat */
 
     .bss (NOLOAD) : { *(.bss .bss.* .sbss* .gnu.linkonce.b.*) *(COMMON) } :data
 

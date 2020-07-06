@@ -1,5 +1,4 @@
 # ARMv8 64 bit
-include ../../../etc/sys/etc/os-release
 include ../../../Config
 
 SRCS = $(filter-out dbg.c,$(wildcard *.c))
@@ -10,13 +9,10 @@ SRCS+= $(wildcard *.S)
 TMP = $(SRCS:.c=.o)
 OBJS = $(TMP:.S=.o)
 ECHO ?= echo
-CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D_OSZ_CORE_=1 -DOSZ_NAME='$(NAME)' -DOSZ_VER='$(VERSION)' \
- -DOSZ_ARCH='"$(ARCH)"' -D__$(ARCH)__ -DOSZ_PLATFORM='"$(PLATFORM)"' -D__$(PLATFORM)__ -DOSZ_BUILD='$(BUILD)' \
- -ansi -fpic -fno-builtin -ffreestanding -mcmodel=small -nostdlib \
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D_OSZ_CORE_=1 \
+ -DOSZ_ARCH='"$(ARCH)"' -D__$(ARCH)__ -DOSZ_PLATFORM='"$(PLATFORM)"' -D__$(PLATFORM)__ \
+ -ansi -fpic -fno-builtin -ffreestanding -mcmodel=small -nostdlib -fno-delete-null-pointer-checks \
  -nostdinc -I. -I./$(PLATFORM) -I../../../include
-ifneq (,$(findstring -gcc,$(CC)))
-CFLAGS += -fstack-limit-symbol=STACK_LIMIT
-endif
 
 all: $(OBJS)
 

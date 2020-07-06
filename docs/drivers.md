@@ -83,5 +83,5 @@ kell a könyvtárba helyezni a devices és platforms fájlok mellé.
 
 ### Eszközmeghajtók írása
 
-Ha eszközmeghajtóval szeretnéd bővíteni az OS/Z-t, [itt](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.md)
+Ha eszközmeghajtóval szeretnéd bővíteni az OS/Z-t, [itt](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md)
 találsz hozzá leírást.

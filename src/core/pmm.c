@@ -52,14 +52,14 @@ void pmm_dump()
 #endif
 
 /**
- * Fizikai Memória Kezelő inicializálása
+ * fizikai Memória Kezelő inicializálása
  */
 void pmm_init()
 {
     char unit, *types[] = { "used", "free", "ACPI", "ANVS", "MMIO" };
     /* a betöltő által szolgáltatott memória térkép */
     MMapEnt *entry = (MMapEnt*)&bootboot.mmap;
-    uint64_t i, s, m=0, e=0, num = (bootboot.size-128)/16;
+    uint64_t i, m=0, e=0, num = (bootboot.size-128)/16, ptr, siz;
     pmm_entry_t *fmem = (pmm_entry_t*)-1;
 
     pmm_size = pmm_totalpages = 0;
@@ -90,30 +90,32 @@ void pmm_init()
         if(MMapEnt_IsFree(entry)) {
             /* szabad memória felső határa */
             if(e > m) m = e;
+            ptr = MMapEnt_Ptr(entry);
+            siz = MMapEnt_Size(entry);
             /* biztonságból, laphatárra igazítjuk */
-            if(entry->ptr & (__PAGESIZE-1)) {
-                entry->size -= (__PAGESIZE-(entry->ptr & (__PAGESIZE-1))) & 0xFFFFFFFFFFFFF0UL;
-                entry->ptr = ((entry->ptr+__PAGESIZE-1) >> __PAGEBITS) << __PAGEBITS;
+            if(ptr & (__PAGESIZE-1)) {
+                siz -= (__PAGESIZE-(ptr & (__PAGESIZE-1))) & 0xFFFFFFFFFFFFF0UL;
+                ptr = ((ptr+__PAGESIZE-1) & ~(__PAGESIZE-1));
             }
             /* hozzáadás a szabad memória listához */
-            if(MMapEnt_Size(entry) >= __PAGESIZE) {
+            if(siz >= __PAGESIZE) {
                 /* memóriafoglalás magához a memória listához */
                 if(fmem == (pmm_entry_t*)-1) {
-                    fmem = pmm_entries = (pmm_entry_t*)MMapEnt_Ptr(entry);
-                    entry->ptr += __PAGESIZE;
-                    entry->size -= __PAGESIZE;
-                    if(MMapEnt_Size(entry) < __PAGESIZE) continue;
+                    fmem = pmm_entries = (pmm_entry_t*)ptr;
+                    ptr += __PAGESIZE;
+                    siz -= __PAGESIZE;
+                    if(siz < __PAGESIZE) continue;
                 }
                 /* DMA buffer lefoglalása a lehető legalacsonyabb címterületen */
-                if(dmabuf && !pmm_dma && MMapEnt_Size(entry) >= (dmabuf << __PAGEBITS)) {
-                    pmm_dma = (phy_t)MMapEnt_Ptr(entry);
-                    entry->ptr += dmabuf << __PAGEBITS;
-                    entry->size -= dmabuf << __PAGEBITS;
-                    if(MMapEnt_Size(entry) < __PAGESIZE) continue;
+                if(dmabuf && !pmm_dma && siz >= (dmabuf << __PAGEBITS)) {
+                    pmm_dma = (phy_t)ptr;
+                    ptr += dmabuf << __PAGEBITS;
+                    siz -= dmabuf << __PAGEBITS;
+                    if(siz < __PAGESIZE) continue;
                 }
                 /* hozzáadás a listához */
-                fmem->base = MMapEnt_Ptr(entry);
-                fmem->size = MMapEnt_Size(entry) >> __PAGEBITS;
+                fmem->base = ptr;
+                fmem->size = siz >> __PAGEBITS;
                 pmm_size++;
                 pmm_totalpages += fmem->size;
                 fmem++;
@@ -129,16 +131,23 @@ void pmm_init()
     /* memóriatérkép naplózása */
     entry = (MMapEnt*)&bootboot.mmap;
     syslog(LOG_INFO,"Memory Map (%d entries, %d Mbytes free)\n", num, (pmm_totalpages << __PAGEBITS)/1024/1024);
+    i = 0;
     while(num>0) {
-        s = MMapEnt_Size(entry);
+        ptr = MMapEnt_Ptr(entry);
+        siz = MMapEnt_Size(entry);
+        if(MMapEnt_IsFree(entry)) {
+            if(ptr & (__PAGESIZE-1)) {
+                siz -= (__PAGESIZE-(ptr & (__PAGESIZE-1))) & 0xFFFFFFFFFFFFF0UL;
+                ptr = ((ptr+__PAGESIZE-1) & ~(__PAGESIZE-1));
+            }
+            if((pmm_entry_t*)ptr == pmm_entries) { ptr += __PAGESIZE; siz -= __PAGESIZE; }
+            if(ptr == pmm_dma) { ptr += dmabuf << __PAGEBITS; siz -= dmabuf << __PAGEBITS; }
+        }
         unit = ' ';
-        if(s >= GBYTE) { unit='G'; s /= GBYTE; } else
-        if(s >= MBYTE) { unit='M'; s /= MBYTE; } else
-        if(s >= KBYTE) { unit='k'; s /= KBYTE; }
-        syslog(LOG_INFO," %s %8x %8d %c\n",
-            MMapEnt_Type(entry)<5?types[MMapEnt_Type(entry)]:types[0],
-            MMapEnt_Ptr(entry), s, unit
-        );
+        if(siz >= GBYTE) { unit='G'; siz /= GBYTE; } else
+        if(siz >= MBYTE) { unit='M'; siz /= MBYTE; } else
+        if(siz >= KBYTE) { unit='k'; siz /= KBYTE; }
+        syslog(LOG_INFO," %s %8x %8d %c\n",MMapEnt_Type(entry)<5?types[MMapEnt_Type(entry)]:types[0],ptr, siz, unit);
         num--;
         entry++;
     }
@@ -153,6 +162,7 @@ void pmm_init()
     /* amíg nincsenek taszkjaink, addig az idle-nek számoljuk a memóriafoglalást */
     idle_tcb.magic = OSZ_TCB_MAGICH;
     idle_tcb.allocmem = idle_tcb.linkmem = 0;
+pmm_dump();
 }
 
 /**
@@ -312,12 +322,15 @@ void* pmm_allocslot(tcb_t *tcb)
 }
 
 /**
- * Fizikai memória felszabadítása és a szabad listához adása
+ * fizikai memória felszabadítása és a szabad listához adása
  */
 void pmm_free(tcb_t *tcb, phy_t base, size_t pages)
 {
     uint64_t i, j, s = pages << __PAGEBITS;
 
+    /* a legelső fizikai lapot sose szabadítjuk fel, mert a firmver használhatja. x86-on a valós módú IVT
+     * van ott (ha esetleg vissza akarnánk menni BIOS-ba), AArch64-on meg a multi-core trampoline code címei. */
+    if(!base && pages > 0) { base += __PAGESIZE; pages--; }
     /* paraméterek ellenőrzése */
     if(tcb->magic != OSZ_TCB_MAGICH || !pages)
         return;

@@ -24,7 +24,7 @@
  *     hozol létre a műből, akkor a létrejött művet ugyanazon licensz-
  *     feltételek mellett kell terjesztened, mint az eredetit.
  *
- * @subsystem libc
+ * @subsystem eszközmeghajtók
  * @brief Csak eszközmeghajtók számára elérhető funkciók
  */
 #include <osZ.h>
@@ -32,20 +32,36 @@
 /**
  * irq üzenetek kérése (csak eszközmeghajtók hívhatják)
  */
-public void core_regirq(uint16_t irq)   { mq_send1(SRV_CORE, SYS_regirq, irq); }
+public void drv_regirq(uint16_t irq)    { mq_send1(SRV_CORE, SYS_regirq, irq); }
 
 /**
  * másodpercenkénti időzítő üzenetek kérése (csak eszközmeghajtók hívhatják, USHRT_MAX irq üzeneteket küld)
  */
-public void core_regtmr()               { mq_send0(SRV_CORE, SYS_regtmr); }
+public void drv_regtmr()                { mq_send0(SRV_CORE, SYS_regtmr); }
 
 /**
  * eszközmeghajtóprogram keresése eszközspecifikáció alapján (csak eszközmeghajtók hívhatják)
  * visszatérési érték: 1 ha van, 0 ha nincs
  */
-public void core_drvfind(char *spec, char*drv, int len) { mq_send3(SRV_CORE, SYS_drvfind, (virt_t)spec, (virt_t)drv, len); }
+public void drv_find(char *spec, char*drv, int len) { mq_send3(SRV_CORE, SYS_drvfind, (virt_t)spec, (virt_t)drv, len); }
 
 /**
  * eszközmeghajtóprogram hozzáadása (csak eszközmeghajtók hívhatják)
  */
-public void core_drvadd(char *drv, void *memspec)       { mq_send2(SRV_CORE, SYS_drvadd, (virt_t)drv, (virt_t)memspec); }
+public void drv_add(char *drv, void *memspec)       { mq_send2(SRV_CORE, SYS_drvadd, (virt_t)drv, (virt_t)memspec); }
+
+/**
+ * eszközhivatkozás hozzáadása (csak eszközmeghajtók és szolgáltatások hívhatják)
+ */
+public int mknod(const char *devname, dev_t minor, mode_t mode, blksize_t size, blkcnt_t cnt)
+{
+    msg_t *msg;
+
+    if(!devname || !devname[0] || devname[0] == '/') {
+        seterr(EINVAL);
+        return -1L;
+    }
+    msg = mq_call5(SRV_FS, SYS_mknod|MSG_PTRDATA, devname, strlen(devname)+1, minor, (((uint64_t)mode)<<32)|size, cnt);
+    return errno() ? -1L : (int)msg->data.scalar.arg0;
+}
+

@@ -22,7 +22,9 @@ Fejlesztők számára érdekes anyagok
  * [Rendszerindulás](https://gitlab.com/bztsrc/osz/blob/master/docs/boot.md)
  * [Tesztelés](https://gitlab.com/bztsrc/osz/blob/master/docs/howto1-testing.md)
  * [Debuggolás](https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.md)
- * [Fejlesztés](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.md)
+ * [Eszközmeghajtó fejlesztés](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md)
+ * [Szolgáltatás fejlesztés](https://gitlab.com/bztsrc/osz/blob/master/docs/howto4-service.md)
+ * [Alkalmazás fejlesztés](https://gitlab.com/bztsrc/osz/blob/master/docs/howto5-app.md)
 
 Rendszergazdák játszótere
 -------------------------
@@ -34,13 +36,13 @@ Leírás arról, hogy hogyan üzemeltessük az OS/Z-t
  * [Virtuális Fájlrendszer](https://gitlab.com/bztsrc/osz/blob/master/docs/vfs.md) és elérési utak
  * [Indítási opciók](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md)
  * [Többnyelvűség](https://gitlab.com/bztsrc/osz/blob/master/docs/translate.md)
- * A [vészhelyzeti parancsértelmező](https://gitlab.com/bztsrc/osz/blob/master/docs/howto4-rescueshell.md) hívása
+ * A [vészhelyzeti parancsértelmező](https://gitlab.com/bztsrc/osz/blob/master/docs/howto6-rescueshell.md) hívása
  * OS/Z [telepítés](https://gitlab.com/bztsrc/osz/blob/master/docs/howto5-install.md)e pendrájvra és a csomagkezelés
- * [Szolgáltatások kezelése](https://gitlab.com/bztsrc/osz/blob/master/docs/howto6-services.md).
+ * [Szolgáltatások kezelése](https://gitlab.com/bztsrc/osz/blob/master/docs/howto7-services.md).
 
 Felhasználói kézikönyv
 ----------------------
 
 Végfelhasználóknak információk
 
- * [Felhasználói felület](https://gitlab.com/bztsrc/osz/blob/master/docs/howto7-interface.md)
+ * [Felhasználói felület](https://gitlab.com/bztsrc/osz/blob/master/docs/howto8-interface.md)

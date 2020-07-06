@@ -1,6 +1,6 @@
 CC-by-nc-sa-4.0
 
-Copyright (c) 2016-2019 bzt (bztsrc@gitlab)
+Copyright (c) 2016-2020 bzt (bztsrc@gitlab)
 https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 You are free to:
@@ -23,3 +23,8 @@ Under the following terms:
  - ShareAlike — If you remix, transform, or build upon the material,
      you must distribute your contributions under the same license as
      the original.
+
+Device drivers under src/drivers are dual licensed, either
+
+ - CC-by-nc-sa
+ - or closed-source proprietary binary distribution

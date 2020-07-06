@@ -38,7 +38,7 @@ char *stdlib_nullstr = "(null)";
 char *stdlib_ttyname;
 
 /**
- * beállítja a PATH-ot gyökérkönyvtárnak (az abszolút elérési útak kiindulópontja).
+ * beállítja a PATH-ot gyökérkönyvtárnak (az abszolút elérési út kiindulópontja).
  * ezt csak rendszergazda jogosultságokkal hívható.
  */
 public fid_t chroot(const char *path)
@@ -76,7 +76,7 @@ public char *getcwd()
     msg_t *msg = mq_call0(SRV_FS, SYS_getcwd);
     if(errno())
         return NULL;
-    return strdup(msg->data.ptr.ptr);
+    return strdup(msg->data.buffer.ptr);
 }
 
 /**
@@ -126,21 +126,6 @@ public int umount(const char *path)
 }
 
 /**
- * eszközhivatkozás hozzáadása
- */
-public int mknod(const char *devname, dev_t minor, mode_t mode, blksize_t size, blkcnt_t cnt)
-{
-    msg_t *msg;
-
-    if(!devname || !devname[0] || devname[0] == '/') {
-        seterr(EINVAL);
-        return -1L;
-    }
-    msg = mq_call5(SRV_FS, SYS_mknod|MSG_PTRDATA, devname, strlen(devname)+1, minor, (((uint64_t)mode)<<32)|size, cnt);
-    return errno() ? -1L : (int)msg->data.scalar.arg0;
-}
-
-/**
  * STREAM duplikálása, egy új fájlleírót ad vissza ugyanarra a megnyitott fájlra
  */
 public fid_t dup(fid_t stream)
@@ -178,7 +163,7 @@ public fid_t tmpfile()
 }
 
 /**
- * megnyit egy fájl és visszad egy STREAM fájlleírót hozzá
+ * megnyit egy fájlt és visszad egy STREAM fájlleírót hozzá
  */
 public fid_t fopen(const char *filename, mode_t oflag)
 {
@@ -436,7 +421,7 @@ char *realpath(const char *path)
     msg = mq_call2(SRV_FS, SYS_realpath|MSG_PTRDATA, path, strlen(path)+1);
     if(errno())
         return NULL;
-    return strdup((char*)msg->data.ptr.ptr);
+    return strdup((char*)msg->data.buffer.ptr);
 }
 
 /**
@@ -452,12 +437,12 @@ char *readlink(const char *path)
         return NULL;
     }
     msg = mq_call2(SRV_FS, SYS_readlink|MSG_PTRDATA, path, strlen(path)+1);
-    if(errno() || !msg->data.ptr.size)
+    if(errno() || !msg->data.buffer.size)
         return NULL;
-    buf = malloc(msg->data.ptr.size);
+    buf = malloc(msg->data.buffer.size);
     if(!buf)
         return NULL;
-    memcpy(buf, msg->data.ptr.ptr, msg->data.ptr.size);
+    memcpy(buf, msg->data.buffer.ptr, msg->data.buffer.size);
     return buf;
 }
 

@@ -44,6 +44,8 @@
 .type main, STT_FUNC
 .extern exit
 .type exit, STT_FUNC
+.global __stack_chk_fail
+.type __stack_chk_fail, STT_FUNC
 
 /*
  * Futtatás menete:
@@ -54,9 +56,13 @@
  *  5. ugrás a libc-ben definiált exit() föggvényre
  */
 .section .crt0, "ax"
+__stack_chk_fail:
+    ud2
+
     /* belépési pont */
 _start:
     /* függvénykönyvtárak inicializálása */
+    movq    %rsp, %rbp
     leaq    _GLOBAL_OFFSET_TABLE_(%rip), %r15
 1:  popq    %rax
     addq    $8, %rsp
@@ -78,5 +84,11 @@ _start:
 
 .section .crt0.fini, "ax"
 5:  popq    %rdi
-    jmp     exit@PLT
+    jmp     exit
 6:
+
+.section .rodata
+.global __stack_chk_guard
+.type __stack_chk_guard, STT_OBJECT
+__stack_chk_guard: .quad 0xBAD57AC6BAD57AC6
+

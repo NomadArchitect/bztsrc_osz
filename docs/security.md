@@ -15,7 +15,7 @@ Hozzáférési jogosultságok
 -------------------------
 
 Bizonyos üzenetek általános kritériumok alapján kerülnek ellenőrzésre. Például csak eszközmeghajtó prioritási szinten futó taszk
-küldhet SYS_setirq üzenetet az IRQ átirányító tábla módosítására. Hasonlóan a SYS_mknod üzenet is csak eszközmeghajtó és
+küldhet SYS_regirq üzenetet az IRQ átirányító tábla módosítására. Hasonlóan a SYS_mknod üzenet is csak eszközmeghajtó és
 szolgáltatás szintről küldhető. Bizonyos esetekben az üzenet egy taszkhoz kapcsolódik, például csak az "FS" taszk küldhet
 SYS_mountfs üzenetet az "FS"-nek.
 

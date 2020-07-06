@@ -24,7 +24,7 @@
  *     hozol létre a műből, akkor a létrejött művet ugyanazon licensz-
  *     feltételek mellett kell terjesztened, mint az eredetit.
  *
- * @subsystem platform
+ * @subsystem eszközmeghajtók
  * @brief PCI busz felderítés
  */
 
@@ -39,7 +39,7 @@
 char pcipath[32];
 mem_entry_t memspec[8];
 
-/**
+/*
  * PCI configurációs regiszterek írása / olvasása
  */
 static __inline__ uint32_t pci_config_read(uint8_t bus, uint8_t dev, uint8_t fnc, uint32_t reg)
@@ -61,7 +61,7 @@ static __inline__ void pci_config_write(uint8_t bus, uint8_t dev, uint8_t fnc, u
 }
 
 /**
- * busz pásztázása, eszközök detektálása
+ * busz pásztázása, eszközök detektálása vagy eszköz inicializálás, 1-el tér vissza, ha sikerült (eszközmeghajtók implementálják)
  */
 public int drv_init()
 {
@@ -86,15 +86,15 @@ public int drv_init()
                     drv[0] = 0;
                     /* először megnézzük a teljes alrendszer modellre van-e egyezés */
                     sprintf(pcipath, "pci%2x:%2x:%2x:%2x", PCI_VENDOR(dev), PCI_DEVICE(dev), PCI_VENDOR(sub), PCI_DEVICE(sub));
-                    core_drvfind(pcipath, drv, sizeof(drv));
+                    drv_find(pcipath, drv, sizeof(drv));
                     if(!drv[0]) {
                         /* ha nincs, akkor a modellhez van-e meghajtó */
                         sprintf(pcipath, "pci%2x:%2x", PCI_VENDOR(dev), PCI_DEVICE(dev));
-                        core_drvfind(pcipath, drv, sizeof(drv));
+                        drv_find(pcipath, drv, sizeof(drv));
                         if(!drv[0]) {
                             /* végül hogy az osztályhoz és altípushoz van-e */
                             sprintf(pcipath, "cls%1x:%1x", PCI_CLASS(cls), PCI_SUBCLASS(cls));
-                            core_drvfind(pcipath, drv, sizeof(drv));
+                            drv_find(pcipath, drv, sizeof(drv));
                         }
                     }
 #if DEBUG
@@ -148,7 +148,7 @@ public int drv_init()
                         }
 #endif
                         /* eszközmeghajtó taszk hozzáadása. drv-ben a meghajtó, memspec-ben a leképezendő memória listája */
-                        core_drvadd(drv, memspec);
+                        drv_add(drv, memspec);
                     } /* ha volt hozzá meghajtó */
                 } /* ha van eszköz */
             } /* funkció */
@@ -157,26 +157,44 @@ public int drv_init()
     return 0;
 }
 
+/**
+ * drv_regirq() vagy drv_regtmr() esetén hívódik, utóbbinál irq == USHRT_MAX (eszközmeghajtók implementálják)
+ */
 public void drv_irq(uint16_t irq __attribute__((unused)), uint64_t __attribute__((unused)) ticks)
 {
 }
 
+/**
+ * akkor hívódik, ha valaki megnyitja a mknod() által kreált fájlt (eszközmeghajtók implementálják)
+ */
 public void drv_open(dev_t device __attribute__((unused)), uint64_t mode __attribute__((unused)))
 {
 }
 
+/**
+ * amikor bezárják az eszközfájlt (eszközmeghajtók implementálják)
+ */
 public void drv_close(dev_t device __attribute__((unused)))
 {
 }
 
+/**
+ * olvasás az eszközfájlból (eszközmeghajtók implementálják)
+ */
 public void drv_read(dev_t device __attribute__((unused)))
 {
 }
 
+/**
+ * írás az eszközfájlba (eszközmeghajtók implementálják)
+ */
 public void drv_write(dev_t device __attribute__((unused)))
 {
 }
 
+/**
+ * eszközparancs (eszközmeghajtók implementálják)
+ */
 public void drv_ioctl(dev_t device __attribute__((unused)))
 {
 }

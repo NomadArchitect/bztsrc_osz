@@ -76,7 +76,7 @@ msg_t *msg_recv(uint64_t serial)
             else {
                 msghdr->mq_total++;
                 if(MSG_ISPTR(msg->evt)) msghdr->mq_bufstart =
-                    ((((virt_t)msg->data.ptr.ptr + msg->data.ptr.size + __PAGESIZE-1) >> __PAGEBITS) << __PAGEBITS);
+                    ((((virt_t)msg->data.buffer.ptr + msg->data.buffer.size + __PAGESIZE-1) >> __PAGEBITS) << __PAGEBITS);
             }
         } else {
             /* ha egy adott taszktól várunk válaszüzenetet, akkor a lista végét nézzük, FILO módon */
@@ -91,7 +91,7 @@ msg_t *msg_recv(uint64_t serial)
                 msghdr->mq_total++;
                 if(i == j) {
                     msghdr->mq_end = j;
-                    if(MSG_ISPTR(msg->evt)) msghdr->mq_bufend = (virt_t)msg->data.ptr.ptr & ~(__PAGESIZE-1UL);
+                    if(MSG_ISPTR(msg->evt)) msghdr->mq_bufend = (virt_t)msg->data.buffer.ptr & ~(__PAGESIZE-1UL);
                 } else {
                     vmm_page(0, LDYN_tmpmap4, vmm_phyaddr(ptr[((virt_t)msg>>__PAGEBITS)&511]), PG_CORE_RWNOCACHE|PG_PAGE);
                     ((msg_t*)(LDYN_tmpmap4 + (((virt_t)msg)&(__PAGESIZE-1))))->evt |= MSG_RESPONSED;

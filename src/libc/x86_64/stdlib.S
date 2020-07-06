@@ -55,7 +55,7 @@ func mq_send
     syscall
     pushq   %rax
     pushq   %rdx
-    call    seterr@PLT
+    call    seterr
     popq    %rdx
     popq    %rax
     popq    %r12
@@ -80,7 +80,7 @@ func mq_call
     /* igen, akkor erre a sorszámra várjuk a választ */
     movq    %rax, %rdi
     jmp     mq_recv_local
-1:  call    seterr@PLT
+1:  call    seterr
     xor     %rax, %rax
     xor     %rdx, %rdx
     popq    %r12

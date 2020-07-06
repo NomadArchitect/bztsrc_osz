@@ -20,11 +20,11 @@ FFFFFF80_00000000 +----------+---------------------+---------------------------+
                   |          |     504 G task      |  516096 M user data       |
                   |          |   dynamic memory    |         malloc()       ^  |
 00000001_00000000 |          +---------------------+---------------------------+  DYN_ADDRESS
-                  |   512 G  |                     |  4092 M user code         |
+                  |   512 G  |                     |  4090 M user code         |
 00000000_00400000 |   local  |                     +---------------------------+  TEXT_ADDRESS
-                  |          |                     |  2M stack              v  |
+                  |          |                     |  4M stack              v  |
                   |          |       4 G task      +---------------------------+
-                  |          |    static memory    |  2M-4K message queue   ^  |
+                  |          |    static memory    |  4M-4K message queue   ^  |
                   |          |                     +---------------------------+  __PAGESIZE
                   |          |                     |  4K Task Control Block    |
 00000000_00000000 +----------+---------------------+---------------------------+  TCB_ADDRESS

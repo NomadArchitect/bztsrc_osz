@@ -10,9 +10,6 @@ CFLAGS += -D__$(ARCH)__ -ansi -mcmodel=small -fPIC -nostdinc -I../../../include
 ifneq (,$(findstring -gcc,$(CC)))
 CFLAGS += -Wno-nonnull-compare
 endif
-ifeq ($(DEBUG),1)
-CFLAGS += -DDEBUG=1
-endif
 
 all: $(OBJS)
 

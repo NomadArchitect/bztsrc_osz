@@ -28,7 +28,6 @@
  */
 
 LOAD_ADDRESS = 0xffffffffffe00000;
-STACK_LIMIT =  0xfffffffffffffc00;
 
 ENTRY(_start)
 

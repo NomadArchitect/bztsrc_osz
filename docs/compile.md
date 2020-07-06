@@ -7,6 +7,8 @@ Szükséges eszközök
 - GNU eszköztár (make, gcc, binutils (gas, ld, objcopy, strip), lásd [tools/cross-gcc.sh](https://gitlab.com/bztsrc/osz/blob/master/tools/cross-gcc.sh))
 - gcc és ld helyett LLVM Clang és LLVM lld is használható
 
+Én Linux alatt fordítok általában, az garantáltan működik. BSD-vel sem lenne szabad, hogy gond legyen. MinGW-ben nem vagyok biztos.
+
 Konfigurálás
 ------------
 

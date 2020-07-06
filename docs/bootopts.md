@@ -17,14 +17,14 @@ Indulási konfigurációs fájl (environment)
 
 Ez az, amit a Linux commandline-nak hív. Az indítási opciók az első bootolható lemez első bootolható partícióján, a
 `FS0:\BOOTBOOT\CONFIG` vagy `/sys/config` alatt találhatóak. Amikor a lemezképek készülnek, akkor az
-[etc/sys/config](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/config) tartalma másolódik ide.
+[etc/config](https://gitlab.com/bztsrc/osz/blob/master/etc/config) tartalma másolódik ide.
 
 Ez egy sima szöveges UTF-8 fájl `kulcs=érték` párokkal, amit a [core/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/env.c)
 és a [libc/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/env.c) értelmez. Tagolókarakterek nem megengedettek, és a
 párokat újsor (0x0A) karakter választja el egymástól. A fájl teljes egésze nem lehet nagyobb, mint egy lap (ez 4096 bájt x86_64-en
 és AArch64-on). Kommenteket lehet tenni bele, a '#", '//' and '/*' karakterekkel.
 
-A kulcsok ASCII nevek szóközök nélkül, az értékek lehetnek decimális vagy hexa [számok, logikai értékek vagy UTF-8 sztringek](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.md#configure).
+A kulcsok ASCII nevek szóközök nélkül, az értékek lehetnek decimális vagy hexa [számok, logikai értékek vagy UTF-8 sztringek](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md).
 
 Kulcsok
 -------
@@ -49,7 +49,7 @@ Kulcsok
 | pathmax    | 512       | szám    | fs       | elérési út maximális hossza bájtban, minimum 256 |
 | cachelines | 16        | szám    | fs       | a blokk gyorsítótár vonalainak a száma, minimum 16 |
 | cachelimit | 5        | százalék | fs       | blokkgyorsítótár kiírása és kiürítése ha a szabad RAM ezalá csökkenne, 1%-50% |
-| keyboard   | pc105,en_us | szt,szt[,szt] | ui | billentyúzet típusa és kiosztása(i), lásd [etc/kbd](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/etc/kbd) |
+| keyboard   | pc105,en_us | szt,szt[,szt] | ui | billentyúzet típusa és kiosztása(i), lásd [etc/kbd](https://gitlab.com/bztsrc/osz/blob/master/etc/etc/kbd) |
 | focusnew   | true      | logikai | ui       | új ablakok automatikusan fókuszálva lesznek |
 | dblbuf     | true      | logikai | ui       | kettős buffer alkalmazása (memóriaigényes, de gyors) |
 | lefthanded | false     | logikai | ui       | mutatók felcserélése, balkezes mód |

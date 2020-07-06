@@ -404,8 +404,11 @@ void drivers_start()
     /* lehazudunk egy megszakításvisszatérést, és ezzel átkapcsolunk a legelső taszkra */
     vmm_switch(((tcb_t*)LDYN_tmpmap1)->memroot);
 #if DEBUG
-    if(debug&DBG_PROMPT)
+    if(debug&DBG_PROMPT) {
         dbg_start("prompt at boot", false);
+        vmm_page(0, LDYN_tmpmap1, services[-SRV_FS] << __PAGEBITS, PG_CORE_RONOCACHE|PG_PAGE);
+        vmm_switch(((tcb_t*)LDYN_tmpmap1)->memroot);
+    }
 #endif
     numinit = 0;
     runlevel = RUNLVL_COOP;
@@ -455,11 +458,6 @@ void drivers_ready()
 
         /* küldünk egy falióra visszaigazolást, hogy biztosan nullázuk a interrupt jelzőjét */
         clock_ack();
-
-#if DEBUG && __x86_64__
-        /* bochs breakpoint a tesztelési hogyan leíráshoz */
-        __asm__ __volatile__("xchg %bx, %bx");
-#endif
 
         /* üzenetet küldünk az FS tasznak, hogy most már felcsatolhatja a fájlrendszereket */
         msg_notify(services[-SRV_FS], SYS_mountfs, 0);

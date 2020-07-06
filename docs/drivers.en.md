@@ -84,4 +84,4 @@ and platforms files.
 
 ### Developing drivers
 
-If you want to write a device driver for OS/Z, [here](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.en.md) you can find more information.
+If you want to write a device driver for OS/Z, [here](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md) you can find more information.

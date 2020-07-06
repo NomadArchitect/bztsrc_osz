@@ -50,7 +50,7 @@ extern uint32_t kx;
 extern unsigned char *platform_parse(unsigned char *env);
 
 /**
- * UTC másodperc időbélyeg kiszámítása lokális BCD vagy bináris időstringből
+ * UTC másodperc időbélyeg kiszámítása lokális BCD vagy bináris idősztringből
  */
 uint64_t env_getts(char *p, int16_t timezone)
 {
@@ -145,11 +145,11 @@ unsigned char *env_tz(unsigned char *s)
     if(*s == '-') { s++; sign = -1; }
     if(*s >= '0' && *s <= '9') {
         s=env_dec(s, &v, 0, 1440);
-        bootboot.timezone = (int16_t)(sign*v);
+        clock_tz = (int16_t)(sign*v);
         asktime = false;
         return s;
     } else if(*s == 'a') {
-        bootboot.timezone = 0;
+        clock_tz = 0;
         asktime = true;
     }
     return s+1;
@@ -286,9 +286,9 @@ void env_asktime_setdigit(uint8_t c, uint32_t i)
     c -= '0';
     switch(i) {
         case 14:
-        case 15: if(c < 5) bootboot.timezone -= 60; else bootboot.timezone += 60; break;
-        case 16: if(c < 5) bootboot.timezone -= 10; else bootboot.timezone += 10; break;
-        case 17: if(c < 5) bootboot.timezone--; else bootboot.timezone++; break;
+        case 15: if(c < 5) clock_tz -= 60; else clock_tz += 60; break;
+        case 16: if(c < 5) clock_tz -= 10; else clock_tz += 10; break;
+        case 17: if(c < 5) clock_tz--; else clock_tz++; break;
         default:
             p[i/2] &= i%2? 0xF0 : 0xF;
             p[i/2] |= i%2? c : c*16;
@@ -301,8 +301,8 @@ void env_asktime_setdigit(uint8_t c, uint32_t i)
             if(p[6] > 0x59) p[6] = 0x59;
             break;
     }
-    if(bootboot.timezone < -1440) bootboot.timezone = 1440;
-    if(bootboot.timezone > 1440) bootboot.timezone = -1440;
+    if(clock_tz < -1440) clock_tz = 1440;
+    if(clock_tz > 1440) clock_tz = -1440;
 }
 
 /**
@@ -320,10 +320,10 @@ void env_asktime()
     kprintf("%s\n", TXT_asktime&&TXT_asktime[0]? TXT_asktime : "Current date and time?");
     while(true) {
         p = bootboot.datetime;
-        tz = bootboot.timezone<0? -bootboot.timezone : bootboot.timezone;
+        tz = clock_tz<0? -clock_tz : clock_tz;
         t1 = tz/600; t2 = (tz/60)%10; t3 = (tz%60)/10; t4 = tz%10;
         sprintf((char*)&t, "%1x%1x-%1x-%1x %1x:%1x:%1x GMT%c%1d%1d:%1d%1d", p[0], p[1], p[2], p[3], p[4], p[5], p[6],
-            bootboot.timezone<0?'-':'+', t1, t2, t3, t4);
+            clock_tz<0?'-':'+', t1, t2, t3, t4);
 /* Raspberry Pi-n a soros portot használjuk, akkor is, ha egyébként debug konzol nélkül fordítottuk a core-t */
 #if DEBUG || defined(__rpi__)
         platform_dbgputc('\r');
@@ -428,6 +428,7 @@ void env_init()
     display = PBT_MONO_COLOR;
     debug = DBG_NONE;
     asktime = *((uint32_t*)&bootboot.datetime) == 0;
+    clock_tz = bootboot.timezone;
     lang[0]='e'; lang[1]='n'; lang[2]=0;
 
     /* platform függő alapértékek */

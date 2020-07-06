@@ -1,4 +1,4 @@
-include ../../etc/sys/etc/os-release
+include ../../etc/etc/os-release
 include ../../Config
 TARGET = sys/core
 
@@ -18,13 +18,10 @@ LDFLAGS += -nostartfiles -nolibc -nodefaultlibs
 endif
 CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D_OSZ_CORE_=1 -DOSZ_NAME='$(NAME)' -DOSZ_VER='$(VERSION)' \
  -DOSZ_ARCH='"$(ARCH)"' -D__$(ARCH)__ -DOSZ_PLATFORM='"$(PLATFORM)"' -D__$(PLATFORM)__ -DOSZ_BUILD='$(BUILD)' \
- -ansi -fpic -fno-builtin -ffreestanding -mcmodel=small -nostdlib \
- -nostdinc -I. -I./$(ARCH) -I./$(ARCH)/$(PLATFORM) -I../../include -g
+ -ansi -fpic -fpie -fno-builtin -ffreestanding -mcmodel=small -nostdlib -fno-delete-null-pointer-checks \
+ -nostdinc -I. -I./$(ARCH) -I./$(ARCH)/$(PLATFORM) -I../../include
 ifeq ($(ARCH),x86_64)
 CFLAGS += -mno-red-zone
-endif
-ifneq (,$(findstring -gcc,$(CC)))
-CFLAGS += -fstack-limit-symbol=STACK_LIMIT
 endif
 ifneq ($(DEBUG),1)
 LDFLAGS += -s
@@ -32,7 +29,7 @@ endif
 
 all: $(OBJS) $(BINTARGET)
 
-main.o: main.c ../../etc/sys/etc/os-release ../../Config
+main.o: main.c ../../etc/etc/os-release ../../Config
 	@$(ECHO) "  src		$<"
 	$(O)$(CC) $(OPT) $(CFLAGS) -c $< -o $@
 

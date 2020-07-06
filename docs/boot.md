@@ -45,9 +45,9 @@ Hogy a gépet elindítsa, a `core` a következő lépéseket hajtja végre:
 20. miután végzett a háttértárolók felcsatolásával, az `FS` értesíti az összes többi rendszer szolgáltatást, hogy inicializálhatnak.
 21. amint ütemezésre kerül, az egyik rendszer szolgáltatás, az `init` taszk betölti és elindítja a felhasználói munkamenet szolgáltatást.
 
-Ha az [induló környezet](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/config)ben vészeseti parancsértelmezőt kértünk, akkor a [bin/sh](https://gitlab.com/bztsrc/osz/blob/master/src/sh/main.c) töltődik be az `init` helyett.
+Ha az [induló környezet](https://gitlab.com/bztsrc/osz/blob/master/etc/config)ben vészeseti parancsértelmezőt kértünk, akkor a [bin/sh](https://gitlab.com/bztsrc/osz/blob/master/src/sh/main.c) töltődik be az `init` helyett.
 
-(MEGJEGYZÉS: Ha az OS/Z debug támogatással lett fordítva, és `debug=tests` lett megadva az [induló környezet](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/config)ben,
+(MEGJEGYZÉS: Ha az OS/Z debug támogatással lett fordítva, és `debug=tests` lett megadva az [induló környezet](https://gitlab.com/bztsrc/osz/blob/master/etc/config)ben,
 akkor a `core` a [bin/test](https://gitlab.com/bztsrc/osz/blob/master/src/test/main.c) nevű programot tölti be az `init` helyett, ami különféle modul és funkcionális
 rendszerteszteket hajt végre.)
 

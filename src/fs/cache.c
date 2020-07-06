@@ -36,7 +36,8 @@
 #include "devfs.h"
 
 extern uint8_t ackdelayed;      /* aszinkron olvasás jelzőbit */
-uint16_t cachelines;            /* gyorsítótár vonalak száma */
+uint32_t cachelines;            /* gyorsítótár vonalak száma */
+uint32_t cachelimit;            /* cache max mérete RAM százalékban */
 uint64_t cache_inflush=0;       /* kiirandó blokkok száma */
 
 #define CACHE_FD(x) (x&0xFFFFFFFFFFFFFFFUL)
@@ -58,6 +59,7 @@ cache_t **cache;
  */
 void cache_init()
 {
+    cachelimit = env_num("cachelimit", 5, 1, 50);
     cachelines = env_num("cachelines", 16, 16, 65535);
     cache = (cache_t**)malloc(cachelines * sizeof(cache_t*));
     /* ha nem tudtuk lefoglalni, akkor kilépünk */

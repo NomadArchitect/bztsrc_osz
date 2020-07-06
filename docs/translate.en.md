@@ -9,7 +9,7 @@ You can change the desired language code in [environment](https://gitlab.com/bzt
 Dictionaries
 ------------
 
-Translations for core, libc, shell and sys (all executables on initrd) can be found in [/sys/lang](https://gitlab.com/bztsrc/osz/tree/master/etc/sys/lang).
+Translations for core, libc, shell and sys (all executables on initrd) can be found in [/sys/lang](https://gitlab.com/bztsrc/osz/tree/master/etc/lang).
 User space applications (packages installed under /usr) have their own dictionaries, which can be loaded by the `lang_init()` libc
 function. It requires a filename prefix (for example "/usr/gcc/lang/ld"), number of strings, and an array of string pointers to fill
 in. Translators can add new languages any time, no recompilation required. Just keep in mind that each line is exactly one

@@ -271,7 +271,7 @@ elferr:
     elfctx->elfbin[elfctx->nelfbin].entry = elfctx->nextaddr + (virt_t)elf->e_entry;
     /* betöltés könyvelése */
     elfc->numref++;
-    elfctx->nextaddr += ((phdr_c->p_filesz + __PAGESIZE-1)>>__PAGEBITS)<<__PAGEBITS;
+    elfctx->nextaddr += (phdr_c->p_filesz + __PAGESIZE-1) & ~(__PAGESIZE-1);
 
     /* lefoglaljuk és bemásoljuk az adatszegmenst */
     i = ((phdr_d->p_offset + __PAGESIZE-1)>>__PAGEBITS);
@@ -284,16 +284,16 @@ elferr:
     if(!vmm_map(elftcb, BUF_ADDRESS + elfctx->nextaddr, 0, phdr_d->p_memsz, PG_USER_RW|PG_PAGE)) goto elferr;
     for(v = BUF_ADDRESS + elfctx->nextaddr; n>0; i++,v+=__PAGESIZE) {
         /* mivel fizikai címeink vannak, ideiglenesen belapozzuk a tmpmap2-be */
-        vmm_page(0, (virt_t)LDYN_tmpmap2, elfc->data[i], PG_CORE_RONOCACHE|PG_PAGE);
+        vmm_page(0, (virt_t)LDYN_tmpmap1, elfc->data[i], PG_CORE_RONOCACHE|PG_PAGE);
         if(n >= __PAGESIZE) {
-            memcpy((void*)v, (void*)LDYN_tmpmap2, __PAGESIZE);
+            memcpy((void*)v, (void*)LDYN_tmpmap1, __PAGESIZE);
             n -= __PAGESIZE;
         } else {
-            memcpy((void*)v, (void*)LDYN_tmpmap2, n);
+            memcpy((void*)v, (void*)LDYN_tmpmap1, n);
             break;
         }
     }
-    elfctx->nextaddr += ((phdr_d->p_memsz + __PAGESIZE-1)>>__PAGEBITS)<<__PAGEBITS;
+    elfctx->nextaddr += (phdr_d->p_memsz + __PAGESIZE-1) & ~(__PAGESIZE-1);
     elfctx->elfbin[elfctx->nelfbin].end = elfctx->nextaddr;
     elfctx->nelfbin++;
 
@@ -304,7 +304,7 @@ elferr:
         kprintf("  elf extr %x, @%x %d bytes\n", elfctx->nextaddr, extrabuf, extrasiz);
 #endif
         elfctx->extra_ptr = elfctx->nextaddr;
-        extrasiz = ((extrasiz+__PAGESIZE-1)>>__PAGEBITS)<<__PAGEBITS;
+        extrasiz = (extrasiz+__PAGESIZE-1) & ~(__PAGESIZE-1);
         vmm_map(elftcb, BUF_ADDRESS + elfctx->nextaddr, extrabuf, extrasiz, PG_USER_RO|PG_PAGE);
         elfctx->nextaddr += extrasiz;
     }
@@ -454,9 +454,9 @@ err:    if(relas) free(relas);
             /* ez nagyon valószínűtlen, hibás linkelő kell hozzá, de azért ellenőrizzük */
             if(vo < (virt_t)elf || vo > vm) {
 #if DEBUG
-                kpanic("pid %x: out of bounds rela %x", elftcb->pid, vo - BUF_ADDRESS);
+                kpanic("pid %x: out of bounds rela %d %x", elftcb->pid, i, vo - BUF_ADDRESS);
 #else
-                syslog(LOG_ERR, "pid %x: out of bounds rela %x", elftcb->pid, vo - BUF_ADDRESS);
+                syslog(LOG_ERR, "pid %x: out of bounds rela %d %x", elftcb->pid, i, vo - BUF_ADDRESS);
                 goto err;
 #endif
             }

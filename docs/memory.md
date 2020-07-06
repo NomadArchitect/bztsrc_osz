@@ -20,11 +20,11 @@ FFFFFF80_00000000 +------------+---------------------+--------------------------
                   |            |     504 G taszk     | 516096 M felhasználói adat  |
                   |            |  dinamikus memória  |          malloc()        ^  |
 00000001_00000000 |            +---------------------+-----------------------------+  DYN_ADDRESS
-                  |   512 G    |                     |  4092 M felhasználói kód    |
+                  |   512 G    |                     |  4090 M felhasználói kód    |
 00000000_00400000 |  lokális   |                     +-----------------------------+  TEXT_ADDRESS
-                  |            |                     |  2M verem                v  |
+                  |            |                     |  4M verem                v  |
                   |            |      4 G taszk      +-----------------------------+
-                  |            |   statikus memória  |  2M-4K üzenet sor        ^  |
+                  |            |   statikus memória  |  4M-4K üzenet sor        ^  |
                   |            |                     +-----------------------------+  __PAGESIZE
                   |            |                     |  4K Taszk Kontroll Blokk    |
 00000000_00000000 +------------+---------------------+-----------------------------+  TCB_ADDRESS

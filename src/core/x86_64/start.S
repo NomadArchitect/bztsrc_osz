@@ -47,7 +47,6 @@
 _start:
     cli
     cld
-xchg %bx,%bx
     /* szegmensregiszterek beállítása */
     lgdt    gdt64
     jmp     1f

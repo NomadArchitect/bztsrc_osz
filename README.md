@@ -50,11 +50,18 @@ A lemezképet [qemu](http://www.qemu.org/), [bochs](http://bochs.sourceforge.net
 Licensz
 -------
 
-A betöltő program és a [BOOTBOOT](https://gitlab.com/bztsrc/bootboot) Protokoll, a [memória allokátor](http://gitlab.com/bztsrc/bztalloc) valamint az
+| Rész                                         | Licensz                                                  |
+| -------------------------------------------- |--------------------------------------------------------- |
+| külső repós modulok és az FS/Z lemezformátum | MIT                                                      |
+| eszközmeghajtók                              | dual licensz, CC-by-nc-sa vagy zárt forrású kereskedelmi |
+| minden más ebben a repóban                   | CC-by-nc-sa                                              |
+
+A betöltő program és a [BOOTBOOT](https://gitlab.com/bztsrc/bootboot) Protokoll, a [memória allokátor](http://gitlab.com/bztsrc/bztalloc),
+az [SSFN](https://gitlab.com/bztsrc/scalable-font2) font formátum valamint az
 [FS/Z lemezformátuma](https://gitlab.com/bztsrc/osz/blob/master/include/osZ/fsZ.h) teljesen szabad, MIT licensz alatt kerül terjesztésre.
 Mivel a libfuse GPL licenszű, ezért az [FS/Z FUSE](https://gitlab.com/bztsrc/osz/blob/master/tools/fsZ-fuse.c) meghajtója szintén GPL licenszet használ.
 Minden más az OS/Z-ben (beleértve a natív [FS/Z](https://gitlab.com/bztsrc/osz/blob/master/docs/fs.md) implementációt is) azonban CC-by-nc-sa-4.0
-licenszű. Az eszközmeghajtók külön kivételt képeznek, azoknál megengedett a zárt forráskódú, bináris terjesztés.
+licenszű, az eszközmeghajtók kivételével, azoknál megengedett a zárt forráskódú, bináris terjesztés.
 
 Ez azt jelenti, hogy bár az OS/Z **Nyílt Forráskódú**, de **nem Szabad Szoftver**. Használhatod és játszhatsz vele otthon, de nincs
 semmi garancia a megfelelő működésre. Nem használhatod fel üzleti célra vagy üzleti környezetben a szerző előzetes írásos
@@ -104,10 +111,9 @@ Projekt struktúra
 |
 |_ etc/                 et cetera, mellékes fájlok
 |   |_ root/            a rendszergazda home-jának váza, /root az initrd-n
-|   \_ sys/             rendszer konfigurációs fájlok
-|       |_ etc/         a /sys/etc váza az initrd-n
-|       |_ lang/        a core és libc nyelvi fájlai, fordításai
-|       \_ config       indulókörnyezet konfigurációja (ESP/BOOTBOOT/CONFIG, a "make config" generálja)
+|   |_ etc/             a /sys/etc váza az initrd-n
+|   |_ lang/            a core és libc nyelvi fájlai, fordításai
+|   \_ config           indulókörnyezet konfigurációja (ESP/BOOTBOOT/CONFIG, a "make config" generálja)
 |
 |_ include/             C header fájlok, a fordításkor használt (valamint az /usr/sys/include váza)
 |

@@ -8,9 +8,15 @@ hivatkozott függvényeket az alkönyvtárakban található megosztott függvén
 - *driver.c* a közös eszközmeghajtó diszpécser
 - a többi könyvtár eszközosztály
 
+Licensz
+-------
+
 Az eszközmeghajtók külön kivételt képeznek licenszelési szempontból, a forrásukat nem kötelező megosztani, a bináris
 terjesztés is megengedett. Ehhez egy megfelelő architektúrára fordított ELF binárist kell a könyvtárba helyezni, "(ARCH).so"
 névvel, ami megvalósítja a drv függvényeket, és ami a driver-el kerül összeszerkesztésre futási időben.
+
+Az eszközmeghajtók ezért kettős licenszűek. Vagy nyílt forráskódú **CC-by-nc-sa**, mint a rendszer többi része, vagy zárt
+forráskódú, bináris terjesztésűek, ún. **propietary**.
 
 Eszközmeghajtó osztályok
 ------------------------
@@ -46,4 +52,4 @@ A hasonlóság a [PCI eszköz osztály](http://pci-ids.ucw.cz/read/PD)okkal nem 
 Az osztálykönyvtár alatt pontosan egy újabb könyvtárszint helyezkedik el, meghajtónként egy könyvtárral. Minden egyes lefordított
 eszközmeghajtó az initrd-n a `sys/drv/(osztály)/(meghajtó).so` alá kerül.
 
-További információért lásd a [dokumentáció](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md)t és a [hogyan fejlesszünk](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.md) leírást.
+További információért lásd a [dokumentáció](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md)t és a [hogyan fejlesszünk](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md) leírást.

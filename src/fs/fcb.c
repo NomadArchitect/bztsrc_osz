@@ -36,7 +36,6 @@ extern uint8_t ackdelayed;
 extern pid_t mq_caller;
 
 public uint64_t nfcb = 0;
-public uint64_t nfiles = 0;
 public fcb_t *fcb = NULL;
 
 /**
@@ -80,7 +79,6 @@ fid_t fcb_add(char *abspath, uint8_t type)
             if(j == -1U) j = i;
         }
     }
-    nfiles++;
     if(j == -1U) {
         nfcb++;
         fcb = (fcb_t*)realloc(fcb, nfcb*sizeof(fcb_t));
@@ -122,7 +120,6 @@ void fcb_del(fid_t idx)
         if(f->abspath) free(f->abspath);
         f->abspath = NULL;
         f->data.reg.filesize = 0;
-        nfiles--;
         idx = nfcb;
         while(idx > 0 && !fcb[idx-1].abspath) idx--;
         if(idx != nfcb) {

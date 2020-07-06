@@ -138,8 +138,8 @@ void mkref(char *outmd, int argc, char **argv)
             printf("Hibás fájlnév a kommentben: %s != %s\n", argv[i], files[i].ifn);
             exit(1);
         }
-        for(c = e; *c && memcmp(c, "@brief ", 7); c++);
-        if(!*c) {
+        for(c = e; *c && memcmp(c, "*/", 2) && memcmp(c, "@brief ", 7); c++);
+        if(*c != '@') {
             printf("Nincs @brief a kommentben: %s\n", argv[i]);
             exit(1);
         }
@@ -148,14 +148,14 @@ void mkref(char *outmd, int argc, char **argv)
         files[i].brief = malloc(e - c + 1);
         memcpy(files[i].brief, c, e - c);
         files[i].brief[e - c] = 0;
-        for(c = data; *c && memcmp(c, "@subsystem ", 11); c++);
-        if(!*c) {
+        for(c = data; *c && memcmp(c, "*/", 2) && memcmp(c, "@subsystem ", 11); c++);
+        if(*c != '@') {
             printf("Nincs @subsystem a kommentben: %s\n", argv[i]);
             exit(1);
         }
         c += 11;
         for(e = c; *e != '\n'; e++);
-        for(j = 0; j < nsub && strlen(subs[j]) != (size_t)(e - c) && memcmp(c, subs[j], e - c); j++);
+        for(j = 0; j < nsub && !(strlen(subs[j]) == (size_t)(e - c) && !memcmp(c, subs[j], e - c)); j++);
         if(j >= nsub) {
             j = nsub++;
             subs = (char**)realloc(subs, nsub * sizeof(char*));
@@ -194,7 +194,7 @@ void mkref(char *outmd, int argc, char **argv)
                             if(!memcmp(c, "__attribute__((malloc)) ", 24)) c += 23; else
                             if(!memcmp(c, "__attribute__((unused)) ", 24)) c += 23; else
                             if(!memcmp(c, " __attribute__((unused))", 24)) c += 23; else
-                            if(!memcmp(c, "__inline__", 10)) { c += 10; memcpy(g, "inline", 6); g += 6; } else {
+                            if(!memcmp(c, "__inline__ ", 11)) { c += 10; memcpy(g, "inline ", 7); g += 7; } else {
                                 if(*c == '[' || *c == ']') *g++ = '\\';
                                 *g++ = *c;
                             }
@@ -216,7 +216,6 @@ void mkref(char *outmd, int argc, char **argv)
     }
     if(!funcs) { printf("Nincs egy funkció se???\n"); exit(1); }
     qsort(funcs, nfunc, sizeof(func_t), fnccmp);
-    printf("%s: ", outmd);
     /* ez csak magyarul van, mivel a forrásban a kommentek úgyis magyarul vannak */
     f = fopen(outmd,"w");
     if(f) {
@@ -234,9 +233,8 @@ void mkref(char *outmd, int argc, char **argv)
                 files[i].ifn, files[i].ifn, subs[files[i].sub], files[i].brief);
         fprintf(f, "\n\n");
         fclose(f);
-        printf("OK\n");
     } else {
-        printf(hu?"Nem lehet írni\n":"Unable to write\n");
+        printf("%s: %s\n", outmd, hu?"Nem lehet írni\n":"Unable to write\n");
     }
 }
 
@@ -247,11 +245,12 @@ int main(int argc,char** argv)
     char *binds[] = { "L", "G", "W", "N" };
     char *types[] = { "NOT", "OBJ", "FNC", "SEC", "FLE", "COM", "TLS", "NUM", "LOS", "IFC", "HOS", "LPR", "HPR" };
     char *elf, *strtable = NULL, *lang, *n, *c, *e, *data, *dev;
-    int i=0, dump=0, chk=0, strsz, syment;
+    int i=0, dump=0, chk=0, strsz, syment, dtrelasz = 0, dtjmpsz = 0, dtrela = 0 , dtjmprel = 0;
     unsigned long int reloc=-1;
     Elf64_Ehdr *ehdr;
     Elf64_Phdr *phdr, *phdr_c, *phdr_d, *phdr_l;
     Elf64_Sym *sym = NULL, *s = NULL;
+    Elf64_Dyn *d;
     lang=getenv("LANG");
     if(lang && lang[0]=='h' && lang[1]=='u') hu=1;
     if(argc<2) {
@@ -348,7 +347,6 @@ int main(int argc,char** argv)
         /* csak a Dynamic header-re van szükségünk */
         if(phdr->p_type==PT_DYNAMIC) {
             /* Dynamic szekció beolvasása */
-            Elf64_Dyn *d;
             d = (Elf64_Dyn *)(elf + phdr->p_offset);
             while(d->d_tag != DT_NULL) {
                 if(dump && d->d_tag<1000)
@@ -357,17 +355,11 @@ int main(int argc,char** argv)
                         (d->d_tag==DT_RELA?"rela":(d->d_tag==DT_RELASZ?"relasz":
                         (d->d_tag==DT_RELAENT?"relaent":(d->d_tag==DT_JMPREL?"jmprel":
                         (d->d_tag==DT_SYMENT?"syment":(d->d_tag==DT_PLTRELSZ?"jmprelsz":"")))))))));
-                if(d->d_tag == DT_STRTAB) {
-                    strtable = elf + (d->d_un.d_ptr&0xFFFFFFFF);
-                }
-                if(d->d_tag == DT_STRSZ) {
-                    strsz = d->d_un.d_val;
-                }
-                if(d->d_tag == DT_SYMTAB) {
-                    sym = (Elf64_Sym *)(elf + (d->d_un.d_ptr&0xFFFFFFFF));
-                }
-                if(d->d_tag == DT_SYMENT) {
-                    syment = d->d_un.d_val;
+                switch(d->d_tag) {
+                    case DT_STRTAB: strtable = elf + (d->d_un.d_ptr&0xFFFFFFFF); break;
+                    case DT_STRSZ: strsz = d->d_un.d_val; break;
+                    case DT_SYMTAB: sym = (Elf64_Sym *)(elf + (d->d_un.d_ptr&0xFFFFFFFF)); break;
+                    case DT_SYMENT: syment = d->d_un.d_val; break;
                 }
                 /* mutató növelése a következő dynamic elemre */
                 d++;
@@ -476,7 +468,7 @@ int main(int argc,char** argv)
                     exit(1);
             }
             if(phdr_c->p_vaddr==0xffffffffffe02000) {
-                /* biztosra megyünk, hogy a szs-core ne legyen direktben futtatható */
+                /* biztosra megyünk, hogy a sys/core ne legyen direktben futtatható */
 #if !defined(DEBUG) || !DEBUG
                 memcpy(ehdr, "OS/Z", 4);
 #endif
@@ -508,7 +500,28 @@ int main(int argc,char** argv)
                     s++;
                 }
             } else {
-                /* újabb linker bug, néha muszáj shared libnek fordítani, különben nem kerülnek a szimbólumok a dynsym-be */
+                if(ehdr->e_phnum > 2) {
+                    d = (Elf64_Dyn *)(elf + phdr_d->p_offset);
+                    while(d->d_tag != DT_NULL) {
+                        switch(d->d_tag) {
+                            case DT_RELASZ:   dtrelasz = d->d_un.d_val; break;
+                            case DT_PLTRELSZ: dtjmpsz = d->d_un.d_val; break;
+                            case DT_RELA:     dtrela = d->d_un.d_ptr; break;
+                            case DT_JMPREL:   dtjmprel = d->d_un.d_ptr; break;
+                        }
+                        d++;
+                    }
+                }
+                /* ha külön van az adat és funkció relokáció, akkor csak akkor jó, ha egymás után van a két tábla */
+                if(ehdr->e_phnum != 3 || (dtrela && dtjmprel && dtrela != dtjmprel && (dtrela + dtrelasz != dtjmprel ||
+                    dtjmprel + dtjmpsz != dtrela))) {
+                    fprintf(stderr,"%s: %s (rela %x %d bytes, jmprel %x %d bytes)\n", argv[argc-1],
+                        hu?"Hibás relokációs tábla":"Invalid relocation table", dtrela, dtrelasz, dtjmprel, dtjmpsz);
+                    exit(1);
+                }
+                /* újabb linker bug, néha muszáj shared libnek fordítani, különben nem kerülnek a szimbólumok a dynsym-be
+                 * a sys/driver pedig azért lett so-nak fordítva, mert máskülönben az ld rinyál a feloldatlan szimbólumokra,
+                 * amik meg persze, hogy feloldatlanok, mert futásidőben szerkesztjük hozzá valamelyik eszközmeghajtót */
                 c = strrchr(argv[argc-1], '.');
                 ehdr->e_type = c && !strcmp(c, ".so") ? ET_DYN : ET_EXEC;
                 /* kódszegmens, betöltendő, olvasható, futtatható, de nem írható */

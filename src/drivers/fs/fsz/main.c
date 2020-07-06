@@ -466,21 +466,23 @@ uint64_t allocateblock(fid_t fd)
     return i;
 }
 
+fsdrv_t drv = {
+    "fsz",
+    "FS/Z",
+    detect,
+    locate,
+    resizefs,
+    checkfs,
+    stat,
+    getdirent,
+    read,
+    NULL,
+    NULL,
+    NULL
+};
 void drv_init()
 {
-    fsdrv_t drv = {
-        "fsz",
-        "FS/Z",
-        detect,
-        locate,
-        resizefs,
-        checkfs,
-        stat,
-        getdirent,
-        read,
-        NULL,
-        NULL,
-        NULL
-    };
+dbg_printf("fsz1\n");
     fsdrv_reg(&drv);
+dbg_printf("fsz2\n");
 }

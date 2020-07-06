@@ -125,7 +125,7 @@ Porting Device Drivers
 Drivers that can't be or worth not be written as separate user space tasks (only interrupt controllers, timers,
 CPU and memory management) are implemented in `core`, all the rest have separate device driver tasks.
 
-Device drivers have to be written for each and every platform. Some [drivers are written in C](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.en.md)
+Device drivers have to be written for each and every platform. Some [drivers are written in C](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md)
 and can be used on different platforms as-is, but it's most likely they have some Assembly parts and platform specific
 implementation in C. To help with that, the build system looks for a [platforms](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.en.md)
 file which lists all platforms that the driver supports. Likewise there's a `devices` file which lists device specifications
@@ -134,7 +134,7 @@ it's booting on.
 
 Device driver tasks are running at a [higher priority level](https://gitlab.com/bztsrc/osz/blob/master/docs/scheduler.en.md)
 than other user space tasks, and they are allowed to use some driver specific `libc` functions, like
-[core_regirq()](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/include/driver.h). Also they are allowed to access IO space
+[drv_regirq()](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/include/driver.h). Also they are allowed to access IO space
 (which can mean to use specific instructions like inb/outb or accesing MMIO addresses depending which one is supported by the
 architecture).
 

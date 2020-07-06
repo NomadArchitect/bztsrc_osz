@@ -7,6 +7,8 @@ Requirements
 - GNU toolchain (make, gcc, binutils (gas, ld, objcopy, strip), see [tools/cross-gcc.sh](https://gitlab.com/bztsrc/osz/blob/master/tools/cross-gcc.sh))
 - instead of gcc and ld, you can use LLVM Clang and LLVM lld
 
+I compile under Linux, that's guaranteed to work. Should be no issue under BSDs either. Not sure about MinGW though.
+
 Configuration
 -------------
 

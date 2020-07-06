@@ -189,6 +189,20 @@ public size_t devfs_getdirent(fpos_t offs)
     return s;
 }
 
+fsdrv_t devdrv = {
+    "devfs",
+    "Device list",
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
+};
 
 /**
  * devfs inicializálása
@@ -198,20 +212,6 @@ void devfs_init()
     size_t s;
     FSZ_SuperBlock *sb = (FSZ_SuperBlock*)BUF_ADDRESS;
 
-    fsdrv_t devdrv = {
-        "devfs",
-        "Device list",
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL
-    };
     fsdrv_reg(&devdrv);
 
     s = (sb->numsec * (1 << (sb->logsec+11)) + __PAGESIZE-1) >> __PAGEBITS;

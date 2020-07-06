@@ -29,28 +29,29 @@
  */
 
 /* core fordítások */
-#define TXT_asktime txt[0]
-#define TXT_initrdtoocomplex txt[1]
-#define TXT_notsupported txt[2]
-#define TXT_filenametoolong txt[3]
-#define TXT_missing txt[4]
-#define TXT_sharedmissing txt[5]
-#define TXT_panic txt[6]
-#define TXT_rebooting txt[7]
-#define TXT_shutdownfinished txt[8]
-#define TXT_turnoff txt[9]
-#define TXT_restart txt[10]
-#define TXT_pressakey txt[11]
-#define TXT_shouldnothappen txt[12]
-#define TXT_outofram txt[13]
-#define TXT_notenoughmem txt[14]
-#define TXT_nodmamem txt[15]
-#define TXT_mounterr txt[16]
-#define TXT_structallocerr txt[17]
-#define TXT_uiexit txt[18]
-#define TXT_legalnotice txt[19]
+#define TXT_language txt[0]
+#define TXT_asktime txt[1]
+#define TXT_initrdtoocomplex txt[2]
+#define TXT_notsupported txt[3]
+#define TXT_filenametoolong txt[4]
+#define TXT_missing txt[5]
+#define TXT_sharedmissing txt[6]
+#define TXT_panic txt[7]
+#define TXT_rebooting txt[8]
+#define TXT_shutdownfinished txt[9]
+#define TXT_turnoff txt[10]
+#define TXT_restart txt[11]
+#define TXT_pressakey txt[12]
+#define TXT_shouldnothappen txt[13]
+#define TXT_outofram txt[14]
+#define TXT_notenoughmem txt[15]
+#define TXT_nodmamem txt[16]
+#define TXT_mounterr txt[17]
+#define TXT_structallocerr txt[18]
+#define TXT_uiexit txt[19]
+#define TXT_legalnotice txt[20]
 
-#define TXT_LAST 20
+#define TXT_LAST 21
 
 /* ezt követően (beleértve a TXT_LAST-adik sort) jönnek a libc sztringek, egyenként max TXT_LIBCSIZE hosszúak */
 #define TXT_LIBCSIZE 128

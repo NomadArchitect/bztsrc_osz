@@ -329,6 +329,7 @@ public int strcmp(const char *s1, const char *s2)
 {
     if(s1 && s2 && s1!=s2) {
         do{if(*s1!=*s2){return *s1-*s2;}s1++;s2++;}while(*s1!=0);
+        return *s1-*s2;
     }
     return 0;
 }
@@ -341,6 +342,7 @@ public int strncmp(const char *s1, const char *s2, size_t n)
     register const char *e = s1+n;
     if(s1 && s2 && s1!=s2 && n>0) {
         do{if(*s1!=*s2){return *s1-*s2;}s1++;s2++;}while(*s1!=0 && s1<e);
+        return *s1-*s2;
     }
     return 0;
 }
@@ -353,6 +355,7 @@ public int strcasecmp(const char *s1, const char *s2)
     register uint32_t a, b;
     if(s1 && s2 && s1!=s2) {
         do{a=strtolower((uint8_t**)&s1);b=strtolower((uint8_t**)&s2);if(a!=b){return a-b;}}while(*s1!=0);
+        return *s1-*s2;
     }
     return 0;
 }
@@ -366,6 +369,7 @@ public int strncasecmp(const char *s1, const char *s2, size_t n)
     register uint32_t a, b;
     if(s1 && s2 && s1!=s2 && n>0) {
         do{a=strtolower((uint8_t**)&s1);b=strtolower((uint8_t**)&s2);if(a!=b){return a-b;}}while(a && s1<e);
+        return *s1-*s2;
     }
     return 0;
 }

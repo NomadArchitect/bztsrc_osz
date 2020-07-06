@@ -129,7 +129,7 @@ Eszközmeghajtók átültetése
 Azok a meghajtók, amiket nem éri meg külön taszkba rakni (csak megszakításvezérlők, időzítők, CPU és memória kezelés) a
 `core`-ban vannak beépítve, minden más önálló eszközmeghajtó taszkkal rendelkezik.
 
-Az eszközmeghajtókat meg kell írni minden platformra. Néhány [meghajtó C-ben van](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.md)
+Az eszközmeghajtókat meg kell írni minden platformra. Néhány [meghajtó C-ben van](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md)
 és használható több platformon is, de valószínűbb, hogy Assembly betétekkel van tele vagy platform specifikus C implementáció. Hogy
 ezen segítsen, a fordítási környezet egy [platforms](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md) nevű fájlt keres,
 ami tartalmazza az összes platformot, amin a meghajtó működik. Hasonlóan ehhez, van egy `devices` fájl, a meghajtott eszköz(ök)
@@ -138,7 +138,7 @@ a rendszerbuszokat pásztázza.
 
 Az eszközmeghajtók [magasabb prioritási szint](https://gitlab.com/bztsrc/osz/blob/master/docs/scheduler.md)en futnak, mint a többi
 felhasználói taszk, és elérhetnek bizonyos speciális `libc` funkciókat, mint például a
-[core_regirq()](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/include/driver.h). Ezen kívül hozzáférnek a B/K címtérhez
+[drv_regirq()](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/include/driver.h). Ezen kívül hozzáférnek a B/K címtérhez
 (ami vagy speciális utasításokat, mint az inb/outb jelent, vagy MMIO elérést, attól függően melyik támogatott az architektúrán).
 
 Az eszközmeghajtók esetében megengedett a bináris terjesztés, nem kötelező a nyílt forráskód. Ez esetben kell lennie egy

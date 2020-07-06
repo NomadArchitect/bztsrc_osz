@@ -186,7 +186,7 @@ void kprintf_fade()
 }
 
 /**
- *  viszlát képernyő és a számítógép újraindítása
+ * viszlát képernyő és a számítógép újraindítása
  */
 void kprintf_reboot()
 {

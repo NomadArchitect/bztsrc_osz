@@ -14,7 +14,7 @@ Access rights
 -------------
 
 Some message types are checked through common criterias. For example only a task in driver priority level allowed to send
-a SYS_setirq message to modify the IRQ Routing Table. Likewise the SYS_mknod message is limited to the tasks for priority level
+a SYS_regirq message to modify the IRQ Routing Table. Likewise the SYS_mknod message is limited to the tasks for priority level
 driver and service. Sometimes the message is associated with a specific system service, like only "FS" allowed to send
 SYS_mountfs message to "FS".
 

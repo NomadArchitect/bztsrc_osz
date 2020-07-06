@@ -42,6 +42,8 @@
 .type main, STT_FUNC
 .extern exit
 .type exit, STT_FUNC
+.global __stack_chk_fail
+.type __stack_chk_fail, STT_FUNC
 
 /*
  * Futtatás menete:
@@ -52,9 +54,13 @@
  *  5. ugrás a libc-ben definiált exit() föggvényre
  */
 .section .crt0, "ax"
+__stack_chk_fail:
+    udf     #0
+
     /* belépési pont */
 _start:
     /* függvénykönyvtárak inicializálása */
+    mov     x29, sp
     ldr     x0, [sp], #16
     cbz     x0, 1f
     blr     x0
@@ -74,3 +80,9 @@ _start:
 4:  ldr     x0, [sp], #16       /* pop x0 */
     b       exit
 5:
+
+.section .rodata
+.global __stack_chk_guard
+.type __stack_chk_guard, STT_OBJECT
+__stack_chk_guard: .quad 0xBAD57AC6BAD57AC6
+

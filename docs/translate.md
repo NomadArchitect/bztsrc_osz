@@ -10,12 +10,12 @@ kulcsszóval.
 Szótárak
 --------
 
-A core, libc, sh és sys (minden initrd-n található program) fordítása a [/sys/lang](https://gitlab.com/bztsrc/osz/tree/master/etc/sys/lang)
+A core, libc, sh és sys (minden initrd-n található program) fordítása a [/sys/lang](https://gitlab.com/bztsrc/osz/tree/master/etc/lang)
 mappában helyezkedik el.
 A felhasználói programok szótárfájljai (amik az /usr alá kerülnek telepítésre) külön, saját könyvtárakban találhatók, amik a libc
 `lang_init()` hívásával tölthetők be. Ennek egy fájlnév előtagot kell megadni (például "/usr/gcc/lang/ld"), a sztringek számát,
 és egy sztringmutatókat tartalmazó tömb címét, ami feltöltésre kerül. A fordítók bármikor új nyelveket adhatnak hozzá, nem szükséges
-a programokat újrafordítani. Csak a fontos, hogy minden sor pontosan egy, lefordított UTF-8 sztring (sortörés és más kódlap nem
+a programokat újrafordítani. Csak az a fontos, hogy minden sor pontosan egy, lefordított UTF-8 sztring (sortörés és más kódlap nem
 megengedett).
 
 Üzenetek
@@ -25,7 +25,7 @@ Nagyon fontos, hogy **csakis a felhasználónak megjelenített üzenetek kerüln
 üzeneteinek MUSZÁJ angolul lenniük. Ennek egyszerű oka van.
 
 A legtöbb forrásban minden változónév és függvénynév angolul van, valamint a legtöbb dokumentáció is angolul található meg a weben,
-így jogos feltételezés, hogy egy fejlesztő legalább alapszérten megérti az angolt. Mivel a debug üzenetek gyakran tartalmaznak
+így jogos feltételezés, hogy egy fejlesztő legalább alapszinten megérti az angolt. Mivel a debug üzenetek gyakran tartalmaznak
 változó és függvényneveket (amik angolul vannak), a fordítás kifejezetten hátrányos lenne, és roppantmód megnehezítené a debug
 konzol és a forrás összekapcsolását.
 

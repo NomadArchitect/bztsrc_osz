@@ -62,13 +62,13 @@ void syslog(int pri, char* fmt, ...)
         syslog_ptr = sprintf(syslog_ptr, "%1x%1x-", p[0], p[1]);
         syslog_ptr = sprintf(syslog_ptr, "%1x-%1xT", p[2], p[3]);
         syslog_ptr = sprintf(syslog_ptr, "%1x:%1x:%1x", p[4], p[5], p[6]);
-        *syslog_ptr = (bootboot.timezone<0?'-':'+'); syslog_ptr++;
+        *syslog_ptr = (clock_tz<0?'-':'+'); syslog_ptr++;
         syslog_ptr = sprintf(syslog_ptr, "%1d%1d:",
-            (bootboot.timezone<0?-bootboot.timezone:bootboot.timezone)/600,
-            ((bootboot.timezone<0?-bootboot.timezone:bootboot.timezone)/60)%10);
+            (clock_tz<0?-clock_tz:clock_tz)/600,
+            ((clock_tz<0?-clock_tz:clock_tz)/60)%10);
         syslog_ptr = sprintf(syslog_ptr, "%1d%1d - boot - - - ",
-            ((bootboot.timezone<0?-bootboot.timezone:bootboot.timezone)%60)/10,
-            (bootboot.timezone<0?-bootboot.timezone:bootboot.timezone)%10);
+            ((clock_tz<0?-clock_tz:clock_tz)%60)/10,
+            (clock_tz<0?-clock_tz:clock_tz)%10);
     } else
         syslog_ptr = syslog_buffer;
 

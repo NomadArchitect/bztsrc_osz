@@ -4,6 +4,44 @@ OS/Z Függvényreferenciák
 Prototípusok
 ------------
 
+### Eszközmeghajtók
+[void drv_add(char *drv, void *memspec)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L48)
+  eszközmeghajtóprogram hozzáadása (csak eszközmeghajtók hívhatják)
+ 
+[void drv_close(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L174)
+  amikor bezárják az eszközfájlt (eszközmeghajtók implementálják)
+ 
+[void drv_find(char *spec, char*drv, int len)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L42)
+  eszközmeghajtóprogram keresése eszközspecifikáció alapján (csak eszközmeghajtók hívhatják)
+  visszatérési érték: 1 ha van, 0 ha nincs
+ 
+[int drv_init()](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L63)
+  busz pásztázása, eszközök detektálása vagy eszköz inicializálás, 1-el tér vissza, ha sikerült (eszközmeghajtók implementálják)
+ 
+[void drv_ioctl(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L195)
+  eszközparancs (eszközmeghajtók implementálják)
+ 
+[void drv_irq(uint16_t irq, uint64_t ticks)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L160)
+  drv_regirq() vagy drv_regtmr() esetén hívódik, utóbbinál irq == USHRT_MAX (eszközmeghajtók implementálják)
+ 
+[void drv_open(dev_t device, uint64_t mode)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L167)
+  akkor hívódik, ha valaki megnyitja a mknod() által kreált fájlt (eszközmeghajtók implementálják)
+ 
+[void drv_read(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L181)
+  olvasás az eszközfájlból (eszközmeghajtók implementálják)
+ 
+[void drv_regirq(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L32)
+  irq üzenetek kérése (csak eszközmeghajtók hívhatják)
+ 
+[void drv_regtmr()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L37)
+  másodpercenkénti időzítő üzenetek kérése (csak eszközmeghajtók hívhatják, USHRT_MAX irq üzeneteket küld)
+ 
+[void drv_write(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L188)
+  írás az eszközfájlba (eszközmeghajtók implementálják)
+ 
+[int mknod(const char *devname, dev_t minor, mode_t mode, blksize_t size, blkcnt_t cnt)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L53)
+  eszközhivatkozás hozzáadása (csak eszközmeghajtók és szolgáltatások hívhatják)
+ 
 ### Libc
 [void abort()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L240)
   programfutás azonnali felfüggesztése
@@ -23,7 +61,7 @@ Prototípusok
 [long int atol(char *c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L182)
   decimális (vagy 0x előtag esetén hexadecimális) sztring átalakítássa 64 bites long integer számmá
  
-[char *basename(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L585)
+[char *basename(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L589)
   elérési út fájlnév részét adja vissza egy újonnan allokált bufferben
  
 [void *bsearch(void *key, void *base, size_t nmemb, size_t size, int (*cmp)(void *, void *))](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L194)
@@ -48,24 +86,11 @@ Prototípusok
   utf-8 szekvenciává alakítja az UNICODE-ot, majd lépteti a sztringmutatót
  
 [fid_t chroot(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L40)
-  beállítja a PATH-ot gyökérkönyvtárnak (az abszolút elérési útak kiindulópontja).
+  beállítja a PATH-ot gyökérkönyvtárnak (az abszolút elérési út kiindulópontja).
   ezt csak rendszergazda jogosultságokkal hívható.
  
-[int closedir(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L524)
+[int closedir(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L509)
   STREAM könyvtárleíró lezárása. 0-át ad vissza, ha sikeres, -1 -et ha nem.
- 
-[void core_drvadd(char *drv, void *memspec)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L48)
-  eszközmeghajtóprogram hozzáadása (csak eszközmeghajtók hívhatják)
- 
-[void core_drvfind(char *spec, char*drv, int len)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L42)
-  eszközmeghajtóprogram keresése eszközspecifikáció alapján (csak eszközmeghajtók hívhatják)
-  visszatérési érték: 1 ha van, 0 ha nincs
- 
-[void core_regirq(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L32)
-  irq üzenetek kérése (csak eszközmeghajtók hívhatják)
- 
-[void core_regtmr()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c#L37)
-  másodpercenkénti időzítő üzenetek kérése (csak eszközmeghajtók hívhatják, USHRT_MAX irq üzeneteket küld)
  
 [uint32_t crc32a_calc(char *start, size_t length)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/crc32.h#L108)
   EFI kompatíbilis (ANSI) ellenörzőösszeg kiszámítása
@@ -73,19 +98,19 @@ Prototípusok
 [uint32_t crc32c_calc(char *start, size_t length)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/crc32.h#L98)
   CRC32 Castagnoli ellenörzőösszeg kiszámítása
  
-[char *dirname(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L602)
+[char *dirname(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L606)
   elérési út könyvtár részét adja vissza egy újonnan allokált bufferben
  
 [#define distance(x,y)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L136)
   X és Y távolságát adja vissza
  
-[stat_t *dstat(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L397)
+[stat_t *dstat(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L382)
   a STREAM fájlhoz tartozó, st_dev-ben visszaadott eszköz attribútumainak lekérése csak olvasható bufferbe
  
-[fid_t dup(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L143)
+[fid_t dup(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L128)
   STREAM duplikálása, egy új fájlleírót ad vissza ugyanarra a megnyitott fájlra
  
-[fid_t dup2(fid_t stream, fid_t stream2)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L152)
+[fid_t dup2(fid_t stream, fid_t stream2)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L137)
   STREAM duplikálása STREAM2-re, a STREAM2-t lezárja és megnyitja ugyanarra a fájlra
  
 [bool_t env_bool(char *key, bool_t def)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/env.c#L63)
@@ -103,68 +128,68 @@ Prototípusok
 [void exit(int status)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L228)
   az 'atexit' által regisztrált függvények hívása, majd kilépés STATUS kóddal
  
-[int fclose(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L210)
+[int fclose(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L195)
   lezárja a STREAM fájlleírón megnyitott fájlt.
  
-[int fcloseall()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L219)
+[int fcloseall()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L204)
   minden fájlleírót lezár.
  
-[void fclrerr(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L254)
+[void fclrerr(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L239)
   az EOF és hibajelzők törlése STREAM fájlleírón.
  
-[bool_t feof(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L262)
+[bool_t feof(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L247)
   visszaadja az EOF fájl vége jelzőt a STREAM fájlleíróhoz.
  
-[int ferror(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L271)
+[int ferror(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L256)
   visszaadja a STREAM fájlleíróhoz tartozó hiba jelzőbiteket.
  
-[int fflush(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L370)
+[int fflush(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L355)
   írási buffer kiürítése STREAM fájlleírón, vagy mindegyiken ha STREAM -1.
  
 [uint64_t ffs(uint64_t i)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/x86_64/string.S#L200)
   visszaadja az első beállított bit pozícióját I-ben, vagy 0-át, ha nincs.
   a legkissebb helyiértékű bit az 1-es, a legmagasabb a 64.
 
-[int fgetc(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L311)
+[int fgetc(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L296)
   egy UTF-8 karakter olvasása STREAM fájlleíróból.
  
-[fid_t fopen(const char *filename, mode_t oflag)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L180)
-  megnyit egy fájl és visszad egy STREAM fájlleírót hozzá
+[fid_t fopen(const char *filename, mode_t oflag)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L165)
+  megnyit egy fájlt és visszad egy STREAM fájlleírót hozzá
  
 [pid_t fork()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L249)
   az aktuális címtér klónozása
  
-[int fprintf(fid_t stream, const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L731)
+[int fprintf(fid_t stream, const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L716)
   formázott szöveg kiírása STREAM fájlleíróba
  
-[int fputc(fid_t stream, int c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L331)
+[int fputc(fid_t stream, int c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L316)
   egy UTF-8 karakter kiírása STREAM fájlleíróba.
  
-[int fputs(fid_t stream, char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L351)
+[int fputs(fid_t stream, char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L336)
   sztring kiírása STREAM fájlleíróba.
  
-[size_t fread(fid_t stream, void *ptr, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L280)
+[size_t fread(fid_t stream, void *ptr, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L265)
   adatok olvasása STREAM fájlleíróból.
  
 [void free(void *p)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L85)
   'malloc', 'realloc' vagy 'calloc' által lefoglalt memória felszabadítása
 
-[fid_t freopen(const char *filename, mode_t oflag, fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L195)
+[fid_t freopen(const char *filename, mode_t oflag, fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L180)
   lecserél egy meglévő STREAM fájlleírót egy újonnan megnyitott fájlra
  
-[int fseek(fid_t stream, off_t off, int whence)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L228)
+[int fseek(fid_t stream, off_t off, int whence)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L213)
   beállítja a pozíciót egy STREAM fájlleírón.
  
-[stat_t *fstat(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L411)
+[stat_t *fstat(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L396)
   STREAM fájlleírón megnyitott fájl, csővezeték vagy socket attribútumainak lekérése csak olvasható bufferbe
  
-[fpos_t ftell(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L237)
+[fpos_t ftell(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L222)
   STREAM fájlleíró aktuális pozícióját adja vissza.
  
-[size_t fwrite(fid_t stream, void *ptr, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L295)
+[size_t fwrite(fid_t stream, void *ptr, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L280)
   adatok kiírása STREAM fájlleíróba.
  
-[int getchar()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L323)
+[int getchar()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L308)
   egy UTF-8 karakter olvasása stdin fájlleíróból.
  
 [char *getcwd()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L71)
@@ -179,10 +204,10 @@ Prototípusok
 [uid_t getuidp(pid_t pid)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/x86_64/stdlib.S#L221)
   visszaadja egy taszk felhasználójának azonosítóját
 
-[int ioctl(fid_t stream, uint64_t code, void *buff, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L161)
+[int ioctl(fid_t stream, uint64_t code, void *buff, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L146)
   B/K parancs küldése egy STREAM-en megnyitott eszköznek. BUFF lehet NULL.
  
-[bool_t isatty(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L829)
+[bool_t isatty(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L814)
   1-et ad vissza ha a STREAM fájlleíró egy terminálon van megnyitva, egyébként 0-át
  
 [void lockacquire(int bit, uint64_t *mem)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/x86_64/stdlib.S#L145)
@@ -194,7 +219,7 @@ Prototípusok
 [void lockrelease(int bit, uint64_t *mem)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/x86_64/stdlib.S#L161)
   jelzőbit felszabadítása
 
-[stat_t *lstat(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L379)
+[stat_t *lstat(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L364)
   PATH attribútumainak lekérése a csak olvasható bufferbe
  
 [void *malloc(size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L61)
@@ -242,9 +267,6 @@ Prototípusok
 [#define min(x,y)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L128)
   X és Y közül a kissebb
  
-[int mknod(const char *devname, dev_t minor, mode_t mode, blksize_t size, blkcnt_t cnt)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L128)
-  eszközhivatkozás hozzáadása
- 
 [void *mmap(void *addr, size_t len, int prot, int flags, fid_t fid, off_t offs)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L111)
   memória lefoglalálsa és leképezése a címtérbe
  
@@ -270,22 +292,22 @@ Prototípusok
 [int munmap(void *addr, size_t len)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L121)
   memória felszabadítása a címtérből
  
-[fid_t opendir(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L464)
+[fid_t opendir(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L449)
   a PATH-on található könyvtár vagy unió megnyitása, STREAM könyvtárleírót ad vissza
  
 [uint32_t ord(uint8_t **s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L68)
   lépteti a sztringmutatót a következő utf-8 karakterre és visszaadja az UNICODE kódpontot
  
-[void perror(char *cmd, char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L759)
+[void perror(char *cmd, char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L744)
   stderr-re kiírja szövegesen az errno hibakód jelentését.
  
-[int printf(const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L749)
+[int printf(const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L734)
   formázott szöveg kiírása stdout-ra
  
-[int putchar(int c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L343)
+[int putchar(int c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L328)
   egy UTF-8 karakter kiírása stdout fájlleíróba.
  
-[int puts(char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L359)
+[int puts(char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L344)
   sztring és egy sorvége kiírása stdout fájlleíróba.
  
 [void qsort(void *aa, size_t n, size_t es, int (*cmp)(void *, void *))](https://gitlab.com/bztsrc/osz/blob/master/src/libc/qsort.c#L80)
@@ -294,20 +316,20 @@ Prototípusok
 [uint64_t rand()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L264)
   0 és URAND_MAX közötti, kritográfiában használható véletlenszám lekérdezése
  
-[dirent_t *readdir(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L502)
+[dirent_t *readdir(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L487)
   könyvtárbejegyzés olvasása STREAM könyvtárleíróból. Csak olvasható dirent bufferrel tér vissza,
   vagy NULL-al, ha nincs több bejegyzés.
  
-[char *readlink(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L442)
+[char *readlink(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L427)
   a PATH szimbólikus hivatkozás vagy unió céljának lekérése allokált bufferbe
  
 [void *realloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L73)
   korábbi P lefoglalás méretének megváltoztatása S-re
 
-[char *realpath(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L425)
+[char *realpath(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L410)
   kanonikus abszolút elérési út visszaadása PATH-hoz egy allokált bufferben
  
-[void rewind(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L246)
+[void rewind(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L231)
   a STREAM fájlleíró vagy opendir könyvtárleírót az elejére pozícionálja.
  
 [void *saligned_alloc(uint_t a, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L111)
@@ -325,10 +347,10 @@ Prototípusok
 [void *smalloc(size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h#L93)
   S bájt lefoglalása megosztott memóriában
 
-[int snprintf(char *dst, size_t size, const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L700)
+[int snprintf(char *dst, size_t size, const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L685)
   formázott szöveg kiírása DST sztringbe, legfeljebb SIZE bájt hosszan
  
-[int sprintf(char *dst, const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L690)
+[int sprintf(char *dst, const char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L675)
   formázott szöveg kiírása DST sztringbe
  
 [void srand(uint64_t seed)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L259)
@@ -346,31 +368,31 @@ Prototípusok
 [void stimezone(int16_t min)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L284)
   rendszeridő időzónájának beállítása percekben (UTC -1440 .. +1440)
  
-[int strcasecmp(const char *s1, const char *s2)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L348)
+[int strcasecmp(const char *s1, const char *s2)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L350)
   kis- és nagybetűfüggetlen sztring összehasonlítás, 0-át ad vissza, ha egyezik
  
-[char *strcasecpy(char *dst, const char *src)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L421)
+[char *strcasecpy(char *dst, const char *src)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L425)
   SRC kisbetűsített másolása DST-be
  
-[char *strcasedup(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L471)
+[char *strcasedup(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L475)
   kisbetűsített S duplikálása egy újonnan allokált bufferbe
  
-[char *strcasestr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L550)
+[char *strcasestr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L554)
   hasonló a 'strstr'-hez, de kis- és nagybetű függetlenül keresi az első előfordulást
  
-[char *strcat(char *dst, const char *src)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L373)
+[char *strcat(char *dst, const char *src)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L377)
   SRC sztring hozzáfűzése DST sztringhez
  
-[char *strchr(const char *s, uint32_t c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L495)
+[char *strchr(const char *s, uint32_t c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L499)
   karakter első előfordulásának keresése a sztringben, ez UTF-8 biztos
  
 [int strcmp(const char *s1, const char *s2)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L325)
   sztring összehasonlítás, 0-át ad vissza, ha egyezik
  
-[char *strcpy(char *dst, const char *src)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L398)
+[char *strcpy(char *dst, const char *src)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L402)
   SRC sztring másolása DST-be
  
-[char *strdup(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L446)
+[char *strdup(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L450)
   S duplikálása egy újonnan allokált bufferbe
  
 [char *strerror(int errnum)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L246)
@@ -379,52 +401,52 @@ Prototípusok
 [size_t strlen(const char *s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L263)
   visszaadja a sztring bájthosszát
  
-[int strncasecmp(const char *s1, const char *s2, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L360)
+[int strncasecmp(const char *s1, const char *s2, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L363)
   kis- és nagybetűfüggetlen sztring összehasonlítás legfeljebb N hosszig, 0-át ad vissza, ha egyezik
  
-[char *strncasecpy(char *dst, const char *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L433)
+[char *strncasecpy(char *dst, const char *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L437)
   legfeljebb N hosszú SRC kisbetűsített másolása DST-be
  
-[char *strncasedup(const char *s, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L483)
+[char *strncasedup(const char *s, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L487)
   legfeljebb N kisbetűs karakter duplikálása S stringből egy újonnan allokált bufferbe
  
-[char *strncat(char *dst, const char *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L385)
+[char *strncat(char *dst, const char *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L389)
   legfeljebb N hosszú SRC sztring hozzáfűzése DST sztringhez
  
-[int strncmp(const char *s1, const char *s2, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L336)
+[int strncmp(const char *s1, const char *s2, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L337)
   sztring összehasonlítás legfeljebb N hosszig, 0-át ad vissza, ha egyezik
  
-[char *strncpy(char *dst, const char *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L409)
+[char *strncpy(char *dst, const char *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L413)
   legfeljebb N hosszú SRC sztring másolása DST-be
  
-[char *strndup(const char *s, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L457)
+[char *strndup(const char *s, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L461)
   legfeljebb N karakter duplikálása S stringből egy új allokált bufferbe
  
 [size_t strnlen(const char *s, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L273)
   visszaadja a sztring bájthosszát legfeljebb N hosszig
  
-[char *strrcasestr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L567)
+[char *strrcasestr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L571)
   hasonló a 'strrstr'-hez, de kis- és nagybetű függetlenül keresi az utolsó előfordulást
  
-[char *strrchr(const char *s, uint32_t c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L512)
+[char *strrchr(const char *s, uint32_t c)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L516)
   karakter utolsó előfordulásának keresése, UTF-8 biztos
  
-[char *strrstr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L542)
+[char *strrstr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L546)
   NEEDLE utolsó előfordulásának keresése a HAYSTACK sztringben
  
-[char *strsep(char **stringp, const char *delim)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L669)
+[char *strsep(char **stringp, const char *delim)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L673)
   visszaadja a DELIM határolt sztringet, 0-ával lezárva, *STRINGP-t pedig a következő bájtra állítva
  
 [char *strsignal(int sig)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L255)
   visszaadja a SIG szignál szöveges nevét sztringben
  
-[char *strstr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L534)
+[char *strstr(const char *haystack, const char *needle)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L538)
   NEEDLE első előfordulásának keresése a HAYSTACK sztringben
  
-[char *strtok(char *s, const char *delim)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L652)
+[char *strtok(char *s, const char *delim)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L656)
   S feldarabolása DELIM karaktereknél
  
-[char *strtok_r(char *s, const char *delim, char **ptr)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L661)
+[char *strtok_r(char *s, const char *delim, char **ptr)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L665)
   S feldarabolása DELIM karaktereknél, a tagok a PTR tömbbe kerülnek
  
 [uint32_t strtolower(uint8_t **s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L94)
@@ -433,20 +455,20 @@ Prototípusok
 [uint64_t time()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L289)
   rendszeridő lekérdezése mikroszekundumban
  
-[fid_t tmpfile()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L171)
+[fid_t tmpfile()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L156)
   létrehoz egy ideiglenes fájlt és megnyitja írásra / olvasásra
  
 [void trace(bool_t enable)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L106)
   nyomkövetés ki/bekapcsolása
  
-[void tskcpy(pid_t dst, void *dest, void *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L677)
+[void tskcpy(pid_t dst, void *dest, void *src, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L681)
   memória másolása egy másik taszk címterébe
  
-[char *ttyname(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L815)
+[char *ttyname(fid_t stream)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L800)
   visszaadja a STREAM fájlleíróhoz tartozó terminál eszköz nevét, vagy NULL-t
   a visszaadtott érték csak a kovetkező h0vásig érvényes
  
-[int ttyname_r(fid_t stream, char *buf, size_t buflen)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L803)
+[int ttyname_r(fid_t stream, char *buf, size_t buflen)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L788)
   nem több, mint BUFLEN bájtot lement a STREAM-hez tartozó terminál eszköz elérési útjából, 0-át ad vissza, ha sikerült
  
 [int umount(const char *path)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L113)
@@ -455,16 +477,16 @@ Prototípusok
 [void usleep(uint64_t usec)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L254)
   a futó taszk altatása USEC mikroszekundumig
  
-[int vfprintf(fid_t stream, const char *fmt, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L710)
+[int vfprintf(fid_t stream, const char *fmt, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L695)
   formázott szöveg kiírása STREAM fájlleíróba, argumentumlistával
  
-[int vprintf(const char *fmt, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L741)
+[int vprintf(const char *fmt, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L726)
   formázott szöveg kiírása stdout-ra, argumentumlistával
  
-[int vsnprintf(char *dst, size_t size, const char *format, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L553)
+[int vsnprintf(char *dst, size_t size, const char *format, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L538)
   egyszerű sprintf implementáció, formázott szöveg írása DST-be, maximum SIZE hosszan, argumentumlistával
  
-[int vsprintf(char *dst, const char *fmt, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L682)
+[int vsprintf(char *dst, const char *fmt, va_list args)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdio.c#L667)
   formázott szöveg kiírása DST sztringbe, argumentumlistával
  
 [void yield()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/x86_64/stdlib.S#L184)
@@ -476,11 +498,12 @@ Fájlok
 | Fájl | Alrendszer | Leírás |
 | ---- | ---------- | ------ |
 | [include/osZ/stdlib.h](https://gitlab.com/bztsrc/osz/blob/master/src/include/osZ/stdlib.h) | libc | ISO C99 Sztandard: 7.20 általános funkciók, plusz OS/Z specifikus szolgáltatások |
+| [drivers/bridge/pci/main.c](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c) | eszközmeghajtók | PCI busz felderítés |
 | [libc/bztalloc.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/bztalloc.c) | libc | Memória allokátor és deallokátor |
 | [libc/bztalloc.h](https://gitlab.com/bztsrc/osz/blob/master/src/libc/bztalloc.h) | libc | Memória allokátor és deallokátor header |
 | [libc/crc32.h](https://gitlab.com/bztsrc/osz/blob/master/src/libc/crc32.h) | libc | ellenörzőösszeg számító eljárások |
 | [libc/dispatch.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/dispatch.c) | libc | üzenet sor diszpécser |
-| [libc/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c) | libc | Csak eszközmeghajtók számára elérhető funkciók |
+| [libc/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/drivers.c) | eszközmeghajtók | Csak eszközmeghajtók számára elérhető funkciók |
 | [libc/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/env.c) | libc | induló környezet értelmező függvények |
 | [libc/env.h](https://gitlab.com/bztsrc/osz/blob/master/src/libc/env.h) | libc | indulási környezet szolgáltatások |
 | [libc/libc.h](https://gitlab.com/bztsrc/osz/blob/master/src/libc/libc.h) | libc | belső struktúrák és változók |

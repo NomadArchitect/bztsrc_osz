@@ -73,11 +73,11 @@ enum {
 };
 
 enum {
-    tab_code, tab_data, tab_msg, tab_tcb, tab_sched, tab_ram, tab_sysinfo,
+    tab_code, tab_data, tab_msg, tab_tcb, tab_sched, tab_ram, tab_sysinfo, tab_env,
     tab_last
 };
-char *tabs[] = { "Code", "Data", "Messages", "Task", "CPU", "RAM", "Sysinfo" };
-virt_t dbg_codepos, dbg_lastpos, dbg_datapos, dbg_logpos;
+char *tabs[] = { "Code", "Data", "Messages", "Task", "CPU", "RAM", "Sysinfo", "Environment" };
+virt_t dbg_codepos, dbg_lastpos, dbg_datapos, dbg_logpos, dbg_envpos;
 phy_t dbg_dataphy;
 uint dbg_mqpos, dbg_cpuid, dbg_rampos;
 char *prio[] = { "SYSTEM   ", "RealTime ", "Driver   ", "Service  ", "High prio", "Normal   ", "Low prio ", "IDLE ONLY" };
@@ -588,7 +588,7 @@ void dbg_msg(uint idx)
             kprintf("%4x from %3x evt #%2x(", msg->serial, EVT_SENDER(msg->evt), EVT_FUNC(msg->evt));
             kprintf(msg->evt & MSG_PTRDATA? "*%x[%d]" : "%x,%x", msg->data.scalar.arg0, msg->data.scalar.arg1);
             kprintf(",%x,%x,%x,%x)\n", msg->data.scalar.arg2, msg->data.scalar.arg3, msg->data.scalar.arg4, msg->data.scalar.arg5);
-            if(msg->evt & MSG_PTRDATA) kprintf("      %1D", msg->data.ptr.ptr);
+            if(msg->evt & MSG_PTRDATA) kprintf("      %1D", msg->data.buffer.ptr);
         }
     }
 }
@@ -700,10 +700,16 @@ void dbg_sysinfo(virt_t ptr)
         kprintf("random seed: %8x%8x%8x%8x\n\n", srand[0], srand[1], srand[2], srand[3]);
         dbg_settheme(dbg_theme[4]); kprintf("[System Tables and Pointers]\n"); dbg_settheme(dbg_theme[3]);
         for(i = 0; i < 8 && dbg_systables[i]; i++)
-            kprintf("%s%6s: %8x", !i||(i%3)? "  " : "\n", dbg_systables[i], systables[i]);
+            kprintf("%s%6s: %8x", !i||(i%3)? "  " : "\n  ", dbg_systables[i], systables[i]);
         dbg_settheme(dbg_theme[4]); kprintf("\n\n[Syslog Buffer]\n"); dbg_settheme(dbg_theme[3]);
     }
     fx = kx = 0; maxy -= 2; kprintf("%s", syslog_buffer + ptr); maxy += 2;
+    kprintf("\n");
+}
+
+void dbg_env(virt_t ptr)
+{
+    fx = kx = 0; maxy -= 2; kprintf("%s", environment + ptr); maxy += 2;
     kprintf("\n");
 }
 
@@ -724,6 +730,7 @@ int dbg_parsecmd(char *cmd, uint64_t cmdlast)
     if((cmd[0]=='c'&&(cmd[1]=='p'||cmd[1]=='c'))||(cmd[0]=='s'&&cmd[1]=='c')) { dbg_tab = tab_sched; return 1; } else /* cpu, ccb */
     if(cmd[0]=='r') { dbg_tab = tab_ram; return 1; } else                                                                  /* ram */
     if(cmd[0]=='l' || (cmd[0]=='s' && cmd[1]=='y')) { dbg_tab = tab_sysinfo; return 1; } else                          /* sysinfo */
+    if(cmd[0]=='e' && cmd[1]=='n') { dbg_tab = tab_env; return 1; } else                                           /* environment */
     if(cmd[0]=='f') { dbg_full=1-dbg_full; return 1; } else                                                               /* full */
     if(cmd[0]=='n') { dbg_switchnext(); return 4; } else                                                                  /* next */
     if(cmd[0]=='p') { x=0; while(x < cmdlast && cmd[x] != ' ') x++;                                               /* prev / pid X */
@@ -837,7 +844,7 @@ void dbg_start(char *header, bool_t ispanic)
     fg = dbg_theme[6]; bg = 0;
     kprintf("OS/Z debug: %s\n", header);
 
-    dbg_rampos = 0;
+    dbg_rampos = dbg_logpos = dbg_envpos = 0;
     memroot = tcb->common.memroot;
 
 reload:
@@ -900,7 +907,8 @@ reload:
             case tab_tcb: dbg_tcb(); break;
             case tab_sched: dbg_sched(dbg_cpuid); break;
             case tab_ram: dbg_ram(dbg_rampos); break;
-            default: dbg_sysinfo(dbg_logpos); break;
+            case tab_sysinfo: dbg_sysinfo(dbg_logpos); break;
+            default: dbg_env(dbg_envpos); break;
         }
 
         /* parancssor */
@@ -997,6 +1005,9 @@ getcmd: dbg_putchar('\r');
                         case tab_sysinfo: if(dbg_logpos > 0) {
                                 for(dbg_logpos--; dbg_logpos > 0 && syslog_buffer[dbg_logpos-1] != '\n'; dbg_logpos--);
                             } continue;
+                        case tab_env: if(dbg_envpos > 0) {
+                                for(dbg_envpos--; dbg_envpos > 0 && environment[dbg_envpos-1] != '\n'; dbg_envpos--);
+                            } continue;
                     }
                     continue;
                 }
@@ -1029,6 +1040,9 @@ getcmd: dbg_putchar('\r');
                         case tab_ram: if(dbg_rampos+1 < pmm_size) dbg_rampos++; continue;
                         case tab_sysinfo: if(syslog_buffer[dbg_logpos]) {
                                 for(dbg_logpos++; syslog_buffer[dbg_logpos] && syslog_buffer[dbg_logpos-1] != '\n'; dbg_logpos++);
+                            } continue;
+                        case tab_env: if(environment[dbg_envpos]) {
+                                for(dbg_envpos++; environment[dbg_envpos] && environment[dbg_envpos-1] != '\n'; dbg_envpos++);
                             } continue;
                     }
                     continue;

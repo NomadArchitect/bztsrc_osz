@@ -20,9 +20,11 @@ Materials interesting for developers.
  * [Bytecode support](https://gitlab.com/bztsrc/osz/blob/master/docs/bytecode.en.md)
  * [Compilation](https://gitlab.com/bztsrc/osz/blob/master/docs/compile.en.md)
  * [Boot procedure](https://gitlab.com/bztsrc/osz/blob/master/docs/boot.en.md)
- * [Testing](https://gitlab.com/bztsrc/osz/blob/master/docs/howto1-testing.en.md)
- * [Debugging](https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debug.en.md)
- * [Developing](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.en.md)
+ * [Testing](https://gitlab.com/bztsrc/osz/blob/master/docs/howto1-testingmd)
+ * [Debugging](https://gitlab.com/bztsrc/osz/blob/master/docs/howto2-debugmd)
+ * [Developing Device Drivers](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md)
+ * [Developing Services](https://gitlab.com/bztsrc/osz/blob/master/docs/howto4-service.md)
+ * [Developing Applications](https://gitlab.com/bztsrc/osz/blob/master/docs/howto5-app.md)
 
 SysAdmin's Playground
 ---------------------
@@ -34,13 +36,13 @@ Documentation on how to operate OS/Z.
  * [Virtual File System](https://gitlab.com/bztsrc/osz/blob/master/docs/vfs.en.md) and paths
  * [Boot options](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.en.md)
  * [Multi language support](https://gitlab.com/bztsrc/osz/blob/master/docs/translate.en.md)
- * Invoking [Rescue Shell](https://gitlab.com/bztsrc/osz/blob/master/docs/howto4-rescueshell.en.md)
- * [Install](https://gitlab.com/bztsrc/osz/blob/master/docs/howto5-install.en.md) OS/Z on a USB stick and package management
- * Manage and initialize [services](https://gitlab.com/bztsrc/osz/blob/master/docs/howto6-services.en.md).
+ * Invoking [Rescue Shell](https://gitlab.com/bztsrc/osz/blob/master/docs/howto6-rescueshell.md)
+ * [Install](https://gitlab.com/bztsrc/osz/blob/master/docs/howto7-install.md) OS/Z on a USB stick and package management
+ * Manage and initialize [services](https://gitlab.com/bztsrc/osz/blob/master/docs/howto8-services.md).
 
 User's Guide
 ------------
 
 Information for end users.
 
- * [User Interface](https://gitlab.com/bztsrc/osz/blob/master/docs/howto7-interface.en.md)
+ * [User Interface](https://gitlab.com/bztsrc/osz/blob/master/docs/howto9-interface.md)

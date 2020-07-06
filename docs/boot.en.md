@@ -44,9 +44,9 @@ To boot up the computer, `core` does the following:
 20. when finished with mounting file systems, `FS` notifies all the other system services to initialize.
 21. as soon as it's scheduled, one of the system services, the `init` task will load and start user session services.
 
-If rescueshell was requested in [environment](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/config), then [bin/sh](https://gitlab.com/bztsrc/osz/blob/master/src/sh/main.c) is loaded instead of `init`.
+If rescueshell was requested in [environment](https://gitlab.com/bztsrc/osz/blob/master/etc/config), then [bin/sh](https://gitlab.com/bztsrc/osz/blob/master/src/sh/main.c) is loaded instead of `init`.
 
-(NOTE: If OS/Z was compiled with debug support and `debug=tests` passed in [environment](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/config),
+(NOTE: If OS/Z was compiled with debug support and `debug=tests` passed in [environment](https://gitlab.com/bztsrc/osz/blob/master/etc/config),
 then `core` loads [bin/test](https://gitlab.com/bztsrc/osz/blob/master/src/test/main.c) instead of `init`, which will perform various unit and functionality tests on the system.)
 
 User land

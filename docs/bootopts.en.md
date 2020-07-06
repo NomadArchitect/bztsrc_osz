@@ -16,13 +16,13 @@ Environment Configuration File
 
 This is similar to Linux command line. The boot options are kept on the first bootable partition on the first bootable disk under
 `FS0:\BOOTBOOT\CONFIG` or `/sys/config`. When you're creating a disk image, the contents of that file are taken from
-[etc/sys/config](https://gitlab.com/bztsrc/osz/blob/master/etc/sys/config).
+[etc/config](https://gitlab.com/bztsrc/osz/blob/master/etc/config).
 
 This file is a plain UTF-8 file with `key=value` pairs, parsed by [core/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/env.c)
 and [libc/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/libc/env.c). No whitespaces allowed, and each pair is separated by a newline (0x0A) character.
 The file can't be longer than a page (4096 bytes on x86_64 and AArch64). You can put comments in it with '#", '//' and '/*'.
 
-Keys are ASCII names without spaces, values can be decimal and hexadecimal [numbers, booleans or UTF-8 strings](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-develop.md#configure).
+Keys are ASCII names without spaces, values can be decimal and hexadecimal [numbers, booleans or UTF-8 strings](https://gitlab.com/bztsrc/osz/blob/master/docs/howto3-driver.md).
 
 Boot Parameters
 ---------------

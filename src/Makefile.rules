@@ -8,17 +8,21 @@ SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 LIBS += -lc
 ECHO ?= echo
-CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -fPIC -nostdinc -I../../include -I../../include/osZ -I../libc \
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -nostdinc -I../../include -I../../include/osZ -I../libc \
  -I../libui -I../drivers/include
 LDFLAGS += -nostdlib -x -L../../bin/initrd/sys/lib --build-id=none --export-dynamic
-ifeq ($(DEBUG),1)
-LDFLAGS += -E
-endif
 ifeq ($(LINKER),sharedlib)
-LDFLAGS += -shared -Bsymbolic -Bshareable -e init
+CFLAGS += -fPIC
+LDFLAGS += -e init -shared -Bsymbolic -Bshareable
 else
+CFLAGS += -fPIE
+ifeq (,$(findstring shareable,$(LDFLAGS)))
+LDFLAGS += -pie
+else
+CFLAGS += -fPIC
+endif
 # LLVM lld nem támogatja a STARTUP()-ot a szkriptekben, úgyhogy inkább megadjuk a parancssorban
-LDFLAGS += ../../bin/initrd/sys/lib/crt0.o
+LDFLAGS += -e _start ../../bin/initrd/sys/lib/crt0.o
 endif
 
 all: $(OBJS) $(BINTARGET)

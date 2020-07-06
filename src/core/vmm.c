@@ -101,7 +101,7 @@ void *vmm_map(tcb_t *tcb, virt_t bss, phy_t phys, size_t size, uint64_t access)
 
     /* paraméterek ellenőrzése */
     phys = vmm_phyaddr(phys);
-    size = ((size+__PAGESIZE-1)>>__PAGEBITS)<<__PAGEBITS;
+    size = (size+__PAGESIZE-1) & ~(__PAGESIZE-1);
     if(!size || (tcb != &idle_tcb && !bss) || ((bss>>39)!=0 && ((bss>>39)&511)!=511)) {
         seterr(EINVAL);
         return (void *)-1;
@@ -205,7 +205,7 @@ void *vmm_maptext(tcb_t *tcb, virt_t bss, phy_t *phys, size_t size)
     void *ret = (void*)bss;
 
     /* paraméterek ellenőrzése */
-    size = ((size+__PAGESIZE-1)>>__PAGEBITS)<<__PAGEBITS;
+    size = (size+__PAGESIZE-1) & ~(__PAGESIZE-1);
     if(!size || bss<BUF_ADDRESS+TEXT_ADDRESS || bss>BUF_ADDRESS+DYN_ADDRESS || tcb->magic != OSZ_TCB_MAGICH) {
         seterr(EINVAL);
         return NULL;
@@ -297,7 +297,7 @@ void vmm_free(tcb_t *tcb, virt_t bss, size_t size)
     uint64_t i,j,je,k,ke,n;
 
     /* paraméterek ellenőrzése */
-    size = ((size+__PAGESIZE-1)>>__PAGEBITS)<<__PAGEBITS;
+    size = (size+__PAGESIZE-1) & ~(__PAGESIZE-1);
     if(!size || ((bss>>39)!=0 && ((bss>>39)&511)!=511) || tcb->magic != OSZ_TCB_MAGICH) {
         seterr(EINVAL);
         return;

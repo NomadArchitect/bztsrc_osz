@@ -37,7 +37,7 @@ void platform_env()
 {
     systables[systable_pcie_idx] = 0;   /* mp-t nem használjuk, helyette a pcie címét tároljuk, de az most nincs */
     dmabuf = 256;                       /* lapokban, az 1M */
-    bootboot.numcores = numcores = 1;   /* LAPIC hiányában csak egy CPU-t tudunk kezelni */
+    numcores = 1;                       /* LAPIC hiányában csak egy CPU-t tudunk kezelni */
 }
 
 /**

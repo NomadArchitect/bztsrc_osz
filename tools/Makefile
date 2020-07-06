@@ -1,4 +1,9 @@
+# OS/Z - Copyright (c) 2017 bzt (bztsrc@gitlab), CC-by-nc-sa
+# Use is subject to license terms.
+
+ifneq ("$(wildcard ../Config)","")
 include ../Config
+endif
 ifeq ($(ARCH),x86_64)
 INITRD = ../bin/ESP/BOOTBOOT/X86_64
 else
@@ -37,12 +42,16 @@ fsZ-fuse: fsZ-fuse.c
 	@echo "  src		$<"
 	@gcc `pkg-config fuse --cflags --libs` fsZ-fuse.c -o fsZ-fuse
 
+config: config.c
+	@echo "  src		$<"
+	@gcc config.c -o config
+
 %.o: %.c
 	@echo "  src		$<"
 	@gcc $(OPT) $(CFLAGS) -g $< -o $@ $(LIBS)
 
 clean:
-	@rm *.o fsZ-fuse 2>/dev/null || true
+	@rm *.o fsZ-fuse config 2>/dev/null || true
 
 imgclean:
 	@rm -rf ../bin/*.txt ../bin/*.sym ../bin/*.part ../bin/*.vdi ../bin/*.vmdk ../bin/*.rom ../bin/initrd ../bin/usr ../bin/ESP ../bin/var ../bin/home 2>/dev/null || true
@@ -53,7 +62,7 @@ imgclean:
 esp: initrd
 	@echo "  mkfs		boot (ESP)"
 ifneq ($(NOINITRD),1)
-	$(O)cp -f ../etc/sys/config ../bin/ESP/BOOTBOOT/CONFIG 2>/dev/null || true
+	$(O)cp -f ../etc/config ../bin/ESP/BOOTBOOT/CONFIG 2>/dev/null || true
 ifneq ("$(wildcard ../loader/bootboot.bin)","")
 	$(O)cp ../loader/bootboot.bin ../bin/ESP/BOOTBOOT/LOADER || true
 endif
@@ -86,12 +95,12 @@ else
 	@echo "  mkfs		initrd"
 endif
 	@# feltöltés statikus fájlokkal
-	@cp -r ../etc/sys/etc ../bin/initrd/sys || true
-	@./mkfs.o lang ../etc/sys/lang ../bin/initrd/sys/lang || true
+	@cp -r ../etc/etc ../bin/initrd/sys || true
+	@./mkfs.o lang ../etc/lang ../bin/initrd/sys/lang || true
 ifeq ($(NOINITRD),1)
-	@cp -f ../etc/sys/config ../bin/initrd/sys 2>/dev/null || true
+	@cp -f ../etc/config ../bin/initrd/sys 2>/dev/null || true
 	@echo "/dev/disk0p2	/        	rw		1" >../bin/initrd/sys/etc/fstab
-	@cat ../etc/sys/etc/fstab | grep -v "/dev/mem" >>../bin/initrd/sys/etc/fstab
+	@cat ../etc/etc/fstab | grep -v "/dev/mem" >>../bin/initrd/sys/etc/fstab
 endif
 	@cp -r ../etc/root ../bin/initrd 2>/dev/null || true
 ifeq ($(NOINITRD),1)

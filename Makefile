@@ -1,14 +1,17 @@
-# OS/Z - an operating system for hackers
-# Use is subject to license terms. Copyright (c) 2017 bzt (bztsrc@gitlab), CC-by-nc-sa
+# OS/Z - Copyright (c) 2017 bzt (bztsrc@gitlab), CC-by-nc-sa
+# Use is subject to license terms.
 
+ifneq ("$(wildcard Config)","")
 include Config
+endif
 export L = $(shell echo $(LANG)|cut -b 1-2)
 export O = @
 # nagyon részletes kimenet
 export ECHO = true
 #export ECHO = echo
+OMVF = /usr/share/qemu/bios-TianoCoreEFI.bin
 
-all: clrdd todogen util system apps usrs images
+all: clrdd todogen util refgen system apps usrs images
 mind: all
 
 # debugger (bocs, nem szép megoldás, de nálam működik)
@@ -36,20 +39,21 @@ todogen:
 refgen:
 	@make --no-print-directory -C tools elftool.o | grep -v 'Nothing to be done' | grep -v 'up to date' || true
 	@./tools/elftool.o -r docs/refsys.md src/core/*.c src/core/*.h src/core/x86_64/*.c src/core/x86_64/*.h src/core/x86_64/*.S src/core/x86_64/ibmpc/*.c src/core/x86_64/ibmpc/*.h src/core/x86_64/ibmpc/*.S src/fs/*.c
-	@./tools/elftool.o -r docs/refusr.md include/osZ/stdlib.h src/libc/*.c src/libc/*.h src/libc/x86_64/*.h src/libc/x86_64/*.S
+	@./tools/elftool.o -r docs/refusr.md include/osZ/stdlib.h src/libc/*.c src/libc/*.h src/libc/x86_64/*.h src/libc/x86_64/*.S src/drivers/bridge/pci/main.c
 
 # fordításhoz szükséges eszközök
 
 config:
-	@cd tools && ./config.sh
+	@make --no-print-directory -C tools config | grep -v 'Nothing to be done' | grep -v 'up to date' || true
+	@cd tools && ./config
 	@true
 
 util: tools
-	@cat etc/sys/etc/os-release | grep -v ^BUILD | grep -v ^ARCH | grep -v ^PLATFORM >/tmp/os-release
-	@mv /tmp/os-release etc/sys/etc/os-release
-	@date +'BUILD = "%Y%j"' >>etc/sys/etc/os-release
-	@echo 'ARCH = "$(ARCH)"' >>etc/sys/etc/os-release
-	@echo 'PLATFORM = "$(PLATFORM)"' >>etc/sys/etc/os-release
+	@cat etc/etc/os-release | grep -v ^BUILD | grep -v ^ARCH | grep -v ^PLATFORM >/tmp/os-release
+	@mv /tmp/os-release etc/etc/os-release
+	@date +'BUILD = "%Y%j"' >>etc/etc/os-release
+	@echo 'ARCH = "$(ARCH)"' >>etc/etc/os-release
+	@echo 'PLATFORM = "$(PLATFORM)"' >>etc/etc/os-release
 ifeq ($(L),hu)
 	@echo "SEGÉDPROGRAMOK"
 else
@@ -155,13 +159,15 @@ endif
 testesp:
 	@echo "$(TESTTXT)"
 	@echo
-	qemu-system-x86_64 -name OS/Z -bios /usr/share/qemu/bios-TianoCoreEFI.bin -m 64 -device isa-debug-exit,iobase=0x8900,iosize=4 -hda fat:bin/ESP -enable-kvm -cpu host,+ssse3,+avx,+x2apic -serial stdio
+	qemu-system-x86_64 -name OS/Z -bios $(OMVF) -m 64 -device isa-debug-exit,iobase=0x8900,iosize=4 -hda fat:bin/ESP -enable-kvm -cpu host,+ssse3,+avx,+x2apic -serial stdio
+	@printf "\033[0m"
 
 teste: bin/osZ-latest-$(ARCH)-$(PLATFORM).img
 	@echo "$(TESTTXT)"
 	@echo
-	@#qemu-system-x86_64 -name OS/Z -bios /usr/share/qemu/bios-TianoCoreEFI.bin -m 64 -device isa-debug-exit,iobase=0x8900,iosize=4 -hda bin/osZ-latest-$(ARCH)-$(PLATFORM).img -option-rom loader/bootboot.rom -d guest_errors -enable-kvm -cpu host,+avx,+x2apic -serial stdio
-	qemu-system-x86_64 -name OS/Z -bios /usr/share/qemu/bios-TianoCoreEFI.bin -m 64 $(QEMUGDB) -d guest_errors,int -device isa-debug-exit,iobase=0x8900,iosize=4 -drive file=bin/osZ-latest-$(ARCH)-$(PLATFORM).img,format=raw -enable-kvm -cpu host,+ssse3,+avx,+x2apic -serial stdio
+	@#qemu-system-x86_64 -name OS/Z -bios $(OMVF) -m 64 -device isa-debug-exit,iobase=0x8900,iosize=4 -hda bin/osZ-latest-$(ARCH)-$(PLATFORM).img -option-rom loader/bootboot.rom -d guest_errors -enable-kvm -cpu host,+avx,+x2apic -serial stdio
+	qemu-system-x86_64 -name OS/Z -bios $(OMVF) -m 64 $(QEMUGDB) -d guest_errors,int -device isa-debug-exit,iobase=0x8900,iosize=4 -drive file=bin/osZ-latest-$(ARCH)-$(PLATFORM).img,format=raw -enable-kvm -cpu host,+ssse3,+avx,+x2apic -serial stdio
+	@printf "\033[0m"
 
 testq: bin/osZ-latest-$(ARCH)-$(PLATFORM).img
 	@echo "$(TESTTXT)"

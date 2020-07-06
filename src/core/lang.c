@@ -65,7 +65,7 @@ void lang_init()
      *   8. 4  crc32 ellenőrző összeg (fejléc nélkül)
      *  12. 4  sztringek száma
      * ezt követik a zéróval lezárt sztringek */
-    if(!s || memcmp(s,OSZ_LANG_MAGIC,4) || *((uint32_t*)(s+12))!=0x32
+    if(!s || memcmp(s,OSZ_LANG_MAGIC,4) || *((uint32_t*)(s+12))!=0x33
          /* || *((uint32_t*)(s+8))!=crc32a_calc(s+16,*((uint32_t*)(s+4))-16) */
         )
         kpanic("Unable to load language dictionary: %s", &fn);

@@ -56,15 +56,15 @@ typedef struct {
 } mem_entry_t;
 
 /*** libc prototípusok */
-extern void core_regirq(uint16_t irq);                                              /* IRQ üzenetek kérése */
-extern void core_regtmr();                                                          /* timer üzenet kérése */
-extern void core_drvfind(char *spec, char *drv, int len);                           /* meghajtóprogram keresése */
-extern void core_drvadd(char *drv, mem_entry_t *memspec);                           /* meghajtóprogram hozzáadása */
+extern void drv_regirq(uint16_t irq);                                               /* IRQ üzenetek kérése */
+extern void drv_regtmr();                                                           /* timer üzenet kérése */
+extern void drv_find(char *spec, char *drv, int len);                               /* meghajtóprogram keresése */
+extern void drv_add(char *drv, mem_entry_t *memspec);                               /* meghajtóprogram hozzáadása */
 extern dev_t mknod(const char *devname, mode_t mode, blksize_t size, blkcnt_t cnt); /* eszköz fájl létrehozása */
 
 /*** eszközmeghajtók által implementált funkciók ***/
 extern int  drv_init();                                     /* inicializálás, 1-el tér vissza, ha sikerült */
-extern void drv_irq(uint16_t irq, uint64_t ticks);          /* regirq() vagy regtmr() esetén hívódik, utóbbinál irq == USHRT_MAX */
+extern void drv_irq(uint16_t irq, uint64_t ticks);          /* drv_regirq() vagy drv_regtmr() esetén hívódik */
 extern void drv_open(dev_t device, uint64_t mode);          /* akkor hívódik, ha valaki megnyitja a mknod() által kreált fájlt */
 extern void drv_close(dev_t device);                        /* amikor bezárják */
 extern void drv_read(dev_t device);                         /* olvasás az eszközfájlból */

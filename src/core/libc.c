@@ -37,6 +37,10 @@ uint64_t srand[4];                  /* véletlen generátor magja */
 uint64_t systables[8];              /* rendszertáblázatok (platform függő) */
 pid_t services[NUMSRV];             /* rendszerszolgáltatások taszkjai */
 
+/* gcc-nek kell automatikus stack overflow / underrun ellenőrzéshez */
+uint64_t __stack_chk_guard = 0xBAD57AC6BAD57AC6UL;
+void __stack_chk_fail() { kpanic("core stack smash"); }
+
 void seterr(int errno)
 {
     ((ccb_t*)LDYN_ccb)->core_errno = errno;
@@ -137,6 +141,7 @@ int strcmp(const char *s1, const char *s2)
 {
     if(s1 && s2 && s1!=s2) {
         do{if(*s1!=*s2){return *s1-*s2;}s1++;s2++;}while(*s1!=0);
+        return *s1-*s2;
     }
     return 0;
 }
@@ -154,7 +159,7 @@ char *strncpy(char *dst, const char *src, size_t n)
 }
 
 /**
- * Véletlenszám generátor bitjeinek összekeverése entrópianövelés céljából
+ * véletlenszám generátor bitjeinek összekeverése entrópianövelés céljából
  */
 void kentropy() {
     srand[3]^=clock_ts;

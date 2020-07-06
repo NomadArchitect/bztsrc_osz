@@ -10,9 +10,10 @@ TMP = $(SRCS:.c=.o)
 OBJS = $(TMP:.S=.o)
 LIBS += -lc
 ECHO ?= echo
-CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -fPIC -nostdinc -I../../../../include \
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -fPIC -fPIE -nostdinc -I../../../../include \
 -I../../include -I../../include/$(ARCH) -I../../../libc -I../../../libui -I../../../fs -I../../../ui
-LDFLAGS += -nostdlib -shared -Bshareable -e drv_init -x -L../../../../bin/initrd/sys/lib --build-id=none
+LDFLAGS += -nostdlib -shared -Bsymbolic -Bshareable -x -L../../../../bin/initrd/sys/lib --build-id=none --export-dynamic \
+-e drv_init
 
 all: $(BINTARGET)
 
