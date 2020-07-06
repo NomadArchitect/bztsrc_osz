@@ -84,7 +84,7 @@ Itt látható, hogy a mágikus `'TASK'` azonosítóval kezdődik, tehát ez egy 
 2-es prioritási szinten fut.
 
 Az első 8 bájtot leszámítva a TCB mezői architektúrafüggőek, mivel CPU állapotot is tartalmaz. Minden architektúrának van
-egy struktúradefiníciója a platform könyvtárban, pl. [src/core/(platform)/tcb.h](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/tcb.h).
+egy struktúradefiníciója a platform könyvtárban, pl. [src/core/(platform)/task.h](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/task.h).
 
 Debuggolás VirtualBox-al
 ------------------------
@@ -148,7 +148,7 @@ A debuggeren belül a `dbg> p pid` paranccsal vagy a <kbd>&larr;</kbd> és <kbd>
 | Code | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg3.png">Regiszterek dumpolása és kód visszafejtés |
 | Data | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg4.png">Memória vagy verem dumpolása |
 | [Messages](https://gitlab.com/bztsrc/osz/blob/master/docs/messages.md) | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg5.png">Taszk üzenetsorának dumpolása |
-| [TCB](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/tcb.h)  | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg6.png">Az aktuális Taszk Kontroll Blokk dumpolása |
+| [TCB](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/task.h)  | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg6.png">Az aktuális Taszk Kontroll Blokk dumpolása |
 | [CCB](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/ccb.h) | <img align="left" style="padding-right:10px" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg7.png">A CPU Kontroll Blokk dumpja (taszk prioritási sorok) |
 | [RAM](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.h) | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg8.png">A fizikai memóriakezelő adatainak dumpolása |
 | [Sysinfo](https://gitlab.com/bztsrc/osz/blob/master/src/core/syslog.c) | <img align="left" style="padding-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszdbg9.png">Rendszer információ és korai syslog buffer |

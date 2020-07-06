@@ -14,7 +14,7 @@ anyagra.
 Fejlécek
 --------
 
-Minden OS/Z alá írt alkalmazást a következő include-al kell kezdeni:
+Minden OS/Z alá írt meghajtóprogramot a következő include-okkal kell kezdeni:
 
 ```c
 #include <osZ.h>
@@ -23,7 +23,8 @@ Minden OS/Z alá írt alkalmazást a következő include-al kell kezdeni:
 
 Az első behúz mindent, amire szükség lehet, beleértve a sztandard C függvénykönyvtárat is. Habár mindent elkövettem azért, hogy
 POSIX-szerű legyen, és így egyszerűbb legyen a meglévő alkalmazások átültetése, az OS/Z szándékosan
-[nem teljesen POSIX kompatíbilis](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md). Az OS/Z saját interfésszel rendelkezik.
+[nem teljesen POSIX kompatíbilis](https://gitlab.com/bztsrc/osz/blob/master/docs/posix.md).
+Az [OS/Z saját interfész](https://gitlab.com/bztsrc/osz/blob/master/docs/refusr.md)-el rendelkezik.
 
 Ezen túlmenően az eszközmeghajtóknak szüksége van az src/drivers/include alatti fejlécekre. Ezeket a második include húzza be.
 

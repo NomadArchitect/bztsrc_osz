@@ -118,9 +118,9 @@ Időzóna
 -------
 
 Akár egy szám az -1440..1440 tartományban (eltolás percekben) vagy a "default" illetve "ask" sztring. A "default" azt jelenti, hogy
-csak akkor kérdezzen rá, ha nem sikerült az idózónát detektálni (nincs RTC, azaz valós idejű óra). Másrészről az "ask" rákérdez,
+csak akkor kérdezzen rá, ha nem sikerült az időzónát detektálni (nincs RTC, azaz valós idejű óra). Másrészről az "ask" rákérdez,
 mindig bekéri a felhasználótól (mert például az RTC lehet pontatlan). Ha "tz=0"-át adunk meg, akkor az időt UTC-ben (Greenwichi
-középidőben) fogja kezelni a rendszer, és mindenképp továbblép az indulásnkor, akkor is, ha nem sikerült semmit detekátlni. Ez
+középidőben) fogja kezelni a rendszer, és mindenképp továbblép az induláskor, akkor is, ha nem sikerült semmit detektálni. Ez
 utóbbi esetben "0000-00-00T00:00:00+00:00" fog látszódni a rendszer naplóban, míg az ntpd be nem állítja a pontos időt.
 
 Alacsony memória fogysztás
