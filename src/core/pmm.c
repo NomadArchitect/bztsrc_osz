@@ -162,7 +162,6 @@ void pmm_init()
     /* amíg nincsenek taszkjaink, addig az idle-nek számoljuk a memóriafoglalást */
     idle_tcb.magic = OSZ_TCB_MAGICH;
     idle_tcb.allocmem = idle_tcb.linkmem = 0;
-pmm_dump();
 }
 
 /**

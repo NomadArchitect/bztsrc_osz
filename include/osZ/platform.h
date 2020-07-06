@@ -1,5 +1,5 @@
 /*
- * libc/x86_64/platform.h
+ * libc/aarch64/platform.h
  *
  * Copyright (c) 2016 bzt (bztsrc@gitlab)
  * https://creativecommons.org/licenses/by-nc-sa/4.0/
@@ -31,9 +31,9 @@
 #ifndef _PLATFORM_H
 #define _PLATFORM_H
 
-#define cpu_relax  __asm__ __volatile__("pause":::"memory");
-#define breakpoint __asm__ __volatile__("int $1":::)
-#define breakbochs __asm__ __volatile__("xchg %%bx,%%bx":::)
-#define breakgdb   __asm__ __volatile__("1:jmp 1b");
+#define cpu_relax  __asm__ __volatile__("nop":::"memory");
+#define breakpoint __asm__ __volatile__("brk #0")
+#define breakbochs __asm__ __volatile__("brk #0")
+#define breakgdb   __asm__ __volatile__("1:b 1b")
 
 #endif

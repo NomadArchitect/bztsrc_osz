@@ -33,7 +33,6 @@
 #include "pipe.h"
 
 extern uint8_t ackdelayed;
-extern pid_t mq_caller;
 
 public uint64_t nfcb = 0;
 public fcb_t *fcb = NULL;

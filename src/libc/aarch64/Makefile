@@ -6,7 +6,7 @@ OBJS = $(TMP:.S=.o)
 LIBS =
 ECHO ?= echo
 
-CFLAGS += -D__$(ARCH)__ -ansi -mcmodel=small -fPIC -nostdinc -I../../../include
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -ansi -mcmodel=small -fPIC -nostdinc -I../../../include
 ifneq (,$(findstring -gcc,$(CC)))
 CFLAGS += -Wno-nonnull-compare
 endif

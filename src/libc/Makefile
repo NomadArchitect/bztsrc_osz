@@ -7,12 +7,9 @@ OBJS = $(SRCS:.c=.o)
 LIBS =
 ECHO ?= echo
 
-CFLAGS += -D__$(ARCH)__ -ansi -mcmodel=small -fno-delete-null-pointer-checks -fPIC -nostdinc  -I../../include -I. -I../core/$(ARCH)
+CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -ansi -mcmodel=small -fno-delete-null-pointer-checks -fPIC -nostdinc  -I../../include -I. -I../core/$(ARCH)
 ifneq (,$(findstring -gcc,$(CC)))
 CFLAGS += -Wno-nonnull-compare
-endif
-ifeq ($(DEBUG),1)
-CFLAGS += -DDEBUG=1
 endif
 
 all: $(OBJS) $(BINTARGET)

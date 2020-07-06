@@ -59,7 +59,7 @@ ifeq ($(L),hu)
 else
 	@echo "TOOLS"
 endif
-	@make --no-print-directory -e -C tools all | grep -v 'Nothing to be done' || true
+	@make -e --no-print-directory -C tools all | grep -v 'Nothing to be done' || true
 
 # alaprendszer (core és libc)
 
@@ -79,8 +79,8 @@ ifeq ($(L),hu)
 else
 	@echo "BASE"
 endif
-	@make -e --no-print-directory -C src -Oline libs | grep -v 'Nothing to be done' || true
-	@make -e --no-print-directory -C src -Oline apps | grep -v 'Nothing to be done' || true
+	@make -e --no-print-directory -C src libs | grep -v 'Nothing to be done' || true
+	@make -e --no-print-directory -C src apps | grep -v 'Nothing to be done' || true
 ifeq ($(L),hu)
 	@echo "ESZKÖZMEGHAJTÓK"
 else

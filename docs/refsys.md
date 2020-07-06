@@ -141,34 +141,34 @@ Prototípusok
 [bool_t dofsck(fid_t fd, bool_t fix)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/vfs.c#L668)
   fájlrendszer ellenőrzése egy eszközön
  
-[fid_t fcb_add(char *abspath, uint8_t type)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L68)
+[fid_t fcb_add(char *abspath, uint8_t type)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L67)
   elérési út keresése az fcb listában, és hozzáadás, ha nem találta
  
-[void fcb_del(fid_t idx)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L96)
+[void fcb_del(fid_t idx)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L95)
   fcb bejegyzés eltávolítása
  
-[void fcb_dump()](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L458)
+[void fcb_dump()](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L457)
   Fájl Kontrol Blokkok listájának dumpolása, debuggoláshoz
  
-[bool_t fcb_flush(fid_t idx)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L356)
+[bool_t fcb_flush(fid_t idx)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L355)
   fcb írási buffer kiírása az eszközre (blokk gyorsítótárba)
  
-[void fcb_free()](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L132)
+[void fcb_free()](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L131)
   összes nemhasznált bejegyzés törlése az fcb listából
  
-[fid_t fcb_get(char *abspath)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L41)
+[fid_t fcb_get(char *abspath)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L40)
   elérési út keresése az fcb listában
  
-[char *fcb_readlink(fid_t idx)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L167)
+[char *fcb_readlink(fid_t idx)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L166)
   unió listájának vagy szimbolikus hivatkozás céljának visszaadása
  
-[size_t fcb_unionlist_add(fid_t **fl, fid_t f, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L150)
+[size_t fcb_unionlist_add(fid_t **fl, fid_t f, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L149)
   fid_t hozzáadása az unió fl listához, ha még nincs benne
  
-[fid_t fcb_unionlist_build(fid_t idx, void *buf, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L187)
+[fid_t fcb_unionlist_build(fid_t idx, void *buf, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L186)
   unió fid listájának összeállítása
  
-[bool_t fcb_write(fid_t idx, off_t offs, void *buf, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L268)
+[bool_t fcb_write(fid_t idx, off_t offs, void *buf, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/fcb.c#L267)
   adatok írása egy fcb-be, a módosítás bufferbe kerül
  
 [void *fs_locate(char *fn)](https://gitlab.com/bztsrc/osz/blob/master/src/core/fs.c#L38)
@@ -573,19 +573,19 @@ Prototípusok
 [void *memset(void *dst, uint8_t c, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/core/libc.c#L68)
   memória feltötlése adott karakterrel, általános implementáció
  
-[void* pmm_alloc(tcb_t *tcb, uint64_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L186)
+[void* pmm_alloc(tcb_t *tcb, uint64_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L185)
   folyamatos fizikai memória lefoglalása. Ficikai címmel tér vissza
  
-[void* pmm_allocslot(tcb_t *tcb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L252)
+[void* pmm_allocslot(tcb_t *tcb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L251)
   egy egybefüggő, címigazított blokk (2M) lefoglalása. Fizikai címmel tér vissza
  
-[void pmm_free(tcb_t *tcb, phy_t base, size_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L324)
+[void pmm_free(tcb_t *tcb, phy_t base, size_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L323)
   fizikai memória felszabadítása és a szabad listához adása
  
 [void pmm_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L54)
   fizikai Memória Kezelő inicializálása
  
-[void pmm_vmem()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L168)
+[void pmm_vmem()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L167)
   inicializálás befejezése, miután lett virtuális memóriánk
  
 [char *sprintf(char *dst,char* fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/libc.c#L279)

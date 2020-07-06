@@ -52,18 +52,13 @@ public int main(int argc __attribute__((unused)), char **argv __attribute__((unu
     meminfo_t m;
     uint64_t ret = 0, j, k;
 
-dbg_printf("fs1\n");
     mtab_init();
-dbg_printf("fs2\n");
     devfs_init();
-dbg_printf("fs3\n");
-/*
     cache_init();
     nomem = false;
-*/
+
     while(1) {
         msg = mq_recv();
-dbg_printf("fs4\n");
 #if 0
         seterr(SUCCESS);
         ackdelayed = nomem;

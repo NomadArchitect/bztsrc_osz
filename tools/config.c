@@ -403,6 +403,23 @@ memerr:     err(lang[0]);
     return data;
 }
 
+int mystrlen(const char *s)
+{
+    register size_t c=0;
+    if(s) {
+        while(*s) {
+            if((*s & 128) != 0) {
+                if((*s & 32) == 0 ) s++; else
+                if((*s & 16) == 0 ) s+=2; else
+                if((*s & 8) == 0 ) s+=3;
+            }
+            c++;
+            s++;
+        }
+    }
+    return c;
+}
+
 void *myrealloc(void *ptr, int size) {
     void *data = realloc(ptr, size);
     if(!data) err(lang[0]);
@@ -737,16 +754,16 @@ void drawline(int x, int y, int w, int i, int a, char *sel, char *ina)
 void drawboxtop(int x, int y, int w, int i, int a,char *ina)
 {
     int j;
-    printf("\033[%d;%dH\033[%s;%dm%s%s",y,x,a?"30;1":ina,a?47:(t==terms[2]?46:100),t[PRE],t[NW]);
+    printf("\033[%d;%dH\033[%s;%dm%s%s",y,x,a?"0;30":ina,a?47:(t==terms[2]?46:100),t[PRE],t[NW]);
     for(j = 0; j < w - 2; j++) printf(t[VER]);
-    printf("\033[%sm%s%s%s\033[%s;%dm\033[%d;%dH",a?"37;1":ina,t[NE],t[SUF], i?"\033[40m  ":"", a?"0;30":"0;34",
+    printf("\033[%sm%s%s%s\033[%s;%dm\033[%d;%dH",a?"37;1":ina,t[NE],t[SUF], i?"\033[40m  ":"", a?"1;30":"1;34",
         a?47:(t==terms[2]?46:100), y, x + 3);
 }
 
 void drawboxbtm(int x, int y, int w, int a, char *ina)
 {
     int j;
-    printf("\033[%d;%dH\033[%s;%dm%s%s\033[%sm",y,x,a?"30;1":ina,a?47:(t==terms[2]?46:100),t[PRE],t[SW],a?"37;1":ina);
+    printf("\033[%d;%dH\033[%s;%dm%s%s\033[%sm",y,x,a?"0;30":ina,a?47:(t==terms[2]?46:100),t[PRE],t[SW],a?"37;1":ina);
     for(j = 0; j < w - 2; j++) printf(t[VER]);
     printf("%s%s\033[40m  \033[0m",t[SE],t[SUF]);
 }
@@ -762,15 +779,15 @@ void drawchklist(list_t *list, int len, int title)
 {
     int x, y, w = 0, m = 0, h, i, j;
     for(i = 0; i < len; i++) {
-        j = strlen(list[i].name) + 1;
+        j = mystrlen(list[i].name) + 1;
         if(j > m) m = j;
-        j = strlen(lang[list[i].langcode]) + 1;
+        j = mystrlen(lang[list[i].langcode]) + 1;
         if(j > w) w = j;
     }
-    w += m + 9; if(w < strlen(lang[title])+8) w = strlen(lang[title])+8;
+    w += m + 9; if(w < mystrlen(lang[title])+8) w = mystrlen(lang[title])+8;
     chkh = (len > row - 6 ? row - 6: len); h = chkh + 2; chkl = len;
     x = (col - w) / 2; if(x < 1) x = 1;
-    y = (row - h) / 2; if(y < 1) y = 1;
+    y = (row - h) / 2 + 1; if(y < 1) y = 1;
     if(chk < chkscr) chkscr = chk;
     if(chk > chkscr + chkh - 1) chkscr = chk - chkh + 1;
     if(chkscr < 0) chkscr = 0;
@@ -788,15 +805,15 @@ void drawselect(list_t *list, int len, int title, int curr)
 {
     int x, y, w = 0, m = 0, h, i, j;
     for(i = 0; i < len; i++) {
-        j = strlen(list[i].name) + 1;
+        j = mystrlen(list[i].name) + 1;
         if(j > m) m = j;
-        j = strlen(lang[list[i].langcode]) + 1;
+        j = mystrlen(lang[list[i].langcode]) + 1;
         if(j > w) w = j;
     }
-    w += m + 5; if(w < strlen(lang[title])+8) w = strlen(lang[title])+8;
+    w += m + 5; if(w < mystrlen(lang[title])+8) w = mystrlen(lang[title])+8;
     chkh = (len > row - 6 ? row - 6: len); h = chkh + 2; chkl = len;
     x = (col - w) / 2; if(x < 1) x = 1;
-    y = (row - h) / 2; if(y < 1) y = 1;
+    y = (row - h) / 2 + 1; if(y < 1) y = 1;
     drawboxtop(x,y,w,0,1,"0;37"); printf(" %s ", lang[title]);
     if(curr < chkscr) chkscr = curr;
     if(curr > chkscr + chkh - 1) chkscr = curr - chkh + 1;
@@ -814,7 +831,7 @@ void drawselect(list_t *list, int len, int title, int curr)
 void redraw()
 {
     int r = 0, c = 0, x, y, i, j, w = 42, h = 18, es,us,vs,hs;
-    char s[32],sel[16],ina[16],iab[16];
+    char s[32],sel[16],ina[16],iab[16],initrdstr[]="  ####";
 
     getstdindim(&r, &c);
     if(r != row || c != col) { row = r; col = c; bg(); }
@@ -834,7 +851,7 @@ void redraw()
     drawboxtop(x,y+6,w,1,!menu,ina); printf(" %s ", lang[6]);
     drawline(x,y+ 7,w,mainitem== 4,!menu,sel,ina); printf("%s",lang[11]);
     sprintf(s, "GMT%s%d %s",tz>0?"+":"",tz,lang[51]);
-    drawline(x,y+ 8,w,mainitem== 5,!menu,sel,ina); printf("%s (%s)",lang[12],tz==-99999?"RTC":(tz==-99998?"ask":(!tz?"UTC":s)));
+    drawline(x,y+ 8,w,mainitem== 5,!menu,sel,ina); printf("%s (%s)",lang[12],tz==-99999?"detect":(tz==-99998?"ask":(!tz?"UTC":s)));
     drawline(x,y+ 9,w,mainitem== 6,!menu,sel,ina); printf("%s (%s)",lang[13],screens[scr]);
     drawline(x,y+10,w,mainitem== 7,!menu,sel,ina); printf("%s (%s)",lang[14],visopts[vis].name);
     drawline(x,y+11,w,mainitem== 8,!menu,sel,ina); printf("%s",lang[15]);
@@ -847,28 +864,29 @@ void redraw()
 
     printf("\033[%d;%dH\033[%s;%dm%s%s",y+17,x,!menu?"37;1":ina,!menu?47:(t==terms[2]?46:100),t[PRE],t[NW]);
     for(i = 0; i < w - 2; i++) printf(t[VER]);
-    printf("\033[%s;%dm%s%s\033[40m  ",!menu?"30;1":ina,!menu?47:(t==terms[2]?46:100),t[NE],t[SUF]);
+    printf("\033[%s;%dm%s%s\033[40m  ",!menu?"0;30":ina,!menu?47:(t==terms[2]?46:100),t[NE],t[SUF]);
 
     printf("\033[%d;%dH\033[%s;%dm%s%s\033[30m",y+18,x,!menu?"37;1":ina,!menu?47:(t==terms[2]?46:100),t[PRE],t[HOR]);
     for(i = 0; i < w - 2; i++) printf(" ");
     printf("\033[%s;%dm%s%s\033[40m  ",!menu?"0;30":ina,!menu?47:(t==terms[2]?46:100),t[HOR],t[SUF]);
     printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+4,!menu?47:(t==terms[2]?46:100),!menu && mainbtn==0?sel:iab,
         !menu && mainbtn==0?"33;44;1":iab, lang[20], !menu && mainbtn==0?sel:iab);
-    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+(w/2-(strlen(lang[21])+4)/2),!menu?47:(t==terms[2]?46:100),
+    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+(w/2-(mystrlen(lang[21])+4)/2),!menu?47:(t==terms[2]?46:100),
         !menu && mainbtn==1?sel:iab, !menu && mainbtn==1?"33;44;1":iab, lang[21], !menu && mainbtn==1?sel:iab);
-    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+w-6-strlen(lang[22]),!menu?47:(t==terms[2]?46:100),
+    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+w-6-mystrlen(lang[22]),!menu?47:(t==terms[2]?46:100),
         !menu && mainbtn==2?sel:iab,!menu && mainbtn==2?"33;44;1":iab, lang[22], !menu && mainbtn==2?sel:iab);
 
-    printf("\033[%d;%dH\033[%s;%dm%s%s\033[%sm",y+19,x,!menu?"37;1":ina,!menu?47:(t==terms[2]?46:100),t[PRE],t[SW],!menu?"30;1":ina);
+    printf("\033[%d;%dH\033[%s;%dm%s%s\033[%s;%dm",y+19,x,!menu?"37;1":ina,!menu?47:(t==terms[2]?46:100),t[PRE],t[SW],
+        !menu?"0;30":ina,!menu?47:(t==terms[2]?46:100));
     for(i = 0; i < w - 2; i++) printf(t[VER]);
     printf("%s%s\033[40m  ",t[SE],t[SUF]);
     drawshd(x,y+20,w);
 
     switch(menu) {
         case 1:
-            w = 24 + platw; if(w < strlen(lang[23])+8) w = strlen(lang[23])+8; h = numplatform + 2;
+            w = 24 + platw; if(w < mystrlen(lang[23])+8) w = mystrlen(lang[23])+8; h = numplatform + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[23]);
             for(i = 0; i < numplatform; i++) {
                 drawline(x,y+1+i,w,selplat==i,1,"37;44;1",ina);
@@ -878,9 +896,9 @@ void redraw()
             drawshd(x,y+h,w);
         break;
         case 2:
-            w = 8 + 8 + 16; if(w < strlen(lang[24])+8) w = strlen(lang[24])+8; h = (sizeof(compilers)/sizeof(compilers[0])) + 2;
+            w = 8 + 8 + 16; if(w < mystrlen(lang[24])+8) w = mystrlen(lang[24])+8; h = (sizeof(compilers)/sizeof(compilers[0])) + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[24]);
             for(i = 0; i < sizeof(compilers)/sizeof(compilers[0]); i++) {
                 drawline(x,y+1+i,w,cmplr==i,1,"37;44;1",ina);
@@ -892,7 +910,7 @@ void redraw()
         case 3: drawchklist(compopts, sizeof(compopts)/sizeof(compopts[0]), 25); break;
         case 4:
             x = 3; w = col - 4; h = 10;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[10]);
             drawline(x,y+1,w,0,1,"37;44;1",ina);
             drawline(x,y+2,w,0,1,"37;44;1",ina);
@@ -902,18 +920,18 @@ void redraw()
             us = usrsize * (col - 17) / j; if(usrsize && !us) { us = 1; es--; }
             vs = varsize * (col - 17) / j; if(varsize && !vs) { vs = 1; es--; }
             hs = homesize * (col - 17) / j; if(homesize && !hs) { hs = 1; es--; }
-            if(es + us + vs + hs < col - 17) es = col - 17 - us - vs - hs;
-            printf("\033[1;33;%dm%s",noinitrd?43:46,noinitrd?" ":"i"); for(i = 1; i < es; i++) printf(" ");
+            if(es + us + vs + hs != col - 17) es = col - 17 - us - vs - hs;
+            printf("\033[1;33;%dm",noinitrd?43:46); for(i = 0; i < es; i++) printf("%c",noinitrd||i>=sizeof(initrdstr)-1?' ':initrdstr[i]);
             printf("\033[1;31;41m"); for(i = 0; i < us; i++) printf(" ");
             printf("\033[0;32;42m"); for(i = 0; i < vs; i++) printf(" ");
             printf("\033[0;35;45m"); for(i = 0; i < hs; i++) printf(" ");
-            printf("\033[0;30;47m\033[%d;%dH%6d Kb",y+2,col-12,j);
+            printf("\033[0;30;47m\033[%d;%dH%4d.%d Mb",y+2,col-12,j/1024,(j%1024)/100);
             drawline(x,y+3,w,0,1,"37;44;1",ina);
-            drawline(x,y+4,w,chk==0,1,"37;44;1",ina); printf("             %s (%s)",lang[34],noinitrd?lang[35]:"ESP:/BOOTBOOT");
-            drawline(x,y+5,w,chk==1,1,"37;44;1",ina); printf("<%6d > Kb %s %s",espsize,noinitrd?"Initrd":"/boot",lang[35]);
-            drawline(x,y+6,w,chk==2,1,"37;44;1",ina); printf("<%6d > Kb /usr %s",usrsize,lang[36]);
-            drawline(x,y+7,w,chk==3,1,"37;44;1",ina); printf("<%6d > Kb /var %s",varsize,lang[37]);
-            drawline(x,y+8,w,chk==4,1,"37;44;1",ina); printf("<%6d > Kb /home %s",homesize,lang[37]);
+            drawline(x,y+4,w,chk==0,1,"37;44;1",ina); printf("               %s (%s)",lang[34],noinitrd?lang[35]:"ESP:/BOOTBOOT");
+            drawline(x,y+5,w,chk==1,1,"37;44;1",ina); printf("-<%6d >+ Kb %s %s",espsize,noinitrd?"Initrd":"/boot",lang[35]);
+            drawline(x,y+6,w,chk==2,1,"37;44;1",ina); printf("-<%6d >+ Kb /usr %s",usrsize,lang[36]);
+            drawline(x,y+7,w,chk==3,1,"37;44;1",ina); printf("-<%6d >+ Kb /var %s",varsize,lang[37]);
+            drawline(x,y+8,w,chk==4,1,"37;44;1",ina); printf("-<%6d >+ Kb /home %s",homesize,lang[37]);
             drawboxbtm(x,y+h-1,w,1,ina);
             drawshd(x,y+h,w);
         break;
@@ -921,19 +939,19 @@ void redraw()
         case 6:
             w = 60; h = 6;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[52]);
-            drawline(x,y+1,w,chk==0,1,"37;44;1",ina); printf("?        %s",lang[41]);
-            drawline(x,y+2,w,chk==1,1,"37;44;1",ina); printf("ask      %s",lang[53]);
-            drawline(x,y+3,w,chk==2,1,"37;44;1",ina); printf("UTC      %s",lang[54]);
-            drawline(x,y+4,w,chk==3,1,"37;44;1",ina); printf("<%5d > %s",tz >= -1440 && tz <= 1440 ? tz : 0,lang[55]);
+            drawline(x,y+1,w,chk==0,1,"37;44;1",ina); printf("  detect   %s",lang[41]);
+            drawline(x,y+2,w,chk==1,1,"37;44;1",ina); printf("  ask      %s",lang[53]);
+            drawline(x,y+3,w,chk==2,1,"37;44;1",ina); printf("  UTC      %s",lang[54]);
+            drawline(x,y+4,w,chk==3,1,"37;44;1",ina); printf("-<%5d >+ %s",tz >= -1440 && tz <= 1440 ? tz : 0,lang[55]);
             drawboxbtm(x,y+h-1,w,1,ina);
             drawshd(x,y+h,w);
         break;
         case 7:
-            w = 8 + 16; if(w < strlen(lang[13])+8) w = strlen(lang[13])+8; h = (sizeof(screens)/sizeof(screens[0])) + 2;
+            w = 8 + 16; if(w < mystrlen(lang[13])+8) w = mystrlen(lang[13])+8; h = (sizeof(screens)/sizeof(screens[0])) + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[13]);
             for(i = 0; i < sizeof(screens)/sizeof(screens[0]); i++) {
                 drawline(x,y+1+i,w,scr==i,1,"37;44;1",ina);
@@ -945,9 +963,9 @@ void redraw()
         case 8: drawselect(visopts, sizeof(visopts)/sizeof(visopts[0]), 14, vis); break;
         case 9: drawchklist(dspopts, sizeof(dspopts)/sizeof(dspopts[0]), 15); break;
         case 10:
-            w = 8 + 16; if(w < strlen(lang[66])+8) w = strlen(lang[66])+8; h = numlangs + 2;
+            w = 8 + 16; if(w < mystrlen(lang[66])+8) w = mystrlen(lang[66])+8; h = numlangs + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[66]);
             for(i = 0; i < numlangs; i++) {
                 drawline(x,y+1+i,w,sellang==i,1,"37;44;1",ina);
@@ -958,9 +976,9 @@ void redraw()
             drawshd(x,y+h,w);
         break;
         case 11:
-            w = 8 + 16; if(w < strlen(lang[67])+8) w = strlen(lang[67])+8; h = numkbd + 2;
+            w = 8 + 16; if(w < mystrlen(lang[67])+8) w = mystrlen(lang[67])+8; h = numkbd + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[67]);
             for(i = 0; i < numkbd; i++) {
                 drawline(x,y+1+i,w,selkbd==i,1,"37;44;1",ina);
@@ -970,9 +988,9 @@ void redraw()
             drawshd(x,y+h,w);
         break;
         case 12:
-            w = 8 + 16; if(w < strlen(lang[68])+8) w = strlen(lang[68])+8; h = kbds[selkbd].num + 2;
+            w = 8 + 16; if(w < mystrlen(lang[68])+8) w = mystrlen(lang[68])+8; h = kbds[selkbd].num + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[68]);
             for(i = 0; i < kbds[selkbd].num; i++) {
                 drawline(x,y+1+i,w,sellyt==i,1,"37;44;1",ina);
@@ -982,9 +1000,9 @@ void redraw()
             drawshd(x,y+h,w);
         break;
         case 13:
-            w = 8 + 16; if(w < strlen(lang[69])+8) w = strlen(lang[69])+8; h = kbds[selkbd].num + 2;
+            w = 8 + 16; if(w < mystrlen(lang[69])+8) w = mystrlen(lang[69])+8; h = kbds[selkbd].num + 2;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina); printf(" %s ", lang[69]);
             for(i = 0; i < kbds[selkbd].num; i++) {
                 drawline(x,y+1+i,w,selalt==i,1,"37;44;1",ina);
@@ -996,9 +1014,9 @@ void redraw()
         case 14: /* harmadlagos kiosztás */ break;
         case 15: /* negyedleges */ break;
         case 16:
-            w = strlen(lang[40])+8; h = 3;
+            w = mystrlen(lang[40])+8; h = 3;
             x = (col - w) / 2; if(x < 1) x = 1;
-            y = (row - h) / 2; if(y < 1) y = 1;
+            y = (row - h) / 2 + 1; if(y < 1) y = 1;
             drawboxtop(x,y,w,0,1,ina);
             drawline(x,y+1,w,0,1,"37;44;1",ina); printf(" %s ", lang[40]);
             drawboxbtm(x,y+2,w,1,ina);
@@ -1062,19 +1080,19 @@ int main(int argc, char **argv)
                     case 3:
                         switch(chk) {
                             case 0: noinitrd ^= 1; break;
-                            case 1: espsize += 4; break;
-                            case 2: usrsize += 4; break;
-                            case 3: varsize += 4; break;
-                            case 4: homesize += 4; break;
+                            case 1: espsize &= ~255; espsize += 256; break;
+                            case 2: usrsize &= ~255; usrsize += 256; break;
+                            case 3: varsize &= ~255; varsize += 256; break;
+                            case 4: homesize &= ~255; homesize += 256; break;
                         }
                     break;
                     case 4:
                         switch(chk) {
                             case 0: noinitrd ^= 1; break;
-                            case 1: if(espsize > 8256) espsize -= 4; break;
-                            case 2: if(usrsize > 768) usrsize -= 4; break;
-                            case 3: if(varsize > 0) varsize -= 4; break;
-                            case 4: if(homesize > 0) homesize -= 4; break;
+                            case 1: espsize -= 256; if(espsize < 8256) espsize = 8256; break;
+                            case 2: usrsize -= 256; if(usrsize < 256) usrsize = 256; break;
+                            case 3: varsize -= 256; if(varsize < 0) varsize = 0; break;
+                            case 4: homesize -= 256; if(homesize < 0) homesize = 0; break;
                         }
                     break;
                     case ' ': noinitrd ^= 1; break;

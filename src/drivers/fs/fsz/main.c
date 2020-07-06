@@ -482,7 +482,5 @@ fsdrv_t drv = {
 };
 void drv_init()
 {
-dbg_printf("fsz1\n");
     fsdrv_reg(&drv);
-dbg_printf("fsz2\n");
 }

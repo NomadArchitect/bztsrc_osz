@@ -4,10 +4,10 @@
 
 // --- loader options ---
 screen=800x600
-kernel=sys/core
+kernel=sys/coreincompatible-library-redeclaration
 
 // --- core options ---
-// tz=0
+tz=0
 nrmqmax=1
 quantum=1000
 

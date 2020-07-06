@@ -62,5 +62,5 @@
     vmm_invalidate(LDYN_tmpctrl); memroot = ((uint64_t*)LDYN_tmpctrl)[((virt_t)(p)>>39)&511]
 /* vezérlés átadása az adott címtérre */
 #define vmm_enable(t) __asm__ __volatile__( \
-        "movq %0, %%rsp; xor %%rbp, %%rbp; xchg %%bx, %%bx; iretq" : : \
+        "movq %0, %%rsp; xor %%rbp, %%rbp; iretq" : : \
         "a"(&(t)->pc) : "rsp","rbp", "memory")

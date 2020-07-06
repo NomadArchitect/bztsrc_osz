@@ -55,7 +55,10 @@
  */
 .section .crt0, "ax"
 __stack_chk_fail:
-    udf     #0
+    /* ehhh, gcc nem ismeri ezt a mnemonikot
+    udf     #0 */
+    .long   0
+    b       abort
 
     /* belépési pont */
 _start:
