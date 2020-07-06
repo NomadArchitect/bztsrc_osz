@@ -11,7 +11,7 @@ Szolgáltatások Menedzselése
 
 A legtöbb POSIX operációs rendszerben a szolgáltatásokat vagy szkriptek kezelik (SysV init) vagy egy másik szolgáltatás
 (systemd vagy launchd). Mindkét esetben start és stop parancsok állnak rendelkezésre a parancsértelmezőben. Az OS/Z sem
-kivétel, itt az `init` rendszerszolgáltatás a felelős a felhasználi szolgáltatások felügyeletéért. Fedd figyelembe, hogy
+kivétel, itt az `init` rendszerszolgáltatás a felelős a felhasználói szolgáltatások felügyeletéért. Fedd figyelembe, hogy
 a [rendszer szolgáltatások](https://gitlab.com/bztsrc/osz/blob/master/docs/services.md)at nem lehet parancssorból irányítani,
 mivel azok a rendszer szerves részeit képezik.
 
@@ -33,7 +33,7 @@ sys stop (szolgáltatás)
 
 ### Szolgáltatás indítása minden induláskor
 
-Hogy az indítás elinduljon, és hogy ez az indítás tartós maradjon, újrabootolás után is,
+Hogy a szolgáltatás ne csak egyszer, hanem minden egyes újrabootást követően is elinduljon,
 
 ```sh
 sys enable (szolgáltatás)
@@ -49,7 +49,7 @@ sys disable (szolgáltatás)
 
 ### Szolgáltatás újraindítása
 
-Ha egy szolgáltazás konfigurációs fájlja megvéltozik, akkor újra kell olvasnia. De ha ezt nem tenné, vagy éppenséggel
+Ha egy szolgáltazás konfigurációs fájlja megváltozik, akkor újra kell olvasnia. De ha ezt nem tenné, vagy éppenséggel
 a démon rosszul viselkedik, akkor szükség lehet a szolgáltatás újraindítására. Ehhez a következő parancsot kell kiadni
 
 ```sh

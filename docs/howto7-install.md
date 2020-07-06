@@ -51,7 +51,7 @@ sys update
 
 ### Rendszerfrissítés
 
-Második paraméter nélkül minden egyes csomagot felfrissít (szóval az egész rendszert), amihez van őjabb verzió.
+Második paraméter nélkül minden egyes csomagot felfrissít (szóval az egész rendszert), amihez van újabb verzió.
 Ha meg van adva egy csomagnév, akkor csak azt az egyet és a függőségeit frissíti.
 
 ```sh
@@ -77,7 +77,7 @@ sys install (csomagnév)
 
 ### Csomag eltávolítása
 
-Ha őgy gondolod, hogy már nincs egy programra a továbbiakban szükséged, akkor a következővel törölheted:
+Ha úgy gondolod, hogy már nincs egy programra a továbbiakban szükséged, akkor a következővel törölheted:
 
 ```sh
 sys remove (csomagnév)
