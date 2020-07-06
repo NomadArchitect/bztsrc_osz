@@ -23,7 +23,7 @@ Az érvényes kombinációk a következők (megjegyyés: ezeket az src/core mapp
 | aarch64 | rpi3     | Raspberry Pi 3+ |
 | aarch64 | rpi4     | Raspberry Pi 4+ |
 
-Ha van telepítve "dialog" segédprogram a gépedre, akkor a következő parancs egy kényelmes ncurses alapú felülettel segíti a beállítást:
+A következő parancs egy kényelmes ncurses alapú felülettel segíti a beállítást:
 
 ```shell
 $ make config

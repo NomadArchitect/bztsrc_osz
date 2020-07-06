@@ -5,12 +5,15 @@ Fordításkori opciók
 -------------------
 
 Egynéhány opció (főként sebességnövelés miatt) a [Config](https://gitlab.com/bztsrc/osz/blob/master/Config)-ba került. Ha ezeken
-változtatsz, akkor újra kell fordítanod. De a legtöbb funkció induláskor állítható. Ha van "dialog" telepítve, akkor a következő
-parancsot futtatva könnyedén konfigurálhatsz:
+változtatsz, akkor újra kell fordítanod. De a legtöbb funkció induláskor állítható. A következő parancsot futtatva könnyedén
+konfigurálhatsz:
 
 ```sh
 $ make config
 ```
+
+<img height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszcfg1.png" alt="make config">
+
 
 Indulási konfigurációs fájl (environment)
 -----------------------------------------

@@ -5,11 +5,14 @@ Compilation Time Options
 ------------------------
 
 A few options (mostly for performance reasons) moved to [Config](https://gitlab.com/bztsrc/osz/blob/master/Config). Changing these
-will require a recompilation. But most of the features can be configured in boot-time. If you have "dialog" installed, you can run
+will require a recompilation. But most of the features can be configured in boot-time. You can easily configure by running
 
 ```sh
 $ make config
 ```
+
+<img height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszcfg1.png" alt="make config">
+
 
 Environment Configuration File
 ------------------------------

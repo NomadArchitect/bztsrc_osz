@@ -6,7 +6,7 @@ Előszó
 
 Mielőtt mélyebbre merülnénk, fontos azzal kezdeni, miként lehet az OS/Z-t telepítés nélkül kipróbálni.
 
-Mindig akkor pusholok a git repóba, amikor a legjobb tudomásom szerint hiba nélkül [lefordul](https://gitlab.com/bztsrc/osz/bloc/master/docs/compile.md)
+Mindig akkor pusholok a git repóba, amikor a legjobb tudomásom szerint hiba nélkül [lefordul](https://gitlab.com/bztsrc/osz/blob/master/docs/compile.md)
 a forrás egy `make clean all` paranccsal. Bár mindent elkövetek, nincs garancia rá, hogy valamilyen előre nem látható okból mégse
 menne, vagy hogy a jól leforduló kód valami miatt ne kresselhetne el :-)
 

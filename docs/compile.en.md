@@ -23,7 +23,7 @@ Valid combinations are (note: the configurator collects these by examining direc
 | aarch64 | rpi3     | Raspberry Pi 3+ |
 | aarch64 | rpi4     | Raspberry Pi 4+ |
 
-If you have the "dialog" tool installed on your system, you can run the following to get a nice ncurses based interface.
+You can run the following to get a nice ncurses based interface.
 
 ```shell
 $ make config
