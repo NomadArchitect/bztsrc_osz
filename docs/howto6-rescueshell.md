@@ -14,7 +14,7 @@ Vészhelyzeti parancssor aktiválása
 <img align="left" style="margin-right:10px;" height="64" src="https://gitlab.com/bztsrc/osz/raw/master/docs/oszrsh.png" alt="OS/Z Vészhelyzeti parancssor">
 
 Az induló környezeti [konfiguráció](https://gitlab.com/bztsrc/osz/blob/master/etc/config)ban kell engedélyezni a `rescueshell=true`
-beállítással. A következő boot alkalmával a szokásos `init` helyett egy rendsyergaydai jogosultsággal futó `sh` fog elindulni. Ez
+beállítással. A következő boot alkalmával a szokásos `init` helyett egy rendszergazdai jogosultsággal futó `sh` fog elindulni. Ez
 azt jelenti, hogy az OS/Z nem fogja a felhasználói szolgáltatásokat elindítani.
 
 A vészhelyzeti parancssor pont olyan, mint bármelyik másik parancssor, kivéve, hogy rendszergazdai jogosultságokkal fut,

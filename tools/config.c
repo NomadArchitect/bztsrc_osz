@@ -813,7 +813,7 @@ void drawselect(list_t *list, int len, int title, int curr)
 
 void redraw()
 {
-    int r = 0, c = 0, x, y, i, j, w = 78, h = 18, es,us,vs,hs;
+    int r = 0, c = 0, x, y, i, j, w = 42, h = 18, es,us,vs,hs;
     char s[32],sel[16],ina[16],iab[16];
 
     getstdindim(&r, &c);
@@ -852,11 +852,11 @@ void redraw()
     printf("\033[%d;%dH\033[%s;%dm%s%s\033[30m",y+18,x,!menu?"37;1":ina,!menu?47:(t==terms[2]?46:100),t[PRE],t[HOR]);
     for(i = 0; i < w - 2; i++) printf(" ");
     printf("\033[%s;%dm%s%s\033[40m  ",!menu?"0;30":ina,!menu?47:(t==terms[2]?46:100),t[HOR],t[SUF]);
-    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+8,!menu?47:(t==terms[2]?46:100),!menu && mainbtn==0?sel:iab,
+    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+4,!menu?47:(t==terms[2]?46:100),!menu && mainbtn==0?sel:iab,
         !menu && mainbtn==0?"33;44;1":iab, lang[20], !menu && mainbtn==0?sel:iab);
     printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+(w/2-(strlen(lang[21])+4)/2),!menu?47:(t==terms[2]?46:100),
         !menu && mainbtn==1?sel:iab, !menu && mainbtn==1?"33;44;1":iab, lang[21], !menu && mainbtn==1?sel:iab);
-    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+w-12-strlen(lang[22]),!menu?47:(t==terms[2]?46:100),
+    printf("\033[%d;%dH\033[0;%d;%sm< \033[%sm%s\033[%sm >",y+18,x+w-6-strlen(lang[22]),!menu?47:(t==terms[2]?46:100),
         !menu && mainbtn==2?sel:iab,!menu && mainbtn==2?"33;44;1":iab, lang[22], !menu && mainbtn==2?sel:iab);
 
     printf("\033[%d;%dH\033[%s;%dm%s%s\033[%sm",y+19,x,!menu?"37;1":ina,!menu?47:(t==terms[2]?46:100),t[PRE],t[SW],!menu?"30;1":ina);

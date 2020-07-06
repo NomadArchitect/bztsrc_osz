@@ -1,4 +1,4 @@
-OS/Z - Hogyan Sorozat #3 - Alkalmazás fejlesztése
+OS/Z - Hogyan Sorozat #5 - Alkalmazás fejlesztése
 =================================================
 
 Előszó
