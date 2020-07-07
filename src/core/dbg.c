@@ -52,7 +52,6 @@ virt_t elf_sym(virt_t addr, bool_t onlyfunc);
 virt_t elf_lookupsym(char *sym);
 unsigned char *env_hex(unsigned char *s, uint64_t *v, uint64_t min, uint64_t max);
 extern uint64_t pmm_size;
-extern phy_t pmm_dma;
 extern pmm_entry_t pmm_entries_buf;
 extern char display_drv[], display_env[], intr_name[], syslog_buffer[];
 virt_t disasm(virt_t addr, char *str);                  /* ezt itt csak azért használjuk, hogy visszaadja a köv. utasítás címét */
@@ -588,7 +587,7 @@ void dbg_msg(uint idx)
             kprintf("%4x from %3x evt #%2x(", msg->serial, EVT_SENDER(msg->evt), EVT_FUNC(msg->evt));
             kprintf(msg->evt & MSG_PTRDATA? "*%x[%d]" : "%x,%x", msg->data.scalar.arg0, msg->data.scalar.arg1);
             kprintf(",%x,%x,%x,%x)\n", msg->data.scalar.arg2, msg->data.scalar.arg3, msg->data.scalar.arg4, msg->data.scalar.arg5);
-            if(msg->evt & MSG_PTRDATA) kprintf("      %1D", msg->data.buffer.ptr);
+            if(msg->evt & MSG_PTRDATA) kprintf("      %1D", msg->data.buf.ptr);
         }
     }
 }
@@ -627,7 +626,7 @@ void dbg_tcb()
         kprintf("[Task Memory]\n"); dbg_settheme(dbg_theme[3]);
         kprintf("mapping: %8x, allocated pages: %7d, linked pages: %7d\n\n", tcb->memroot, tcb->allocmem, tcb->linkmem);
         if(tcb->memroot && tcb->allocmem < 0x100000)
-            bzt_dumpmem((uint64_t*)DYN_ADDRESS);
+            dbg_bztdump((uint64_t*)DYN_ADDRESS);
         else
             kprintf("Bogus memory map\n");
     }
@@ -645,7 +644,7 @@ void dbg_sched(uint cpuid)
 
     dbg_settheme(dbg_theme[4]); kprintf("[CPU Global Memory]\n"); dbg_settheme(dbg_theme[3]);
     kx = fx = 0;
-    bzt_dumpmem((uint64_t*)CDYN_ADDRESS);
+    dbg_bztdump((uint64_t*)CDYN_ADDRESS);
     maxy += 2;
 }
 
@@ -666,13 +665,6 @@ void dbg_ram(uint rampos)
         for(; i < (uint)(maxx-9); i++) { kprintf_putchar('_'); kx++; }
         bg = dbg_theme[1]; dbg_settheme(dbg_theme[3]); if(!dbg_tui) dbg_putchar(']');
         kprintf(" %2d.%d%d%%\n\n", allocmem*100/m, (allocmem*1000/m)%10, (allocmem*10000/m)%10);
-        if(pmm_dma) {
-            n = dmabuf << __PAGEBITS; unit = ' ';
-            if(n >= GBYTE) { unit='G'; n /= GBYTE; } else
-            if(n >= MBYTE) { unit='M'; n /= MBYTE; } else
-            if(n >= KBYTE) { unit='k'; n /= KBYTE; }
-            kprintf("DMA buffer: %8x - %8x, %d pages %d %c\n\n", pmm_dma, pmm_dma + (dmabuf << __PAGEBITS) - 1, dmabuf, n, unit);
-        }
         dbg_settheme(dbg_theme[4]);
     }
 

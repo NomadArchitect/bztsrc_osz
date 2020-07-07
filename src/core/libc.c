@@ -34,7 +34,7 @@ uint8_t runlevel = RUNLVL_BOOT;     /* futási szint, lásd RUNLVL_* */
 uint8_t sys_fault = 0;              /* rendszerhiba jelző (kivételkezelők állítják), főleg a debugger használja */
 uint32_t numcores = 0;              /* a CPU magok száma (csak a címigazítás miatt 32 bites, egyébként 16) */
 uint64_t srand[4];                  /* véletlen generátor magja */
-uint64_t systables[8];              /* rendszertáblázatok (platform függő) */
+uint64_t systables[16];             /* rendszertáblázatok (platform függő) */
 pid_t services[NUMSRV];             /* rendszerszolgáltatások taszkjai */
 
 /* gcc-nek kell automatikus stack overflow / underrun ellenőrzéshez */
@@ -176,14 +176,14 @@ extern uint8_t volatile reent, cnt; /* rekurzió és paraméter számláló */
 extern char tmpstr[33];             /* átmeneti számformázáshoz */
 extern char nullstr[];
 
-static __inline__ char *sprintf_putascii(char *dst, int64_t c)
+static inline char *sprintf_putascii(char *dst, int64_t c)
 {
     *((int64_t*)&tmpstr) = c;
     tmpstr[cnt>0&&cnt<=8?cnt:8]=0;
     return sprintf(dst,&tmpstr[0]);
 }
 
-static __inline__ char *sprintf_putdec(char *dst, int64_t c)
+static inline char *sprintf_putdec(char *dst, int64_t c)
 {
     int64_t i=18,s=c<0;
     if(s) c*=-1;
@@ -205,7 +205,7 @@ static __inline__ char *sprintf_putdec(char *dst, int64_t c)
     return sprintf(dst,&tmpstr[i]);
 }
 
-static __inline__ char *sprintf_puthex(char *dst, int64_t c)
+static inline char *sprintf_puthex(char *dst, int64_t c)
 {
     int i=16;
     tmpstr[i]=0;

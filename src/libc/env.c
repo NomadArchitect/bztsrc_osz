@@ -24,7 +24,7 @@
  *     hozol létre a műből, akkor a létrejött művet ugyanazon licensz-
  *     feltételek mellett kell terjesztened, mint az eredetit.
  *
- * @subsystem libc
+ * @subsystem eszközmeghajtók
  * @brief induló környezet értelmező függvények
  */
 
@@ -36,7 +36,7 @@ public char *_environment=NULL;
 /* mivel a kulcsok többször is előfordulhatnak, mindig az utolsót kell figyelembe venni */
 
 /**
- * szám típusú változó visszaadása
+ * szám típusú változó visszaadása (csak eszközmeghajtók és szolgáltatások számára elérhető)
  */
 public uint64_t env_num(char *key, uint64_t def, uint64_t min, uint64_t max)
 {
@@ -61,7 +61,7 @@ public uint64_t env_num(char *key, uint64_t def, uint64_t min, uint64_t max)
 }
 
 /**
- * logikai érték változó visszaadása
+ * logikai érték változó visszaadása (csak eszközmeghajtók és szolgáltatások számára elérhető)
  */
 public bool_t env_bool(char *key, bool_t def)
 {
@@ -92,7 +92,8 @@ public bool_t env_bool(char *key, bool_t def)
 }
 
 /**
- * sztring visszaadása egy allokált bufferben, amit a hívónak kell felszabadítania
+ * sztring visszaadása egy allokált bufferben, amit a hívónak kell felszabadítania (csak eszközmeghajtók és szolgáltatások
+ * számára elérhető)
  */
 public char *env_str(char *key, char *def)
 {

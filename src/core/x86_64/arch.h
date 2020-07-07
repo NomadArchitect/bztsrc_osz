@@ -37,14 +37,15 @@
 #define ARCH_ELFEM          EM_X86_64   /* ELF architektúra kód */
 
 /* Rendszerleíró táblák */
-#define systable_acpi_idx   0
-#define systable_smbi_idx   1
-#define systable_efi_idx    2
-#define systable_pcie_idx   3           /* mp táblát nem használjuk */
-#define systable_dsdt_idx   4
-#define systable_apic_idx   5
-#define systable_ioapic_idx 6
-#define systable_hpet_idx   7
+#define systable_dma_idx    0
+#define systable_acpi_idx   1
+#define systable_smbi_idx   2
+#define systable_efi_idx    3
+#define systable_pcie_idx   4           /* mp táblát nem használjuk */
+#define systable_dsdt_idx   5
+#define systable_apic_idx   6
+#define systable_ioapic_idx 7
+#define systable_hpet_idx   8
 
 #define cpu_relax __asm__ __volatile__("pause":::"memory");
 #define breakpoint __asm__ __volatile__("xchg %bx, %bx")

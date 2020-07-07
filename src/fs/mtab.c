@@ -34,7 +34,7 @@
 #include "vfs.h"
 #include "fsdrv.h"
 
-uint8_t rootmounted = false;
+bool_t rootmounted = false;
 uint16_t nmtab = 0;
 mtab_t *mtab = NULL;
 
@@ -49,7 +49,7 @@ void mtab_init()
 /**
  * új felcsatolási pont hozzáadása
  */
-uint16_t mtab_add(char *dev, char *file, char __attribute__((unused)) *opts)
+uint16_t mtab_add(char *dev, char *file, unused char *opts)
 {
     fid_t fd, ff;
     uint16_t fs, i;
@@ -153,53 +153,59 @@ bool_t mtab_del(char *dev, char *file)
 void mtab_fstab(char *ptr, size_t size)
 {
     char *dev, *file, *opts, *end, pass;
-    char *fstab = (char*)malloc(size);
+    char *fstab;
 
-    /* le kell másolnunk, mivel nullával zárjuk le benne a sztringeket */
-    if(!fstab || errno()) exit(2);
-    memcpy(fstab, ptr, size);
-    end = fstab + size;
-    /* az mtab_add-ot megfelelő sorrendben kell meghívni */
-    for(pass = '1'; pass <= '9'; pass++) {
-        ptr = fstab;
-        while(ptr < end) {
-            while(*ptr == '\n' || *ptr == '\t' || *ptr == ' ') ptr++;
-            /* átlépjük a kommenteket */
-            if(*ptr == '#') {
-                for(ptr++; ptr < end && *(ptr-1) != '\n'; ptr++);
-                continue;
+    /* ha nincs fstab, akkor csak hozzáadjuk a root-ot */
+    if(!ptr || !size) {
+        mtab_add("/dev/root", "/", "");
+    } else {
+        /* le kell másolnunk, mivel nullával zárjuk le benne a sztringeket */
+        fstab = (char*)malloc(size);
+        if(!fstab || errno()) exit(2);
+        memcpy(fstab, ptr, size);
+        end = fstab + size;
+        /* az mtab_add-ot megfelelő sorrendben kell meghívni */
+        for(pass = '1'; pass <= '9'; pass++) {
+            ptr = fstab;
+            while(ptr < end) {
+                while(*ptr == '\n' || *ptr == '\t' || *ptr == ' ') ptr++;
+                /* átlépjük a kommenteket */
+                if(*ptr == '#') {
+                    for(ptr++; ptr < end && *(ptr-1) != '\n'; ptr++);
+                    continue;
+                }
+                /* blokk eszköz */
+                dev = ptr;
+                while(ptr < end && *ptr && *ptr != '\t' && *ptr != ' ') ptr++;
+                if(*ptr == '\n') continue;
+                *ptr = 0; ptr++;
+                while(ptr < end && (*ptr == '\t' || *ptr == ' ')) ptr++;
+                if(*ptr == '\n') continue;
+                /* felcsatolási pont */
+                file = ptr;
+                while(ptr < end && *ptr && *ptr != '\t' && *ptr != ' ') ptr++;
+                if(*ptr == '\n') continue;
+                *ptr = 0; ptr++;
+                while(ptr < end && (*ptr == '\t' || *ptr == ' ')) ptr++;
+                if(*ptr == '\n') continue;
+                /* opciók és hozzáférések */
+                opts = ptr;
+                while(ptr < end && *ptr && *ptr != '\t' && *ptr != ' ') ptr++;
+                if(*ptr == '\n') continue;
+                *ptr = 0; ptr++;
+                while(ptr < end && (*ptr == '\t' || *ptr == ' ')) ptr++;
+                if(*ptr == '\n') continue;
+                /* hányadik körben kell felcsatolni */
+                if(*ptr == pass)
+                    mtab_add(dev, file, opts);
+                ptr++;
             }
-            /* blokk eszköz */
-            dev = ptr;
-            while(ptr < end && *ptr && *ptr != '\t' && *ptr != ' ') ptr++;
-            if(*ptr == '\n') continue;
-            *ptr = 0; ptr++;
-            while(ptr < end && (*ptr == '\t' || *ptr == ' ')) ptr++;
-            if(*ptr == '\n') continue;
-            /* felcsatolási pont */
-            file = ptr;
-            while(ptr < end && *ptr && *ptr != '\t' && *ptr != ' ') ptr++;
-            if(*ptr == '\n') continue;
-            *ptr = 0; ptr++;
-            while(ptr < end && (*ptr == '\t' || *ptr == ' ')) ptr++;
-            if(*ptr == '\n') continue;
-            /* opciók és hozzáférések */
-            opts = ptr;
-            while(ptr < end && *ptr && *ptr != '\t' && *ptr != ' ') ptr++;
-            if(*ptr == '\n') continue;
-            *ptr = 0; ptr++;
-            while(ptr < end && (*ptr == '\t' || *ptr == ' ')) ptr++;
-            if(*ptr == '\n') continue;
-            /* hányadik körben kell felcsatolni */
-            if(*ptr == pass)
-                mtab_add(dev, file, opts);
-            ptr++;
+            /* ha az első körben nem csatoltuk fel a gyökérkönyvtárat, akkor most megtesszük manuálisan */
+            if(pass == '1' && !rootmounted)
+                mtab_add("/dev/root", "/", "");
         }
-        /* ha az első körben nem csatoltuk fel a gyökérkönyvtárat, akkor most megtesszük manuálisan */
-        if(pass == '1' && !rootmounted)
-            mtab_add("/dev/root", "/", "");
+        free(fstab);
     }
-    free(fstab);
 }
 
 #if DEBUG

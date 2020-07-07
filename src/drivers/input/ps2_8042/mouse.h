@@ -33,7 +33,7 @@ uint8_t mouse_pktsize, mouse_cnt, mouse_buf[8];
 /**
  * PS/2 Intellimouse inicializálása
  */
-static __inline__ bool_t mouse_init()
+static inline bool_t mouse_init()
 {
     ps2_cmd0(0xA8);                 /* engedélyezzük a második portot */
     if(ps2_aux0(0xFF) != 0xFA)      /* reszet és önteszt */
@@ -67,7 +67,7 @@ static __inline__ bool_t mouse_init()
 /**
  * megszakításkezelő
  */
-static __inline__ void mouse_irq()
+static inline void mouse_irq()
 {
     if(!(inb(PS2_CTRL)&1)) return;  /* néha fantom IRQ-t kapunk a már kiolvasott ack miatt */
     if(mouse_cnt >= sizeof(mouse_buf)-1) mouse_cnt = 0;

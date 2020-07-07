@@ -432,7 +432,7 @@ void env_init()
     lang[0]='e'; lang[1]='n'; lang[2]=0;
 
     /* platform függő alapértékek */
-    memcpy((void*)&systables, (void*)&bootboot.arch, 64);
+    memcpy((void*)&systables[1], (void*)&bootboot.arch, 56);
     platform_env();
 
     /* környezeti változók szövegének értelmezése */

@@ -427,9 +427,9 @@ public __attribute__((malloc)) void *bzt_alloc(uint64_t *arena, size_t a, void *
 
 #if DEBUG
 /**
- * foglaltsági memóriatérkép listázása, debuggolási célra
+ * foglaltsági memóriatérkép listázása, debuggolási célra (csak ha DEBUG = 1)
  */
-public void bzt_dumpmem(uint64_t *arena)
+public void dbg_bztdump(uint64_t *arena)
 {
     uint i,j,k,l,n,o,cnt;
     int mask[]={1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768};

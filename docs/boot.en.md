@@ -29,14 +29,14 @@ To boot up the computer, `core` does the following:
 5. `env_init` parses the [environment variables](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.en.md) in [src/core/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/env.c) passed by the loader.
 6. `pmm_init()` sets up Physical Memory Manager in [src/core/pmm.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c).
 7. `vmm_init()` sets up Virtual Memory Manager and paging in [src/core/(arch)/vmm.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/vmm.c).
-8. `drivers_init()` in [src/core/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c), creates `IDLE` task (the CPU "driver"), initializes the interrupt controller and the IRQ Routing Table (IRT), and enumerates system buses to load the required [device drivers](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.en.md) with `drivers_add()`.
+8. `drivers_init()` in [src/core/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c), creates `IDLE` task (the CPU "driver"), initializes the interrupt controller and the IRQ Routing Table (IRT), and enumerates drivers database to load the required [device drivers](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.en.md) with `drivers_add()`.
 9. next `core` loads a [system service](https://gitlab.com/bztsrc/osz/blob/master/docs/services.en.md), `service_add(SRV_FS)` which is a normal system service, except it has the initrd entirely mapped in in it's bss.
 10. user interface is loaded with `service_add(SRV_UI)`. These first three services (aka `IDLE`, `FS`, `UI`) are mandatory, unlike the rest (hence the upper-case).
 11. loads additional, non-critical tasks by several `service_add()` calls, like the `syslog`, `inet`, `sound`, `print` and `init` system services.
 12. drops supervisor privileges and starts co-operative multitasking by calling `drivers_start()`.
 13. that function switches to the FS task, which arranges memory so that it can receive mknod calls from drivers.
 14. then the scheduler, `sched_pick()` in [src/core/sched.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/sched.c) chooses driver and service tasks one by one. Note that pre-emption is not enabled at this point.
-15. driver tasks perform hardware initialization and they fill up the IRT.
+15. driver tasks perform hardware initialization and they fill up the IRT. Optionally drivers might load additional device drivers (typically PCI and ACPI).
 16. when all tasks are blocked and the `IDLE` task is scheduled for the first time, a call to `drivers_ready()` in [src/core/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c) is made, which
 17. enables IRQs with entries in the IRT. It also enables scheduler and wallclock IRQ and with that pre-emption may begin.
 18. now that all storage device drivers are finished with their initialization, as a last thing `drivers_start()` sends a SYS_mountfs message to the `FS` task. At this point the `core` has done with booting.

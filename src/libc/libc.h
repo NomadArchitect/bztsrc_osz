@@ -33,6 +33,6 @@
 typedef struct {
     char errstrs[(ENOTIMPL+1)*TXT_LIBCSIZE];
     char osver[256];
-} __attribute__((packed)) _libc_t;
+} packed _libc_t;
 extern public const _libc_t _libc;
 

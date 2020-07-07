@@ -130,6 +130,11 @@ func mq_dispatchcall
 endf
 
 #if DEBUG
+/**
+ * debug üzenet kiírása a kernel konzolra (csak ha DEBUG = 1)
+ *
+ * void dbg_printf(const char *fmt, ...);
+ */
 func dbg_printf
     pushq   %rbp
     pushq   %r12

@@ -402,7 +402,7 @@ static void kprintf_puthex(int64_t c)
 /**
  * ascii érték megjelenítése, %a
  */
-static __inline__ void kprintf_putascii(int64_t c)
+static inline void kprintf_putascii(int64_t c)
 {
     *((int64_t*)&tmpstr) = c;
     tmpstr[cnt>0&&cnt<=8?cnt:8]=0;
@@ -412,7 +412,7 @@ static __inline__ void kprintf_putascii(int64_t c)
 /**
  * hasonló, de a vezérlőkaraktereket kihagyja, %A
  */
-static __inline__ void kprintf_dumpascii(int64_t c)
+static inline void kprintf_dumpascii(int64_t c)
 {
     int i;
 
@@ -431,7 +431,7 @@ static __inline__ void kprintf_dumpascii(int64_t c)
 /**
  * decimálisra formázott szám, %d
  */
-static __inline__ void kprintf_putdec(int64_t c)
+static inline void kprintf_putdec(int64_t c)
 {
     int64_t i=18,s=c<0;
 
@@ -457,7 +457,7 @@ static __inline__ void kprintf_putdec(int64_t c)
 /**
  * bináris formázás, %b
  */
-static __inline__ void kprintf_putbin(int64_t c)
+static inline void kprintf_putbin(int64_t c)
 {
     int i=0;
     int64_t j=1<<15;
@@ -474,7 +474,7 @@ static __inline__ void kprintf_putbin(int64_t c)
 /**
  * uuid egyedi azonosító formázás, %U
  */
-static __inline__ void kprintf_uuid(uuid_t *mem)
+static inline void kprintf_uuid(uuid_t *mem)
 {
     int i;
 
@@ -507,7 +507,7 @@ void kprintf_clock()
 /**
  * memória dump, %D
  */
-static __inline__ void kprintf_dumpmem(uint8_t *mem)
+static inline void kprintf_dumpmem(uint8_t *mem)
 {
     volatile uint8_t *ptr;
     int i, j, k=cnt, old=dbg_indump;
@@ -545,7 +545,7 @@ static __inline__ void kprintf_dumpmem(uint8_t *mem)
 /**
  * Taszk Kontroll Blokk dumpolás, %T
  */
-static __inline__ void kprintf_dumptcb(uint8_t *mem)
+static inline void kprintf_dumptcb(uint8_t *mem)
 {
     tcb_arch_t *tcb = (tcb_arch_t*)mem;
 
@@ -583,7 +583,7 @@ static __inline__ void kprintf_dumptcb(uint8_t *mem)
 /**
  * címfordító tábla dump, %P
  */
-static __inline__ void kprintf_dumppagetable(volatile uint64_t *mem)
+static inline void kprintf_dumppagetable(volatile uint64_t *mem)
 {
     volatile int64_t c;
     int i, k=cnt;
@@ -609,7 +609,7 @@ static __inline__ void kprintf_dumppagetable(volatile uint64_t *mem)
 /**
  * címfordítás bejárás dump, %p
  */
-static __inline__ void kprintf_dumppagewalk(uint64_t *mem)
+static inline void kprintf_dumppagewalk(uint64_t *mem)
 {
     tcb_t *tcb = (tcb_t*)0;
     virt_t memroot, addr=(virt_t)mem;

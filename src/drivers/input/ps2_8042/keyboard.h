@@ -43,7 +43,7 @@ uint8_t keyboard_usb[] = {  /* PS/2 scancode set 2-ből USB HID scancode-okká a
 /**
  * PS/2 billentyűzet inicializálása
  */
-static __inline__ void keyboard_init()
+static inline void keyboard_init()
 {
     ps2_cmd0(0xAE);                 /* engedélyezzük az első portot */
     if(ps2_kbd0(0xFF) != 0xFA)      /* reszet */
@@ -65,7 +65,7 @@ static __inline__ void keyboard_init()
 /**
  * megszakításkezelő
  */
-static __inline__ void keyboard_irq()
+static inline void keyboard_irq()
 {
     uint8_t key;
 

@@ -2,29 +2,29 @@
  * bootboot.h
  *
  * Copyright (C) 2017 - 2020 bzt (bztsrc@gitlab)
+ * https://opensource.org/licenses/MIT
  *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * A szabad felhasználás jogát ezennel ráruházom bármely személyre
+ * aki jelen mű és dokumentációjának egy példányát (a továbbiakban
+ * “Szoftver”) megszerezte, hogy a szoftvert korlátozás nélkül
+ * - beleértve a használat, másolás, módosítás, kiadás, terjesztés,
+ * és/vagy értékesítés jogát - felhasználhassa, és a továbbadott
+ * példánnyal hasonlóan járhasson el, amennyiben a következő feltételek
+ * teljesülnek:
  *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
+ * A fenti szerzői jogot és felhasználási jogot biztosító szöveget
+ * fel kell tüntetni a Szoftver minden teljes és rész másolataiban is.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
+ * A SZOFTVER “ÚGY, AHOGY VAN” KERÜL TERJESZTÉSE, MINDENNEMŰ JÓTÁLLÁS
+ * NÉLKÜL, KÖZVETVE VAGY KÖZVETETTEN, BELEÉRTVE A KERESKEDELMI JÓTÁLLÁS
+ * VAGY EGY ADOTT CÉLRA TÖRTÉNŐ FELHASZNÁLÁSRA ALKALMASSÁGOT. A SZERZŐI
+ * JOG TULAJDONOSA SEMMILYEN KÖRÜLMÉNYEK KÖZÖTT NEM TEHETŐ FELELŐSSÉ
+ * BÁRMILYEN MÓDON, BELEÉRVE A SZOFTVER RENDELTETÉSSZERŰ HASZNÁLATA
+ * SORÁN, VAGY RENDELTETÉSSZERŰ HASZNÁLATTÓL ELTÉRŐ FELHASZNÁLÁS
+ * SORÁN A SZOFTVER ÁLTAL ESETLEGESEN OKOZOTT KÁROKÉRT.
  *
- * This file is part of the BOOTBOOT Protocol package.
- * @brief The BOOTBOOT structure
+ * Ez a fájl a BOOTBOOT Protokoll csomag része.
+ * @brief A BOOTBOOT struktúra
  *
  */
 
@@ -37,39 +37,40 @@ extern "C" {
 
 #define BOOTBOOT_MAGIC "BOOT"
 
-/* default virtual addresses for level 0 and 1 static loaders */
-#define BOOTBOOT_MMIO   0xfffffffff8000000  /* memory mapped IO virtual address */
-#define BOOTBOOT_FB     0xfffffffffc000000  /* frame buffer virtual address */
-#define BOOTBOOT_INFO   0xffffffffffe00000  /* bootboot struct virtual address */
-#define BOOTBOOT_ENV    0xffffffffffe01000  /* environment string virtual address */
-#define BOOTBOOT_CORE   0xffffffffffe02000  /* core loadable segment start */
+/* a 0-ás és 1-es szintű betöltők alapértelmezett virtuális címei */
+#define BOOTBOOT_MMIO   0xfffffffff8000000  /* memóriába leképezett B/K virtuális címe */
+#define BOOTBOOT_FB     0xfffffffffc000000  /* frémbuffer virtuális címe */
+#define BOOTBOOT_INFO   0xffffffffffe00000  /* bootboot struktúra virtuális címe */
+#define BOOTBOOT_ENV    0xffffffffffe01000  /* environment sztring virtuális címe */
+#define BOOTBOOT_CORE   0xffffffffffe02000  /* core betölthető szegmens kezdetének címe */
 
-/* minimum protocol level:
- *  hardcoded kernel name, static kernel memory addresses */
+/* minimum protokoll szint:
+ *  bevasalt kernelnév, statikus kernel memória címek */
 #define PROTOCOL_MINIMAL 0
-/* static protocol level:
- *  kernel name parsed from environment, static kernel memory addresses */
+/* statikus protokoll szint:
+ *  kernelnév az environment-ből, statikus kernel memória címek */
 #define PROTOCOL_STATIC  1
-/* dynamic protocol level:
- *  kernel name parsed, kernel memory addresses from ELF or PE symbols */
+/* dinamikus protokoll szint:
+ *  kernelnév az environment-ből, kernel memória címek az ELF vagy PE szimbólumokból */
 #define PROTOCOL_DYNAMIC 2
-/* big-endian flag */
+/* nagyüelöl (big-endian) jelző */
 #define PROTOCOL_BIGENDIAN 0x80
 
-/* loader types, just informational */
+/* betöltő típusok, csupán jelzés értékű */
 #define LOADER_BIOS (0<<2)
 #define LOADER_UEFI (1<<2)
 #define LOADER_RPI  (2<<2)
 
-/* framebuffer pixel format, only 32 bits supported */
+/* frémbuffer pixel formátuma, csak 32 bites mód támogatott */
 #define FB_ARGB   0
 #define FB_RGBA   1
 #define FB_ABGR   2
 #define FB_BGRA   3
 
-/* mmap entry, type is stored in least significant tetrad (half byte) of size
- * this means size described in 16 byte units (not a problem, most modern
- * firmware report memory in pages, 4096 byte units anyway). */
+/* mmap bejegyzés, a típus a méret legkevésbé szignifikáns alsó terádjában
+ * (félbájtjában) van tárolva. Ez azt jelenti, csak 16 bájt többszöröse lehet
+ * a méret (nem probléma, a legtöbb modern firmver úgyis lapokban, 4096
+ * bájtos méretben adja vissza a méretet). */
 typedef struct {
   uint64_t   ptr;
   uint64_t   size;
@@ -79,32 +80,32 @@ typedef struct {
 #define MMapEnt_Type(a) (a->size & 0xF)
 #define MMapEnt_IsFree(a) ((a->size&0xF)==1)
 
-#define MMAP_USED     0   /* don't use. Reserved or unknown regions */
-#define MMAP_FREE     1   /* usable memory */
-#define MMAP_ACPI     2   /* acpi memory, volatile and non-volatile as well */
-#define MMAP_MMIO     3   /* memory mapped IO region */
+#define MMAP_USED     0   /* nem használható. Fenntartott vagy ismeretlen régió */
+#define MMAP_FREE     1   /* használható memória */
+#define MMAP_ACPI     2   /* acpi memória, tranzisztens és nem tranzisztens egyaránt */
+#define MMAP_MMIO     3   /* memóriába leképzett B/K régió */
 
 #define INITRD_MAXSIZE 16 /* Mb */
 
 typedef struct {
-  /* first 64 bytes is platform independent */
-  uint8_t    magic[4];    /* 'BOOT' magic */
-  uint32_t   size;        /* length of bootboot structure, minimum 128 */
-  uint8_t    protocol;    /* 1, static addresses, see PROTOCOL_* and LOADER_* above */
-  uint8_t    fb_type;     /* framebuffer type, see FB_* above */
-  uint16_t   numcores;    /* number of processor cores */
-  uint16_t   bspid;       /* Bootsrap processor ID (Local APIC Id on x86_64) */
-  int16_t    timezone;    /* in minutes -1440..1440 */
-  uint8_t    datetime[8]; /* in BCD yyyymmddhhiiss UTC (independent to timezone) */
-  uint64_t   initrd_ptr;  /* ramdisk image position and size */
+  /* az első 64 bájt platform független */
+  uint8_t    magic[4];    /* mágikus 'BOOT' */
+  uint32_t   size;        /* a bootboot struktúra mérete, minimum 128 */
+  uint8_t    protocol;    /* lásd PROTOCOL_* és LOADER_* fentebb */
+  uint8_t    fb_type;     /* frémebuffer típusa, lásd FB_* fentebb */
+  uint16_t   numcores;    /* processzormagok száma */
+  uint16_t   bspid;       /* indító (Bootsrap) processor azonosító (a Local APIC Id x86_64-on) */
+  int16_t    timezone;    /* időzóna, percekben -1440..1440 */
+  uint8_t    datetime[8]; /* dátum BCD-ben ééééhhnnóóppmm UTC (időzónától független) */
+  uint64_t   initrd_ptr;  /* memórialemezkép poziciója és mérete a memóriában */
   uint64_t   initrd_size;
-  uint8_t    *fb_ptr;     /* framebuffer pointer and dimensions */
+  uint8_t    *fb_ptr;     /* frémbuffer fizikai címe és dimenziója */
   uint32_t   fb_size;
   uint32_t   fb_width;
   uint32_t   fb_height;
   uint32_t   fb_scanline;
 
-  /* the rest (64 bytes) is platform specific */
+  /* a többi (újabb 64 bájt) platformspecifikus */
   union {
     struct {
       uint64_t acpi_ptr;
@@ -128,11 +129,11 @@ typedef struct {
     } aarch64;
   } arch;
 
-  /* from 128th byte, MMapEnt[], more records may follow */
+  /* a 128. bájttól a bootboot méretig, több MMapEnt[] bejegyzés */
   MMapEnt    mmap;
-  /* use like this:
-   * MMapEnt *mmap_ent = &bootboot.mmap; mmap_ent++;
-   * until you reach bootboot->size */
+  /* használat:
+   * MMapEnt *mmap_ent = &bootboot.mmap;
+   * majd mmap_ent++; amíg át nem lépi a bootboot->size-ban megadott méretet */
 } __attribute__((packed)) BOOTBOOT;
 
 

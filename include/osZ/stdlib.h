@@ -46,6 +46,8 @@
 #ifndef _AS
 extern uint64_t _debug;
 extern void dbg_printf(char * fmt, ...);
+extern void dbg_msg(msg_t *msg);
+extern void dbg_bztdump(uint64_t *arena);
 #endif
 #endif
 
@@ -53,9 +55,6 @@ extern void dbg_printf(char * fmt, ...);
 /* memória allokátor */
 void *bzt_alloc(uint64_t *arena, size_t a, void *ptr, size_t s, int flag);
 void bzt_free(uint64_t *arena, void *ptr);
-#if DEBUG
-void bzt_dumpmem(uint64_t *arena);
-#endif
 
 /* taszk specifikus memória allokálás (Task Local Storage) */
 /**

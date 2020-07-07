@@ -30,14 +30,14 @@ Hogy a gépet elindítsa, a `core` a következő lépéseket hajtja végre:
 5. `env_init` értelmezi a betöltő által átadott [induló környezeti változók](https://gitlab.com/bztsrc/osz/blob/master/docs/bootopts.md)at az [src/core/env.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/env.c)-ben.
 6. `pmm_init()` felkonfigurálja a Fizikai Memória Kezelőt az [src/core/pmm.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c)-ben.
 7. `vmm_init()` felkonfigurálja a Virtuális Memória Kezelőt és a lapcímfordítást az [src/core/(arch)/vmm.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/vmm.c)-ben.
-8. `drivers_init()` az [src/core/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c)-ben létrehozza az `IDLE` taszkot (CPU "meghajtó"), inicializálja a megszakításvezérlőt, az IRQ átirányító táblát (IRT), majd végigpásztázza a rendszerbuszokat és a szükséges [eszközmeghajtókat](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md) betölti `drivers_add()` hívással.
-9. következőnek a `core` betölt egy [rendszer szolgáltatás](https://gitlab.com/bztsrc/osz/blob/master/docs/services.en.md)t a `service_add(SRV_FS)` hívással, ami egy normál rendszer szolgáltatás, kivéve, hogy az initrd le van képezve a bss memóriájába.
+8. `drivers_init()` az [src/core/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c)-ben létrehozza az `IDLE` taszkot (CPU "meghajtó"), inicializálja a megszakításvezérlőt, az IRQ átirányító táblát (IRT), majd végignézi az eszközmeghajtó-adatbázist és a szükséges [eszközmeghajtókat](https://gitlab.com/bztsrc/osz/blob/master/docs/drivers.md) betölti `drivers_add()` hívással.
+9. következőnek a `core` betölt egy [rendszer szolgáltatás](https://gitlab.com/bztsrc/osz/blob/master/docs/services.md)t a `service_add(SRV_FS)` hívással, ami egy normál rendszer szolgáltatás, kivéve, hogy az initrd le van képezve a bss memóriájába.
 10. betöltésre kerül a felhasználói felület a `service_add(SRV_UI)` hívással. Ez az első három szolgáltatás (úgymint `IDLE`, `FS`, `UI`) alapvető fontosságú, nem úgy, mint a többi (ezért a nagybetűs név).
 11. további `service_add()` hívásokkal nem rendszer kritikus taszkokat tölt be, mint pl `syslog`, `inet`, `sound`, `print` és `init`.
 12. a `drivers_start()` hívásával ledobja a felügyeleti jogosultságot, és elindítja a kooperatív ütemezést.
 13. ez átkapcsol az FS taszkra, ami elrendezi a memóriáját, hogy mknod() hívásokat tudjon fogadni az eszközmeghajtó taszkoktól.
 14. ezután az ütemező, a `sched_pick()` az [src/core/sched.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/sched.c)-ben egymás után kiválasztja az eszközmeghajtó és rendszer szolgáltatás taszkokat futásra. Ekkor még nincs preemptív ütemezés.
-15. az eszközmeghajtók inicializálják a hardvereiket, és feltöltik az IRT-t.
+15. az eszközmeghajtók inicializálják a hardvereiket, és feltöltik az IRT-t. Az eszközmeghajtók esetlegesen újabb eszközmeghajtókat tölthetnek be (tipikusan PCI és ACPI).
 16. miután minden taszk blokkolódott és az `IDLE` taszk először kerül beütemezésre, a `drivers_ready()` az [src/core/drivers.c](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c)-ben meghívódik, ami
 17. engedélyezi azokat az IRQ-kat, amikhez tartozik bejegyzés az IRT-ben. Engedélyezi az ütemező és a falióra IRQ-it is, és ezzel kezdetét veheti a preemptív ütemezés.
 18. most, hogy már minden háttértároló eszközmeghajtó inicializálódott, végezetül a `drivers_start()` küld egy SYS_mountfs üzenetet az `FS` taszknak. Ennél a pontnál a `core` teljesen végzett az indulással.

@@ -9,7 +9,7 @@ OBJS = $(SRCS:.c=.o)
 LIBS += -lc
 ECHO ?= echo
 CFLAGS += -DDEBUG=$(DEBUG) -DOPTIMIZE=$(OPTIMIZE) -D__$(ARCH)__ -nostdinc -I../../include -I../../include/osZ -I../libc \
- -I../libui -I../drivers/include
+ -I../libui -I../drivers/include -I../drivers/include/$(ARCH)
 LDFLAGS += -nostdlib -x -L../../bin/initrd/sys/lib --build-id=none --export-dynamic
 ifeq ($(LINKER),sharedlib)
 CFLAGS += -fPIC

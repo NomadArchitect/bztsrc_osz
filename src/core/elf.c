@@ -338,7 +338,7 @@ elferr:
 /**
  * aktuális címtérben összelinkeli az ELF-eket (run-time linker)
  */
-bool_t elf_rtlink()
+bool_t elf_rtlink(pmm_entry_t *devspec)
 {
     tcb_arch_t *tcba = (tcb_arch_t*)elftcb;
     Elf64_Ehdr *elf;
@@ -350,7 +350,7 @@ bool_t elf_rtlink()
     rela_t *relas = NULL, *rel;
     virt_t vo, vm, *stck, args;
     char *strtable = NULL;
-    uint i, j, e, strsz=0, syment=0, relasz, relaent, jmpsz;
+    uint i, j, k, l, e, strsz=0, syment=0, relasz, relaent, jmpsz;
 
     /* paraméterek ellenőrzése */
     if(elftcb->magic != OSZ_TCB_MAGICH || !elfctx->nelfbin || !elfctx->elfbin) {
@@ -535,9 +535,30 @@ err:    if(relas) free(relas);
                    ELF64_ST_VISIBILITY(s->st_other)==STV_DEFAULT) {
                     /* csak eszközmeghajtók és rendszerszolgáltatások számára elérhető adatok */
                     if(elftcb->priority == PRI_DRV || elftcb->priority == PRI_SRV) {
-                        j = bootboot.size - ((virt_t)&bootboot.mmap - (virt_t)&bootboot);
-                        if(!memcmp(strtable + s->st_name, "_memorymap", 11) && s->st_size >= j)
-                            { memcpy((void*)vo, &bootboot.mmap, j); } else
+                        if(!memcmp(strtable + s->st_name, "drv_bufmem", 11) && s->st_size > 4*sizeof(pmm_entry_t)) {
+                            memset((void*)vo, 0, s->st_size);
+                            k = s->st_size - sizeof(pmm_entry_t);
+                            j = l = 0;
+                            /* ha van eszközspecifikus memória, előbb az jön */
+                            if(devspec) {
+                                /* ha a display eszközmeghajtó, akkor az első leképzett memória a framebuffer */
+                                if(devspec == display_dev) {
+                                    memcpy((void*)vo, bootboot.fb_ptr, 8);
+                                    *((uint64_t*)(vo + 8)) = bootboot.fb_scanline*bootboot.fb_height;
+                                    l = sizeof(pmm_entry_t); k -= sizeof(pmm_entry_t);
+                                }
+                                for(; devspec[j].base && devspec[j].size; j++);
+                                j *= sizeof(pmm_entry_t);
+                                memcpy((void*)(vo + l), devspec, k < j ? k : j);
+                            }
+                            /* aztán az összes hardver memória listája */
+                            if(k > j) {
+                                if(j + numdrvmem * sizeof(pmm_entry_t) > k) k -= j; else k = numdrvmem * sizeof(pmm_entry_t);
+                                memcpy((void*)(vo + l + j), &drvmem, k);
+                            }
+                        } else
+                        if(!memcmp(strtable + s->st_name, "drv_phymem", 11) && s->st_size >= sizeof(systables))
+                            { memcpy((void*)vo, &systables, sizeof(systables)); } else
                         if(!memcmp(strtable + s->st_name, "_platform", 10) && s->st_size >= 16) /* legalább 16 bájtot elvárunk */
                             { memcpy((void*)vo, OSZ_PLATFORM, 1 + sizeof OSZ_PLATFORM); } else
                         if(!memcmp(strtable + s->st_name, "_environment", 13) && s->st_size == 8)

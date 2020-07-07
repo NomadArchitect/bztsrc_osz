@@ -41,7 +41,7 @@ void fault_dbg()
 #endif
 }
 
-void fault_pagefault(int16_t exc __attribute__((unused)), uint64_t errcode, virt_t addr)
+void fault_pagefault(unused int16_t exc, uint64_t errcode, virt_t addr)
 {
     if(vmm_notpresent(errcode) && (
         (addr >= DYN_ADDRESS  && addr < BUF_ADDRESS) || (addr >= SDYN_ADDRESS && addr < LDYN_ADDRESS) ||

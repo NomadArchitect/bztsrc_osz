@@ -60,7 +60,7 @@ uint8_t mbox_call(uint8_t ch, volatile uint32_t *mbox)
 void platform_env()
 {
     /* AUX buffer kiüresítése */
-    register uint64_t r __attribute__((unused));
+    register unused uint64_t r;
     while((*AUX_MU_LSR&0x01)) r=(uint64_t)(*AUX_MU_IO);
     scry=-1;
 }

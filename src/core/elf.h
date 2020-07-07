@@ -58,6 +58,6 @@ typedef struct {
 elfcache_t *elf_getfile(char *fn);                          /* betölt egy ELF objektumot a háttértárolóból a gyorsítótárba */
 bool_t elf_load(char *fn, phy_t eb, size_t es, uint8_t re); /* betölt egy ELF objektumot a gyorsítótárból az aktuális címtérbe */
 void elf_unload(elfbin_t *elfbin);                          /* kiszedi au ELF objektumokat az aktuális címtérből */
-bool_t elf_rtlink();                                        /* aktuális címtérben összelinkeli az ELF-eket (run-time linker) */
+bool_t elf_rtlink(pmm_entry_t *devspec);                    /* aktuális címtérben összelinkeli az ELF-eket (run-time linker) */
 
 #endif

@@ -38,6 +38,8 @@ uint irq_max;                           /* megszakítási vonalak száma */
 uint16_t sched_irq=-1, clock_irq=-1;    /* az ütemező és a falióra irq-i */
 uint16_t numinit;                       /* inicializált CPU-k száma */
 phy_t environment_phy, syslog_phy;      /* az indítási konfigráció és a korai rendszernapló fizikai címe */
+uint16_t numdrvmem;                     /* memórialeképezések száma */
+pmm_entry_t drvmem[256];                /* memórialeképezések listája */
 pmm_entry_t *display_dev;               /* a videokártya eszközspecifikációja */
 char drvpath[128];                      /* elérési út és a megjelenító meghajtója */
 char *dispatcher = "/sys/driver";       /* az eszközmeghajtó taszkok közös kódja */
@@ -172,7 +174,7 @@ void drivers_regintr(uint16_t irq, pid_t task)
     if(irq_routing_table[irq]) {
 #if DEBUG
         if(debug&DBG_IRQ)
-            kprintf("IRQ %d: pid %x\n", irq, task);
+            kprintf("IRQ %d: +pid %x\n", irq, task);
 #endif
         irq_routing_table[irq][i] = task;
     }
@@ -202,7 +204,7 @@ void drivers_unregintr(pid_t task)
                 memcpy((void*)&irq_routing_table[irq][p], (void*)&irq_routing_table[irq][p+1], (i-p)*sizeof(pid_t));
 #if DEBUG
                 if(debug&DBG_IRQ)
-                    kprintf("IRQ %d: --pid %x\n", irq, task);
+                    kprintf("IRQ %d: -pid %x\n", irq, task);
 #endif
             }
             /* ha ez volt az utolsó pid, akkor töröljük az irq-hoz tartozó listát */
@@ -241,8 +243,7 @@ void drivers_intr(uint16_t irq)
 void drivers_add(char *drv, pmm_entry_t *devspec)
 {
     elfctx_t *elfctx = (elfctx_t*)(BUF_ADDRESS + __PAGESIZE);
-    MMapEnt *entry = (MMapEnt*)&bootboot.mmap;
-    uint64_t i, s, num = (bootboot.size-128)/16;
+    uint64_t i, s;
     virt_t v;
     tcb_t *tcb = task_new(PRI_DRV);
     char *c;
@@ -268,35 +269,24 @@ void drivers_add(char *drv, pmm_entry_t *devspec)
             kpanic("%s: %s", TXT_missing, dispatcher);
         /* aztán betöltjük magát az eszközmeghajtót és összelinkeljük */
         if(!elf_load((char*)(BUF_ADDRESS + tcb->cmdline), 0, 0, 0) ||
-            !elf_rtlink()) {
+            !elf_rtlink(devspec)) {
                 if(!((ccb_t*)LDYN_ccb)->core_errno) seterr(ENOEXEC); /* nincs rá szükség, de a biztonság kedvéért beállítjuk */
                 elf_unload(elfctx->elfbin);
                 goto err;
         }
         /* aktiváljuk az új kódszegmenst ha nem volt hiba */
         if(task_execfini(tcb)) {
-            /* ha rendben volt, leképezzük az MMIO-t és az ACPI memóriát a címtérbe
-             * ha egy platformon több ilyen is lehet egyszerre, akkor az eszközmeghajtó _memorymap[__PAGESIZE]
-             * változó definiálásaval megkérheti a valós idejű linkelőt, hogy adja át a memória térképet */
-            for(v = BUF_ADDRESS, i=0; i<num; i++)
-                if(MMapEnt_Type(entry) == MMAP_MMIO || MMapEnt_Type(entry) == MMAP_ACPI) {
-                    vmm_map(tcb, v, MMapEnt_Ptr(entry), MMapEnt_Size(entry), PG_USER_DRVMEM|PG_SHARED);
-                    v += MMapEnt_Size(entry);
-                }
+            v = BUF_ADDRESS;
             /* eszközspecifikáció leképezése */
-            if(devspec) {
-                for(v = DEVSPEC_BASE; devspec->base && devspec->size; devspec++) {
-                    s = devspec->size;
-                    if(s & 0x8000000000000000UL) {
-                        /* még nem létezett a taszk, amikor ezt lefoglaltuk, idle-nek könyveltük, ezt most korrigáljuk */
-                        tcb->allocmem++; idle_tcb.allocmem--;
-                        s &= 0x7fffffffffffffffUL;
-                        i = PG_USER_RW;
-                    } else
-                        i = PG_USER_DRVMEM|PG_SHARED;
-                    vmm_map(tcb, v, vmm_phyaddr(devspec->base), s, i);
-                    v += s;
+            if(devspec)
+                for(s = 0; devspec->base && devspec->size; devspec++, v += s) {
+                    s = (devspec->size+__PAGESIZE-1) & ~(__PAGESIZE-1);
+                    vmm_map(tcb, v, vmm_phyaddr(devspec->base), s, PG_USER_DRVMEM|PG_SHARED);
                 }
+            /* leképezzük az összes MMIO-t és az ACPI memóriát is a címtérbe */
+            for(i = s = 0; i<numdrvmem; i++, v += drvmem[i].size) {
+                s = (drvmem[i].size+__PAGESIZE-1) & ~(__PAGESIZE-1);
+                vmm_map(tcb, v, vmm_phyaddr(drvmem[i].base), s, PG_USER_DRVMEM|PG_SHARED);
             }
             /* naplózás és ütemezőhöz hozzáadás */
             for(c = drvpath+9; *c && *c!='.'; c++);
@@ -322,7 +312,7 @@ void service_add(int srv, char *cmd)
     virt_t v;
     char *c, *f, *name = (srv == SRV_FS? "FS" : (srv == SRV_UI? "UI" : cmd+4));
     uint l = strlen(name);
-    uint64_t i, s;
+    uint64_t s;
 
     if(task_execinit(tcb, cmd, NULL, envp)) {
         /* betöltjük a szolgáltatás kódját, és leképezzük a konfigurációt vagy a rendszernaplót */
@@ -348,7 +338,7 @@ void service_add(int srv, char *cmd)
             kpanic("%s: %s", TXT_missing, display_drv);
 
         /* aztán összelinkeljük, ez megint kritikus a nagybetűs taszkok esetén */
-        if(!elf_rtlink()) {
+        if(!elf_rtlink(NULL)) {
             elf_unload(elfctx->elfbin);
             goto err;
         }
@@ -358,23 +348,17 @@ void service_add(int srv, char *cmd)
             if(srv == SRV_FS)
                 vmm_map(tcb, BUF_ADDRESS, bootboot.initrd_ptr, bootboot.initrd_size, PG_USER_RW|PG_SHARED);
             if(srv == SRV_UI) {
-                vmm_map(tcb, BUF_ADDRESS, (phy_t)bootboot.fb_ptr, bootboot.fb_scanline*bootboot.fb_height,
-                    PG_USER_DRVMEM|PG_SHARED);
+                v = BUF_ADDRESS;
+                /* framebuffer az UI-nak */
+                s = (bootboot.fb_scanline*bootboot.fb_height+__PAGESIZE-1) & ~(__PAGESIZE-1);
+                vmm_map(tcb, v, (phy_t)bootboot.fb_ptr, s, PG_USER_DRVMEM|PG_SHARED);
+                v += s;
                 /* eszközspecifikáció leképezése */
-                if(display_dev) {
-                    for(v = DEVSPEC_BASE; display_dev->size; display_dev++) {
-                        s = display_dev->size;
-                        if(s & 0x8000000000000000UL) {
-                            /* még nem létezett a taszk, amikor ezt lefoglaltuk, idle-nek könyveltük, ezt most korrigáljuk */
-                            tcb->allocmem++; idle_tcb.allocmem--;
-                            s &= 0x7fffffffffffffffUL;
-                            i = PG_USER_RW;
-                        } else
-                            i = PG_USER_DRVMEM|PG_SHARED;
-                        vmm_map(tcb, v, vmm_phyaddr(display_dev->base), s, i);
-                        v += s;
+                if(display_dev)
+                    for(s = 0; display_dev->base && display_dev->size; display_dev++, v += s) {
+                        s = (display_dev->size+__PAGESIZE-1) & ~(__PAGESIZE-1);
+                        vmm_map(tcb, v, vmm_phyaddr(display_dev->base), s, PG_USER_DRVMEM|PG_SHARED);
                     }
-                }
             }
             /* naplózás és ütemezőhöz hozzáadás */
             syslog(LOG_INFO, " %s -%d pid %x", name, -srv, tcb->pid);

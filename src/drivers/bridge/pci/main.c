@@ -42,28 +42,24 @@ mem_entry_t memspec[8];
 /*
  * PCI configurációs regiszterek írása / olvasása
  */
-static __inline__ uint32_t pci_config_read(uint8_t bus, uint8_t dev, uint8_t fnc, uint32_t reg)
+static inline uint32_t pci_config_read(uint8_t bus, uint8_t dev, uint8_t fnc, uint32_t reg)
 {
-    register uint32_t ret;
-    __asm__ __volatile__("outl %0, %1" :: "a"(
-        ((uint32_t)bus << 16) | ((uint32_t)dev << 11) | ((uint32_t)fnc << 8) | (reg & 0xfc) | ((reg & 0xf00) << 16) | 0x80000000),
-        "Nd"((uint16_t)0xCF8));
-    __asm__ __volatile__("inl %1, %0;" : "=a"(ret) : "Nd"((uint16_t)0xCFC));
-    return ret;
+    outl(0xCF8,
+        ((uint32_t)bus << 16) | ((uint32_t)dev << 11) | ((uint32_t)fnc << 8) | (reg & 0xfc) | ((reg & 0xf00) << 16) | 0x80000000);
+    return inl(0xCFC);
 }
 
-static __inline__ void pci_config_write(uint8_t bus, uint8_t dev, uint8_t fnc, uint32_t reg, uint32_t val)
+static inline void pci_config_write(uint8_t bus, uint8_t dev, uint8_t fnc, uint32_t reg, uint32_t val)
 {
-    __asm__ __volatile__("outl %0, %1" :: "a"(
-        ((uint32_t)bus << 16) | ((uint32_t)dev << 11) | ((uint32_t)fnc << 8) | (reg & 0xfc) | ((reg & 0xf00) << 16) | 0x80000000),
-        "Nd"((uint16_t)0xCF8));
-    __asm__ __volatile__("outl %0, %1" :: "a"(val), "Nd"((uint16_t)0xCFC));
+    outl(0xCF8,
+        ((uint32_t)bus << 16) | ((uint32_t)dev << 11) | ((uint32_t)fnc << 8) | (reg & 0xfc) | ((reg & 0xf00) << 16) | 0x80000000);
+    outl(0xCFC, val);
 }
 
 /**
- * busz pásztázása, eszközök detektálása vagy eszköz inicializálás, 1-el tér vissza, ha sikerült (eszközmeghajtók implementálják)
+ * busz pásztázása, eszközök detektálása vagy eszköz inicializálás (eszközmeghajtók implementálják)
  */
-public int drv_init()
+public void drv_init()
 {
     uint8_t b, d, f, m;
     uint32_t dev, sub, cls;
@@ -154,47 +150,46 @@ public int drv_init()
             } /* funkció */
         } /* eszköz */
     } /* busz */
-    return 0;
 }
 
 /**
  * drv_regirq() vagy drv_regtmr() esetén hívódik, utóbbinál irq == USHRT_MAX (eszközmeghajtók implementálják)
  */
-public void drv_irq(uint16_t irq __attribute__((unused)), uint64_t __attribute__((unused)) ticks)
+public void drv_irq(unused uint16_t irq, unused uint64_t ticks)
 {
 }
 
 /**
  * akkor hívódik, ha valaki megnyitja a mknod() által kreált fájlt (eszközmeghajtók implementálják)
  */
-public void drv_open(dev_t device __attribute__((unused)), uint64_t mode __attribute__((unused)))
+public void drv_open(unused dev_t device, unused uint64_t mode)
 {
 }
 
 /**
  * amikor bezárják az eszközfájlt (eszközmeghajtók implementálják)
  */
-public void drv_close(dev_t device __attribute__((unused)))
+public void drv_close(unused dev_t device)
 {
 }
 
 /**
  * olvasás az eszközfájlból (eszközmeghajtók implementálják)
  */
-public void drv_read(dev_t device __attribute__((unused)))
+public void drv_read(unused dev_t device)
 {
 }
 
 /**
  * írás az eszközfájlba (eszközmeghajtók implementálják)
  */
-public void drv_write(dev_t device __attribute__((unused)))
+public void drv_write(unused dev_t device)
 {
 }
 
 /**
  * eszközparancs (eszközmeghajtók implementálják)
  */
-public void drv_ioctl(dev_t device __attribute__((unused)))
+public void drv_ioctl(unused dev_t device)
 {
 }

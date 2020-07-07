@@ -36,13 +36,24 @@ public const alignmem __attribute__((section(".rodata"))) _libc_t _libc;
 public char **__argumen;
 public char **__environ;
 public uint64_t errn;
-#if DEBUG
-public uint64_t _debug;
-#endif
 
 typedef void (*atexit_t)(void);
 uint atexit_num = 0;
 atexit_t *atexit_hooks = NULL;
+
+#if DEBUG
+public uint64_t _debug;
+/* a dbg_printf az stdlib.S-ben van, mert csak egy syscall */
+/**
+ * egy üzenet formázott dumpolása (csak ha DEBUG = 1)
+ */
+public void dbg_msg(msg_t *msg)
+{
+    dbg_printf(" msg %3x -> %3x, #%2x(", EVT_SENDER(msg->evt), getpid(), EVT_FUNC(msg->evt));
+    dbg_printf(msg->evt & MSG_PTRDATA? "*%x[%d]" : "%x,%x", msg->data.scalar.arg0, msg->data.scalar.arg1);
+    dbg_printf(",%x,%x,%x,%x)\n",msg->data.scalar.arg2,msg->data.scalar.arg3,msg->data.scalar.arg4,msg->data.scalar.arg5);
+}
+#endif
 
 /**
  * hibakód beállítása
@@ -92,17 +103,6 @@ public int lang_init(char *prefix, int txtc, char **txt)
     return i;
 }
 */
-/*
-public void dumpmsg(msg_t *msg, int errno)
-{
-    if(getpid()==0x4E) {
-dbg_printf("recv msg serial %d len %d%4D",msg->serial,msg->arg1,msg);
-    if(msg->evt&MSG_PTRDATA)
-        dbg_printf("%2D",msg->ptr);
-    }
-}
-*/
-
 /**
  * nyomkövetés ki/bekapcsolása
  */

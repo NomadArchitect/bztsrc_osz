@@ -84,7 +84,7 @@ typedef struct {
     /*** architectúra függő rész ***/
     /* használhattunk volna bonyolult union struct-okat, de a kódnak csak kis
      * része hivatkozik ezekre a mezőkre, ezért egyszerűbb egy külön struct */
-} __attribute__((packed)) tcb_t;
+} packed tcb_t;
 
 c_assert(sizeof(tcb_t) == TCBFLD_GPR && offsetof(tcb_t, acl) == 512);
 

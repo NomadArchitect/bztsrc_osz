@@ -59,7 +59,7 @@ typedef struct {
     blksize_t blksize;
     writebuf_t *buf;
     uint8_t ver;
-} __attribute__((packed)) fcb_reg_t;
+} packed fcb_reg_t;
 
 /* könyvtár uniók */
 typedef struct {
@@ -67,7 +67,7 @@ typedef struct {
     ino_t inode;
     fpos_t filesize;
     fid_t *unionlist;
-} __attribute__((packed)) fcb_union_t;
+} packed fcb_union_t;
 
 /* eszközök */
 typedef struct {
@@ -75,15 +75,15 @@ typedef struct {
     ino_t inode;
     fpos_t filesize;
     blksize_t blksize;
-} __attribute__((packed)) fcb_dev_t;
+} packed fcb_dev_t;
 
 typedef struct {
     uint64_t idx;
-} __attribute__((packed)) fcb_pipe_t;
+} packed fcb_pipe_t;
 
 typedef struct {
     uint64_t idx;
-} __attribute__((packed)) fcb_socket_t;
+} packed fcb_socket_t;
 
 typedef struct {
     char *abspath;
@@ -99,7 +99,7 @@ typedef struct {
         fcb_pipe_t pipe;
         fcb_socket_t socket;
     } data;
-} __attribute__((packed)) fcb_t;
+} packed fcb_t;
 
 extern uint64_t nfcb;
 extern uint64_t nfiles;

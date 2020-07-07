@@ -34,7 +34,6 @@
 uint64_t pmm_size;
 uint64_t pmm_totalpages;
 uint64_t pmm_freepages;
-phy_t pmm_dma;
 extern pmm_entry_t pmm_entries_buf;
 pmm_entry_t *pmm_entries = NULL;
 
@@ -63,13 +62,14 @@ void pmm_init()
     pmm_entry_t *fmem = (pmm_entry_t*)-1;
 
     pmm_size = pmm_totalpages = 0;
-    pmm_dma = 0;
+    systables[systable_dma_idx] = 0;
+    memset(drvmem, 0, sizeof(drvmem));
     /* a rendszer által lefoglalt memóriát az idle taszknak számoljuk, ezért minnél előbb, már itt inicializáljuk */
 #if DEBUG
     if(debug&DBG_MEMMAP)
         kprintf("\nMemory Map (%d entries)\n", num);
 #endif
-    for(i=0;i<num;i++,entry++) {
+    for(i=0, numdrvmem = 0;i<num;i++,entry++) {
         /* entrópia növelés */
         srand[i&3]++; srand[(i+2)&3] ^= entry->size;
         srand[((entry->ptr >> __PAGEBITS) + entry->size +
@@ -87,11 +87,11 @@ void pmm_init()
                 MMapEnt_Ptr(entry), e, MMapEnt_Size(entry)
             );
 #endif
+        ptr = MMapEnt_Ptr(entry);
+        siz = MMapEnt_Size(entry);
         if(MMapEnt_IsFree(entry)) {
             /* szabad memória felső határa */
             if(e > m) m = e;
-            ptr = MMapEnt_Ptr(entry);
-            siz = MMapEnt_Size(entry);
             /* biztonságból, laphatárra igazítjuk */
             if(ptr & (__PAGESIZE-1)) {
                 siz -= (__PAGESIZE-(ptr & (__PAGESIZE-1))) & 0xFFFFFFFFFFFFF0UL;
@@ -107,8 +107,11 @@ void pmm_init()
                     if(siz < __PAGESIZE) continue;
                 }
                 /* DMA buffer lefoglalása a lehető legalacsonyabb címterületen */
-                if(dmabuf && !pmm_dma && siz >= (dmabuf << __PAGEBITS)) {
-                    pmm_dma = (phy_t)ptr;
+                if(dmabuf && !systables[systable_dma_idx] && siz >= (dmabuf << __PAGEBITS)) {
+                    systables[systable_dma_idx] = (phy_t)ptr;
+                    drvmem[numdrvmem].base = (phy_t)ptr;
+                    drvmem[numdrvmem].size = dmabuf << __PAGEBITS;
+                    numdrvmem++;
                     ptr += dmabuf << __PAGEBITS;
                     siz -= dmabuf << __PAGEBITS;
                     if(siz < __PAGESIZE) continue;
@@ -120,6 +123,11 @@ void pmm_init()
                 pmm_totalpages += fmem->size;
                 fmem++;
             }
+        } else {
+            /* a nem szabad rekordokat hozzáadjuk a meghajtók leképezéseinek listájához */
+            drvmem[numdrvmem].base = ptr;
+            drvmem[numdrvmem].size = siz;
+            numdrvmem++;
         }
     }
     pmm_freepages = pmm_totalpages;
@@ -141,7 +149,7 @@ void pmm_init()
                 ptr = ((ptr+__PAGESIZE-1) & ~(__PAGESIZE-1));
             }
             if((pmm_entry_t*)ptr == pmm_entries) { ptr += __PAGESIZE; siz -= __PAGESIZE; }
-            if(ptr == pmm_dma) { ptr += dmabuf << __PAGEBITS; siz -= dmabuf << __PAGEBITS; }
+            if(ptr == systables[systable_dma_idx]) { ptr += dmabuf << __PAGEBITS; siz -= dmabuf << __PAGEBITS; }
         }
         unit = ' ';
         if(siz >= GBYTE) { unit='G'; siz /= GBYTE; } else
@@ -153,10 +161,10 @@ void pmm_init()
     }
     /* DMA buffer ellenőrzése. A fizikai RAM alsó 16M-jában kell lennie */
     if(dmabuf) {
-        if(!pmm_dma || pmm_dma + (dmabuf << __PAGEBITS) >= 16*1024*1024)
+        if(!systables[systable_dma_idx] || systables[systable_dma_idx] + (dmabuf << __PAGEBITS) >= 16*1024*1024)
             kpanic(TXT_nodmamem);
         else
-            syslog(LOG_INFO,"DMA buffer @%x, %d pages", pmm_dma, dmabuf);
+            syslog(LOG_INFO,"DMA buffer @%x, %d pages", systables[systable_dma_idx], dmabuf);
     }
 
     /* amíg nincsenek taszkjaink, addig az idle-nek számoljuk a memóriafoglalást */

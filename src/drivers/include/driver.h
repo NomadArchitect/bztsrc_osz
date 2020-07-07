@@ -41,19 +41,18 @@
 
 /* memóriakiosztás */
 #define MMIO_BASE       (BUF_ADDRESS)                       /* MMIO terület leképezési címe */
-#define DEVSPEC_BASE    (BUF_ADDRESS + (DYN_ADDRESS>>1))    /* eszközspecifikáció címe */
 
 #if !defined(_AS) && !defined(_OSZ_CORE_)
 
-#ifndef _DRIVER_C
-#include <platform.h>                                       /* B/K portok definíciói */
 #include <env.h>                                            /* indulási környezet */
-#endif
+#include <drvplatform.h>                                    /* B/K portok definíciói */
+extern drvmem_t drv_phymem;                                 /* rendszerbufferek és rendszertáblák fizikai címei */
 
 typedef struct {
     uint64_t base;                                          /* fizikai MMIO cím */
     uint64_t size;                                          /* méret */
 } mem_entry_t;
+extern mem_entry_t drv_bufmem[256];                         /* leképzett memória listája */
 
 /*** libc prototípusok */
 extern void drv_regirq(uint16_t irq);                                               /* IRQ üzenetek kérése */
@@ -63,7 +62,7 @@ extern void drv_add(char *drv, mem_entry_t *memspec);                           
 extern dev_t mknod(const char *devname, mode_t mode, blksize_t size, blkcnt_t cnt); /* eszköz fájl létrehozása */
 
 /*** eszközmeghajtók által implementált funkciók ***/
-extern int  drv_init();                                     /* inicializálás, 1-el tér vissza, ha sikerült */
+extern void drv_init();                                     /* inicializálás, exit(EX_UNAVAILABLE)-el kilép, ha nem sikerült */
 extern void drv_irq(uint16_t irq, uint64_t ticks);          /* drv_regirq() vagy drv_regtmr() esetén hívódik */
 extern void drv_open(dev_t device, uint64_t mode);          /* akkor hívódik, ha valaki megnyitja a mknod() által kreált fájlt */
 extern void drv_close(dev_t device);                        /* amikor bezárják */

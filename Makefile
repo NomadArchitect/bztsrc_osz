@@ -39,7 +39,7 @@ todogen:
 refgen:
 	@make --no-print-directory -C tools elftool.o | grep -v 'Nothing to be done' | grep -v 'up to date' || true
 	@./tools/elftool.o -r docs/refsys.md src/core/*.c src/core/*.h src/core/x86_64/*.c src/core/x86_64/*.h src/core/x86_64/*.S src/core/x86_64/ibmpc/*.c src/core/x86_64/ibmpc/*.h src/core/x86_64/ibmpc/*.S src/fs/*.c
-	@./tools/elftool.o -r docs/refusr.md include/osZ/stdlib.h src/libc/*.c src/libc/*.h src/libc/x86_64/*.h src/libc/x86_64/*.S src/drivers/bridge/pci/main.c
+	@./tools/elftool.o -r docs/refusr.md include/osZ/stdlib.h src/libc/*.c src/libc/*.h src/libc/x86_64/*.h src/libc/x86_64/*.S src/drivers/driver.c src/drivers/bridge/pci/main.c
 
 # fordításhoz szükséges eszközök
 

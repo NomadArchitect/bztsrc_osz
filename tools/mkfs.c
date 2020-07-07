@@ -972,10 +972,14 @@ void add_file(char *name, char *datafile)
 {
     FSZ_Inode *in;
     unsigned char *data=readfileall(datafile);
-    long int i,j,k,l,s=((read_size+secsize-1)/secsize)*secsize;
+    long int i,j,k,l,inode,s=((read_size+secsize-1)/secsize)*secsize;
+    if(!data) {
+        fprintf(stderr,"mkfs: %s: %s\n",hu?"nem tudom beolvasni":"unable to read",datafile);
+        exit(5);
+    }
     /* ha a stage2-t a rendszerpartícióra tesszük a /boot helyett (ahová való),
      * akkor módosítjuk a mime típusát, nehogy a defrag áthelyezze. */
-    int inode=add_inode(data[0]==0x55 && data[1]==0xAA &&
+    inode=add_inode(data[0]==0x55 && data[1]==0xAA &&
                data[3]==0xE9 && data[8]=='B' &&
                data[12]=='B'?"boot":"application","octet-stream");
     fs=realloc(fs,size+s+secsize);
@@ -999,7 +1003,7 @@ void add_file(char *name, char *datafile)
             /* szektorkönyvtár */
             j=s/secsize;
             if(j*16>secsize){
-                fprintf(stderr,"mkfs: %s: %s\n",hu?"túl nagy fájl":"File too big",datafile);
+                fprintf(stderr,"mkfs: %s: %s\n",hu?"túl nagy fájl":"file too big",datafile);
                 exit(5);
             }
             /* beágyazható? */
@@ -1162,8 +1166,11 @@ void add_dirs(char *dirname,int parent,int level)
             add_dirs(full,parent,level+1);
         }
         if(ent->d_type==DT_REG) {
-            /* sima fájl hozzáadása */
-            add_file(full+parent,full);
+            /* a sys/core-t már hozzáadtuk, mert annak kell a legelső futtathatónak lennie az initrd-ben */
+            if(strcmp(full+parent,"sys/core")) {
+                /* sima fájl hozzáadása */
+                add_file(full+parent,full);
+            }
         }
         if(ent->d_type==DT_LNK) {
             /* szimbólikus hivatkozás hozzáadása */
@@ -1686,6 +1693,10 @@ int createimage(char *image,char *dir)
     ((FSZ_SuperBlock *)fs)->rootdirfid = add_inode("dir:",FSZ_MIMETYPE_DIR_ROOT);
     ((FSZ_Inode*)(fs+secsize))->numlinks++;
     ((FSZ_Inode*)(fs+secsize))->checksum=crc32a_calc((char*)(((FSZ_Inode*)(fs+secsize))->filetype),1016);
+
+    /* ezt külön adjuk hozzá, mert a legelső futtathatónak kell lennie az initrd-ben */
+    if(initrd)
+        add_file("sys/core", "../bin/initrd/sys/core");
 
     /* rekurzívan mindent hozzáadunk a könyvtárból */
     add_dirs(dir,0,0);

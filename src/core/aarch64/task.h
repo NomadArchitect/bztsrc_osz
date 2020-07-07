@@ -49,7 +49,7 @@ typedef struct {
     /* az utolsó 16 bájt a megszakítási verem teteje */
     uint64_t pc;
     uint64_t sp;
-} __attribute__((packed)) tcb_arch_t;
+} packed tcb_arch_t;
 
 c_assert(sizeof(tcb_arch_t) == __PAGESIZE);
 

@@ -38,6 +38,21 @@ char *stdlib_nullstr = "(null)";
 char *stdlib_ttyname;
 
 /**
+ * eszközhivatkozás hozzáadása (csak eszközmeghajtók és szolgáltatások hívhatják)
+ */
+public int mknod(const char *devname, dev_t minor, mode_t mode, blksize_t size, blkcnt_t cnt)
+{
+    msg_t *msg;
+
+    if(!devname || !devname[0] || devname[0] == '/') {
+        seterr(EINVAL);
+        return -1L;
+    }
+    msg = mq_call5(SRV_FS, SYS_mknod|MSG_PTRDATA, devname, strlen(devname)+1, minor, (((uint64_t)mode)<<32)|size, cnt);
+    return errno() ? -1L : (int)msg->data.scalar.arg0;
+}
+
+/**
  * beállítja a PATH-ot gyökérkönyvtárnak (az abszolút elérési út kiindulópontja).
  * ezt csak rendszergazda jogosultságokkal hívható.
  */
@@ -76,7 +91,7 @@ public char *getcwd()
     msg_t *msg = mq_call0(SRV_FS, SYS_getcwd);
     if(errno())
         return NULL;
-    return strdup(msg->data.buffer.ptr);
+    return strdup(msg->data.buf.ptr);
 }
 
 /**
@@ -421,7 +436,7 @@ char *realpath(const char *path)
     msg = mq_call2(SRV_FS, SYS_realpath|MSG_PTRDATA, path, strlen(path)+1);
     if(errno())
         return NULL;
-    return strdup((char*)msg->data.buffer.ptr);
+    return strdup((char*)msg->data.buf.ptr);
 }
 
 /**
@@ -437,12 +452,12 @@ char *readlink(const char *path)
         return NULL;
     }
     msg = mq_call2(SRV_FS, SYS_readlink|MSG_PTRDATA, path, strlen(path)+1);
-    if(errno() || !msg->data.buffer.size)
+    if(errno() || !msg->data.buf.size)
         return NULL;
-    buf = malloc(msg->data.buffer.size);
+    buf = malloc(msg->data.buf.size);
     if(!buf)
         return NULL;
-    memcpy(buf, msg->data.buffer.ptr, msg->data.buffer.size);
+    memcpy(buf, msg->data.buf.ptr, msg->data.buf.size);
     return buf;
 }
 

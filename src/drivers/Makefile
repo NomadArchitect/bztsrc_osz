@@ -1,4 +1,4 @@
 TARGET = sys/driver
-LDFLAGS = -Bshareable
+LDFLAGS += -Bshareable
 
 include ../Makefile.rules

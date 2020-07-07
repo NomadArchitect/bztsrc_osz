@@ -44,6 +44,8 @@
 #define numallocmaps(a) (a[0]&0x7ffffffff)                      /* allokációs térképek száma egy arénában */
 #define chunksize(q)  ((q*BITMAPSIZE*sizeof(void*)*8/__PAGESIZE)*__PAGESIZE)  /* csomag mérete a quantum függvényében */
 
+#ifndef _AS
+
 typedef struct {
     uint64_t quantum;               /* foglalási egység ebben a csomagban */
     void *ptr;                      /* memória mutató (lap vagy blokk címhelyes) */
@@ -60,7 +62,9 @@ typedef struct {
 extern __attribute__((malloc)) void *bzt_alloc(uint64_t *arena, size_t a, void *ptr, size_t s, int flag);
 extern void bzt_free(uint64_t *arena, void *ptr);
 #if DEBUG
-void bzt_dumpmem(uint64_t *arena);
+void dbg_bztdump(uint64_t *arena);
+#endif
+
 #endif
 
 #endif

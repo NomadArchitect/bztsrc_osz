@@ -41,7 +41,7 @@ uint64_t lastirq;
 /**
  * PS/2 vezérlő inicializálása
  */
-public int drv_init()
+public void drv_init()
 {
     uint8_t ret;
 
@@ -52,7 +52,7 @@ public int drv_init()
 #if DEBUG
         dbg_printf("PS2 init error\n");
 #endif
-        return 0;
+        exit(EX_UNAVAILABLE);
     }
     ps2_cmd0(0x20);                     /* konfigurációs bájt kiolvasása */
     ret = ps2_read();
@@ -63,7 +63,6 @@ public int drv_init()
     devices = 0; lastirq = 0;           /* hotplug */
     mouse_init();
     keyboard_init();
-    return 1;
 }
 
 /**
@@ -91,23 +90,23 @@ public void drv_irq(uint16_t irq, uint64_t ticks)
 /**
  * a többi meghajtóinterfész nem használt
  */
-public void drv_open(dev_t device __attribute__((unused)), uint64_t mode __attribute__((unused)))
+public void drv_open(unused dev_t device, unused uint64_t mode)
 {
 }
 
-public void drv_close(dev_t device __attribute__((unused)))
+public void drv_close(unused dev_t device)
 {
 }
 
-public void drv_read(dev_t device __attribute__((unused)))
+public void drv_read(unused dev_t device)
 {
 }
 
-public void drv_write(dev_t device __attribute__((unused)))
+public void drv_write(unused dev_t device)
 {
 }
 
-public void drv_ioctl(dev_t device __attribute__((unused)))
+public void drv_ioctl(unused dev_t device)
 {
 }
 

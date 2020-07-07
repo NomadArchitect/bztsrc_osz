@@ -24,8 +24,8 @@
  *     hozol létre a műből, akkor a létrejött művet ugyanazon licensz-
  *     feltételek mellett kell terjesztened, mint az eredetit.
  *
- * @subsystem libc
- * @brief indulási környezet szolgáltatások
+ * @subsystem eszközmeghajtók
+ * @brief induló környezet szolgáltatások
  */
 
 #ifndef _ENV_H

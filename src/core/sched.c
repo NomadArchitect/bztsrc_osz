@@ -82,7 +82,7 @@ void sched_dump(uint16_t cpuid)
 /**
  * ütemező megszakítás kezelője
  */
-void sched_intr(uint16_t __attribute__((unused)) irq)
+void sched_intr(unused uint16_t irq)
 {
 #if INTR_SCHEDREMAINDER
     /* ha az időzítő nem képes egyszerre egy egész usec-et várni, akkor több megszakítás is generálódhat */

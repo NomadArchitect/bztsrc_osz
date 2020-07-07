@@ -38,18 +38,18 @@
 #define TRACEBUFSIZ    256 /* a nyomkövetési buffer mérete */
 
 /*** Sztandard headerök ***/
+#include <osZ/stdint.h>                             /* szabvány változótípusok */
+#ifndef _AS
+#include "../../loader/bootboot.h"                  /* rendszerbetöltő definíciói. Az stdint után, de a types előtt kell behúzni */
+#endif
 #include <osZ/errno.h>                              /* hibakódok */
 #include <osZ/limits.h>                             /* limitek és memóriacímek */
-#include <osZ/stdint.h>                             /* szabvány változótípusok */
 #include <osZ/stdarg.h>                             /* változó számú paraméterlista */
 #include <osZ/types.h>                              /* rendszer által definiált változótípusok */
 #include <osZ/syscall.h>                            /* rendszerszolgáltatások definíciói */
 #include <osZ/debug.h>                              /* debug jelzők */
 #include <osZ/syslog.h>                             /* rendszernapló prioritások */
-#ifndef _AS
-#include "../../loader/bootboot.h"                  /* rendszerbetöltő paraméterei */
 #include "../libc/bztalloc.h"                       /* memóriaallokátor */
-#endif
 #include "lang.h"                                   /* nyelvi fordítások kezelése */
 #include "env.h"                                    /* környezeti változók */
 #include "task.h"                                   /* Taszk Kontroll Blokk */
@@ -102,18 +102,21 @@ typedef struct {
     unsigned int   ligature_offs;                   /* ligatúrák, nem használjuk */
     unsigned int   kerning_offs;                    /* kerning, nem használjuk */
     unsigned int   cmap_offs;                       /* paletta, nem használjuk */
-} __attribute__((packed)) sfn_t;
+} packed sfn_t;
 extern sfn_t *font;
 
 /* ---- Általános adatok ----- */
 extern uint8_t runlevel;                            /* futási szint */
 extern pid_t services[NUMSRV];                      /* rendszerszolgáltatások taszkjai */
 extern uint32_t numcores;                           /* a CPU magok száma */
-extern uint64_t srand[4], systables[8];             /* véletlenszámgenerátor és rendszertáblák */
+extern uint64_t srand[4], systables[16];            /* véletlenszámgenerátor és rendszertáblák */
 extern uint64_t clock_ts, clock_ns, clock_ticks;    /* pontos idő másodperc, nanoszek és az indulás óta eltelt mikroszek */
 extern uint64_t clock_freq;                         /* pontos idő frissítési frekvenciája */
 extern int16_t clock_tz;                            /* aktuális időzóna percekben */
 extern uint16_t sched_irq, clock_irq;               /* megszakítási vonalak */
+extern uint16_t numdrvmem;                          /* memórialeképezések száma */
+extern pmm_entry_t drvmem[256];                     /* memórialeképezések listája */
+extern pmm_entry_t *display_dev;                    /* a videokártya eszközspecifikációja */
 extern tcb_t idle_tcb;                              /* rendszer taszk, üresjárat */
 extern virt_t fs_initrd;                            /* az initrd virtuális címe a core területén */
 extern uint64_t __stack_chk_guard;                  /* gcc-nek kell a stack canary-hoz */

@@ -41,7 +41,7 @@ extern char *dbg_err, *strbrk;
 extern virt_t dbg_faultaddr;
 
 /*** rendszerleíró sztringek ***/
-char *dbg_systables[] = { "acpi", "smbi", "efi", "pcie", "dsdt", "apic", "ioapic", "hpet", NULL }; /* lásd arch.h */
+char *dbg_systables[] = { "dma", "acpi", "smbi", "efi", "pcie", "dsdt", "apic", "ioapic", "hpet", NULL }; /* lásd arch.h */
 char *dbg_regs[]={ "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rbp", NULL };
 char *dbg_fareg = "cr2"; /* fault address, lapfordítási hiba címét tartalmazó regiszter neve */
 
@@ -85,7 +85,7 @@ void dbg_dumpregs()
 {
     tcb_arch_t *tcb = (tcb_arch_t*)0;
     __asm__ __volatile__( "movq %%cr2, %0" : "=a"(dbg_faultaddr));
-    kprintf("cr2 %8x cr3 %8x rip %1x:%6x flgs %8x\n", dbg_faultaddr, tcb->common.memroot, tcb->cs, tcb->pc, tcb->rflags);
+    kprintf("cr2 %8x cr3 %8x rip 0%1x:%6x flg %8x\n", dbg_faultaddr, tcb->common.memroot, tcb->cs, tcb->pc, tcb->rflags);
 }
 
 /**

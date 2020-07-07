@@ -41,7 +41,7 @@ extern char *dbg_err, *strbrk;
 extern virt_t dbg_faultaddr;
 
 /*** rendszerleíró sztringek ***/
-char *dbg_systables[] = { "acpi", "mmio", "efi", NULL };  /* lásd arch.h */
+char *dbg_systables[] = { "dma", "acpi", "mmio", "efi", NULL };  /* lásd arch.h */
 char *dbg_regs[]={ "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11", "x12", "x13", "x14", "x15",
     "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24", "x25", "x26", "x28", "x27", "x29", "x30", NULL };
 char *dbg_fareg = "far"; /* fault address, lapfordítási hiba címét tartalmazó regiszter neve */
@@ -96,7 +96,7 @@ void dbg_dumpregs()
 /**
  * CPU Kontroll Blokk architektúrafüggő mezőinek dumpolása
  */
-void dbg_dumpccb(ccb_t *ccb __attribute__((unused)))
+void dbg_dumpccb(unused ccb_t *ccb)
 {
 }
 

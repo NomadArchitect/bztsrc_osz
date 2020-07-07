@@ -57,6 +57,7 @@
 #define SYS_getuid      (23) /* visszaadja egy adott taszk tulajdonosát */
 #define SYS_getgid      (24) /* visszaadja egy adott taszk jogosultságait */
 #define SYS_tskcpy      (25) /* memória másolása adott taszk címterébe */
+#define SYS_log         (26) /* korai rendszernapló írása */
 
 /* események */
 #define EVT_ack         (0x3FFA) /* visszaigazolás */

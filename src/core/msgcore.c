@@ -48,7 +48,7 @@ typedef struct {
  * az SRV_CORE taszknak küldött üzenetek feldolgozása
  */
 msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d,
-    uint64_t e __attribute__((unused)),  uint64_t f __attribute__((unused)), evt_t event)
+    unused uint64_t e, unused uint64_t f, evt_t event)
 {
     tcb_t *tcb = (tcb_t*)0;
     msgret_t ret = {0,0};
@@ -77,6 +77,17 @@ msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d,
     seterr(SUCCESS);
     switch(evt) {
 /*      case SYS_yield:  assemblyben van lekezelve  */
+
+        case SYS_log:
+            /* ez trükkös, mert ha még nem inicializált a syslog, akkor a korai konzolt kell használni */
+            if(services[-SRV_syslog]) {
+                if(runlevel == RUNLVL_COOP)
+                    syslog(c,(char*)a);
+                else
+                    seterr(EACCES);
+            } else
+                seterr(ENOTIMPL);
+            break;
 
         case SYS_exit:
             /* ha kritikus rendszer szolgáltatás lépett ki */

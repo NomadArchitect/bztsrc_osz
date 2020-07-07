@@ -100,6 +100,7 @@ typedef struct {
     int sub;
     char *ifn;
     char *brief;
+    char *link;
 } files_t;
 typedef struct {
     int sub;
@@ -148,6 +149,15 @@ void mkref(char *outmd, int argc, char **argv)
         files[i].brief = malloc(e - c + 1);
         memcpy(files[i].brief, c, e - c);
         files[i].brief[e - c] = 0;
+        for(c = data; *c && memcmp(c, "*/", 2) && memcmp(c, "@link ", 6); c++);
+        if(*c == '@') {
+            c += 6;
+            for(e = c; *e != '\n'; e++);
+            files[i].link = malloc(e - c + 1);
+            memcpy(files[i].link, c, e - c);
+            files[i].link[e - c] = 0;
+        } else
+            files[i].link = NULL;
         for(c = data; *c && memcmp(c, "*/", 2) && memcmp(c, "@subsystem ", 11); c++);
         if(*c != '@') {
             printf("Nincs @subsystem a kommentben: %s\n", argv[i]);
@@ -193,8 +203,7 @@ void mkref(char *outmd, int argc, char **argv)
                         for(; c < e; c++) {
                             if(!memcmp(c, "__attribute__((malloc)) ", 24)) c += 23; else
                             if(!memcmp(c, "__attribute__((unused)) ", 24)) c += 23; else
-                            if(!memcmp(c, " __attribute__((unused))", 24)) c += 23; else
-                            if(!memcmp(c, "__inline__ ", 11)) { c += 10; memcpy(g, "inline ", 7); g += 7; } else {
+                            if(!memcmp(c, "unused ", 7)) c += 6; else {
                                 if(*c == '[' || *c == ']') *g++ = '\\';
                                 *g++ = *c;
                             }
@@ -219,11 +228,12 @@ void mkref(char *outmd, int argc, char **argv)
     /* ez csak magyarul van, mivel a forrásban a kommentek úgyis magyarul vannak */
     f = fopen(outmd,"w");
     if(f) {
-        fprintf(f, "OS/Z Függvényreferenciák\n========================\n\nPrototípusok\n------------\n\n");
+        fprintf(f, "OS/Z Függvényreferenciák\n========================\n\nPrototípusok\n------------\n"
+            "Összesen %d függvény van definiálva.\n\n", nfunc);
         for(j = -1, i = 0; i < nfunc; i++) {
             if(j != funcs[i].sub) { j = funcs[i].sub; fprintf(f, "### %c%s\n",
                 subs[j][0] >= 'a' && subs[j][0] <= 'z' ? subs[j][0] - 32 : subs[j][0],
-                subs[j] + 1); }
+                subs[j] + 1); if(files[funcs[i].file].link) fprintf(f, "Linkelés: %s\n",files[funcs[i].file].link); }
             fprintf(f, "[%s](https://gitlab.com/bztsrc/osz/blob/master/src/%s#L%d)\n%s\n",
                 funcs[i].proto, files[funcs[i].file].ifn, funcs[i].line, funcs[i].desc);
         }

@@ -43,7 +43,7 @@ typedef struct {
     uint64_t mq_bufend;
     uint64_t mq_dummy1;
     uint64_t mq_dummy2;
-} __attribute__((packed)) msghdr_t;
+} packed msghdr_t;
 
 bool_t msg_allowed(tcb_t *sender, pid_t dest, evt_t event);
 msg_t *msg_recv(uint64_t serial);

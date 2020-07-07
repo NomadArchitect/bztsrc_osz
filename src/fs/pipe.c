@@ -124,16 +124,16 @@ public bool_t pipe_write(uint64_t idx, virt_t ptr, size_t size)
     }
     /* ha van blokkolt olvasó, aki legalább annyit akar olvasni, mint amit írunk, és a buffer üres,
      * nem volt korábban direkt írás sem, akkor teljes egészében kihagyjuk a bufferelést */
-    if(tc && tc->msg.data.buffer.size >= size && !p->data && !p->size && p->size != -1U) {
+    if(tc && tc->msg.data.buf.size >= size && !p->data && !p->size && p->size != -1U) {
 #if DEBUG
         if(_debug&DBG_FILEIO)
-            dbg_printf("FS: file read(pipe %d, %x[%d], direct)\n", idx, tc->msg.data.buffer.ptr, size);
+            dbg_printf("FS: file read(pipe %d, %x[%d], direct)\n", idx, tc->msg.data.buf.ptr, size);
 #endif
         /* adatok másolása közvetlenül az olvasó bufferébe */
-        if((int64_t)tc->msg.data.buffer.ptr < 0)
-            memcpy((void*)tc->msg.data.buffer.ptr, (void*)ptr, size);
+        if((int64_t)tc->msg.data.buf.ptr < 0)
+            memcpy((void*)tc->msg.data.buf.ptr, (void*)ptr, size);
         else
-            tskcpy(p->reader, (void*)tc->msg.data.buffer.ptr, (void*)ptr, size);
+            tskcpy(p->reader, (void*)tc->msg.data.buf.ptr, (void*)ptr, size);
         /* jelezzük, hogy direktben másoltunk (csak egyszer tehetjük meg, mielőtt az olvasó olvasna) */
         p->size = -1U;
         goto ack;
@@ -146,7 +146,7 @@ public bool_t pipe_write(uint64_t idx, virt_t ptr, size_t size)
     p->size += size;
     /* ha van blokkolt olvasó, akkor felébresztjük. ez akkor is meghívódik, ha többet írunk, mint amit olvasna */
     if(tc) {
-        size = pipe_read(idx, (virt_t)tc->msg.data.buffer.ptr, tc->msg.data.buffer.size, tc->pid);
+        size = pipe_read(idx, (virt_t)tc->msg.data.buf.ptr, tc->msg.data.buf.size, tc->pid);
         /* válasz küldése az olvasónak */
 ack:    j = errno();
         mq_send(0, 0, j, 0, 0, 0, EVT_DEST(tc->pid) | EVT_ack, tc->msg.serial);

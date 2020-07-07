@@ -42,9 +42,10 @@ public int main(int argc, char **argv)
     mq_dispatch();
 }
 ```
-Ahhoz, hogy ez működjön, minden eseménytípushoz egy függvényt kell implementálni. A mellékelt tools/elftool.c képes egy
-szolgáltatás futtathatóját analizálni, majd a benne definiált függvények alapján létrehozni egy fejlécet a neki küldhető
-üzenettípusokról.
+Ahhoz, hogy ez működjön, minden eseménytípushoz egy lekezelő függvényt kell implementálni. A mellékelt
+[tools/elftool.c](https://gitlab.com/bztsrc/osz/blob/master/tools/elftool.c) képes egy szolgáltatás futtathatóját analizálni,
+majd a benne definiált függvények alapján létrehozni egy fejlécet a neki küldhető üzenettípusokról. A hívók (vagy a szolgáltatás
+függvénykönyvtára) ez behúzhatja és használhatja.
 
 Ha valaki nagyobb rugalmasságot szeretne, akkor használható egy végtelen eseménylekérő ciklus is:
 
@@ -70,8 +71,8 @@ Függvénykönyvtárak
 ------------------
 
 Egy szolgáltatás csomag több, mint valószínű, hogy függvénykönyvtárakat is biztosít a felhasználói alkalmazások számára,
-melyekkel üzeneteket lehet küldeni a háttérben futó szolgáltatásnak. Az is lehetséges, hogy egy szolgáltatás csomag nem
-tartalmaz háttérben futó alkalmazást, csakis függvénykönyvtárakat. Ezek helye a csomagban a 'lib/' mappa.
+melyekkel üzeneteket lehet küldeni a háttérben futó szolgáltatásnak. Az is lehetséges, hogy egy szolgáltatás csomag egyáltalán
+nem tartalmaz háttérben futó alkalmazást, csakis függvénykönyvtárakat. Ezek helye a csomagban a 'lib/' mappa.
 
 Csomagok
 --------

@@ -36,9 +36,10 @@
 #define ARCH_ELFEM          EM_AARCH64  /* ELF architektúra kód */
 
 /* Rendszerleíró táblák */
-#define systable_acpi_idx   0
-#define systable_mmio_idx   1
-#define systable_efi_idx    2
+#define systable_dma_idx    0
+#define systable_acpi_idx   1
+#define systable_mmio_idx   2
+#define systable_efi_idx    3
 
 #define cpu_relax __asm__ __volatile__("yield":::"memory");
 #define breakpoint __asm__ __volatile__("brk #0")

@@ -119,7 +119,7 @@ void syslog(int pri, char* fmt, ...)
     } else {
         *syslog_ptr = 0;
         /* üzenet küldése a rendszernaplózó szolgáltatásnak */
-        msg_send((virt_t)&syslog_buffer, pri, LOG_KERN, (virt_t)"core", 0, 0,
+        msg_send((virt_t)&syslog_buffer, pri, LOG_CORE, (virt_t)"core", 0, 0,
             EVT_DEST(SRV_syslog) | EVT_FUNC(SYS_syslog) | MSG_PTRDATA, 0);
     }
 }

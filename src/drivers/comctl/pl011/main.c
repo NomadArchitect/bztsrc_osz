@@ -1,32 +1,31 @@
 #include <osZ.h>
 #include <driver.h>
 
-public int drv_init()
-{
-    return 0;
-}
-
-public void drv_irq(uint16_t irq __attribute__((unused)), uint64_t __attribute__((unused)) ticks)
+public void drv_init()
 {
 }
 
-public void drv_open(dev_t device __attribute__((unused)), uint64_t mode __attribute__((unused)))
+public void drv_irq(unused uint16_t irq, unused uint64_t ticks)
 {
 }
 
-public void drv_close(dev_t device __attribute__((unused)))
+public void drv_open(unused dev_t device, unused uint64_t mode)
 {
 }
 
-public void drv_read(dev_t device __attribute__((unused)))
+public void drv_close(unused dev_t device)
 {
 }
 
-public void drv_write(dev_t device __attribute__((unused)))
+public void drv_read(unused dev_t device)
 {
 }
 
-public void drv_ioctl(dev_t device __attribute__((unused)))
+public void drv_write(unused dev_t device)
+{
+}
+
+public void drv_ioctl(unused dev_t device)
 {
 }
 

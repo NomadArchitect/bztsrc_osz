@@ -53,7 +53,7 @@ typedef struct {
     uint64_t rflags;
     uint64_t sp;
     uint64_t ss;
-} __attribute__((packed)) tcb_arch_t;
+} packed tcb_arch_t;
 
 c_assert(sizeof(tcb_arch_t) == __PAGESIZE);
 

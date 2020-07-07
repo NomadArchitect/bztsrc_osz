@@ -60,7 +60,7 @@ void ps2_cmd0(uint8_t cmd)
     if(cnt) outb(PS2_CTRL, cmd);
 }
 
-static __inline__ void ps2_cmd1(uint8_t cmd, uint8_t arg)
+static inline void ps2_cmd1(uint8_t cmd, uint8_t arg)
 {
     ps2_cmd0(cmd);
     ps2_write(arg);
@@ -69,13 +69,13 @@ static __inline__ void ps2_cmd1(uint8_t cmd, uint8_t arg)
 /**
  * parancs küldése az első porton lévő eszköznek (billentyűzet)
  */
-static __inline__ uint8_t ps2_kbd0(uint8_t cmd)
+static inline uint8_t ps2_kbd0(uint8_t cmd)
 {
     ps2_write(cmd);
     return ps2_read();
 }
 
-static __inline__ uint8_t ps2_kbd1(uint8_t cmd, uint8_t arg)
+static inline uint8_t ps2_kbd1(uint8_t cmd, uint8_t arg)
 {
     ps2_write(cmd);
     if(ps2_read() == 0xFA)
@@ -86,13 +86,13 @@ static __inline__ uint8_t ps2_kbd1(uint8_t cmd, uint8_t arg)
 /**
  * parancs küldése a második porton lévő eszköznek (egér)
  */
-static __inline__ uint8_t ps2_aux0(uint8_t cmd)
+static inline uint8_t ps2_aux0(uint8_t cmd)
 {
     ps2_cmd1(0xD4, cmd);
     return ps2_read();
 }
 
-static __inline__ uint8_t ps2_aux1(uint8_t cmd, uint8_t arg)
+static inline uint8_t ps2_aux1(uint8_t cmd, uint8_t arg)
 {
     ps2_cmd1(0xD4, cmd);
     if(ps2_read() == 0xFA) {

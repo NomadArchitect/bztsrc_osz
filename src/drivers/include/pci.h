@@ -45,8 +45,6 @@
 #define PCI_CLASS(x)        ((x >> 24) & 0xff)
 #define PCI_SUBCLASS(x)     ((x >> 16) & 0xff)
 
-#define PCI_MMIO_BASE       (DEVSPEC_BASE + __PAGESIZE)
-
 /*
  * egy eszközmeghajtó vagy
  *   pcidev_t *pcidev = (pcidev_t*)DEVSPEC_BASE;
@@ -111,7 +109,7 @@ typedef struct {
     uint32_t bar5_size;
     uint32_t bar6_size;
     uint32_t bar7_size;
-} __attribute__ ((packed)) pcidev_t;
+} packed pcidev_t;
 c_assert(sizeof(pcidev_t)==__PAGESIZE);
 
 /**
@@ -177,7 +175,7 @@ typedef struct {
     uint32_t bar5_size;
     uint32_t bar6_size;
     uint32_t bar7_size;
-} __attribute__ ((packed)) pcibridge_t;
+} packed pcibridge_t;
 c_assert(sizeof(pcibridge_t)==__PAGESIZE);
 
 /**

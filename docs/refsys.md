@@ -3,6 +3,7 @@ OS/Z Függvényreferenciák
 
 Prototípusok
 ------------
+Összesen 210 függvény van definiálva.
 
 ### Konzol
 [void kpanic(char *reason, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L239)
@@ -201,7 +202,7 @@ Prototípusok
 [bool_t mtab_del(char *dev, char *file)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/mtab.c#L120)
   felcsatolási pont megszüntetése
  
-[void mtab_dump()](https://gitlab.com/bztsrc/osz/blob/master/src/fs/mtab.c#L206)
+[void mtab_dump()](https://gitlab.com/bztsrc/osz/blob/master/src/fs/mtab.c#L212)
   felcsatolási pontok dumpolása debuggoláshoz
  
 [void mtab_fstab(char *ptr, size_t size)](https://gitlab.com/bztsrc/osz/blob/master/src/fs/mtab.c#L150)
@@ -397,41 +398,41 @@ Prototípusok
 [bool_t elf_load(char *fn, phy_t extrabuf, size_t extrasiz, uint8_t reent)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L165)
   betölt egy ELF objektumot a gyorsítótárból az aktuális címtérbe, rekurzívan a függvénykönyvtáraival együtt
  
-[virt_t elf_lookupsym(char *sym)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L696)
+[virt_t elf_lookupsym(char *sym)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L717)
   cím keresése szimbólumhoz, sztring -> cím
  
-[bool_t elf_rtlink()](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L338)
+[bool_t elf_rtlink(pmm_entry_t *devspec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L338)
   aktuális címtérben összelinkeli az ELF-eket (run-time linker)
  
-[virt_t elf_sym(virt_t addr, bool_t onlyfunc)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L613)
+[virt_t elf_sym(virt_t addr, bool_t onlyfunc)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L634)
   szimbólum keresése címhez, cím -> sztring
  
 [void elf_unload(elfbin_t *elfbin)](https://gitlab.com/bztsrc/osz/blob/master/src/core/elf.c#L119)
   kiszedi az ELF objektumokat az aktuális címtérből, és ha kell, a gyorsítótárból is
  
 ### Taszk
-[void drivers_add(char *drv, pmm_entry_t *devspec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L238)
+[void drivers_add(char *drv, pmm_entry_t *devspec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L240)
   új eszközmeghajtó taszk hozzáadása
  
-[char *drivers_find(char *spec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L129)
+[char *drivers_find(char *spec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L131)
   visszaadja az eszközspec-hez tartozó első meghajtó fájlnevét. Tipikus eszközspec "pciVVVV:MMMM" vagy "clsCC:SS"
  
-[void drivers_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L55)
+[void drivers_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L57)
   az idle taszk és az eszközmeghajtók inicializálása
  
-[void drivers_intr(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L217)
+[void drivers_intr(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L219)
   üzenet küldése a megszakításkezelő taszkoknak
  
-[void drivers_ready()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L420)
+[void drivers_ready()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L404)
   akkor hívódik, amikor az összes eszközmeghajtó taszk incializálódott és blokkolódott teendőre várva
  
-[void drivers_regintr(uint16_t irq, pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L148)
+[void drivers_regintr(uint16_t irq, pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L150)
   megszakításkezelő taszk hozzáadása a listához
  
-[void drivers_start()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L394)
+[void drivers_start()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L378)
   kooperatív ütemezés, eszközmeghajtó és rendszerszolgáltatás taszkok futtatása
  
-[void drivers_unregintr(pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L181)
+[void drivers_unregintr(pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L183)
   megszakításkezelő taszk eltávolítása a listából
  
 [bool_t msg_allowed(tcb_t *sender, pid_t dest, evt_t event)](https://gitlab.com/bztsrc/osz/blob/master/src/core/security.c#L56)
@@ -480,7 +481,7 @@ Prototípusok
 [void sched_remove(tcb_t *tcb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/sched.c#L122)
   taszk kivétele prioritási sorból
  
-[void service_add(int srv, char *cmd)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L315)
+[void service_add(int srv, char *cmd)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L305)
   új rendszerszolgáltatás taszk hozzáadása. Kicsit kilóg a sorból, de sok a közös elem az eszközmeghajtókkal, itt a helye
  
 [bool_t task_allowed(tcb_t *tcb, char *grp, uint8_t access)](https://gitlab.com/bztsrc/osz/blob/master/src/core/security.c#L36)
@@ -521,7 +522,7 @@ Prototípusok
 [void dbg_paginghelp()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L50)
   kiírja, hogy a lapcímtáblában melyik bit milyen attribútumot takar
  
-[int dbg_parsecmd(char *cmd, uint64_t cmdlast)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L716)
+[int dbg_parsecmd(char *cmd, uint64_t cmdlast)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L708)
   parancsértelmező
  
 [virt_t dbg_previnst(virt_t addr)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L108)
@@ -530,32 +531,32 @@ Prototípusok
 [void dbg_singlestep(bool_t enable)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L99)
   ki/bekapcsolja a lépésenkénti utasításvégrehajtást
  
-[void dbg_start(char *header, bool_t ispanic)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L813)
+[void dbg_start(char *header, bool_t ispanic)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L805)
   beépített debugger
  
 ### Memória
-[void *kalloc(size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L193)
+[void *kalloc(size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L196)
   fizikai memória lefoglalása és leképezése a kernel memóriába
 
-[void *kalloc_gap(size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L199)
+[void *kalloc_gap(size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L202)
   üres "lyuk" lefoglalása a kernel memóriába
 
 [void kentropy()](https://gitlab.com/bztsrc/osz/blob/master/src/core/libc.c#L161)
   véletlenszám generátor bitjeinek összekeverése entrópianövelés céljából
  
-[void kfree(void *p)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L211)
+[void kfree(void *p)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L214)
   kernel memória felszabadítása
 
-[void *krealloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L205)
+[void *krealloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L208)
   kernel memória átméretezése
 
-[void *ksalloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L217)
+[void *ksalloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L220)
   fizikai memória lefoglalása és leképezése a megosztott kernel memóriába
 
-[void ksfree(void *p)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L229)
+[void ksfree(void *p)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L232)
   megosztott kernel memória felszabadítása
 
-[void *ksrealloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L223)
+[void *ksrealloc(void *p, size_t s)](https://gitlab.com/bztsrc/osz/blob/master/src/core/core.h#L226)
   megosztott kernel memória átméretezése
 
 [void lang_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/lang.c#L44)
@@ -573,19 +574,19 @@ Prototípusok
 [void *memset(void *dst, uint8_t c, size_t n)](https://gitlab.com/bztsrc/osz/blob/master/src/core/libc.c#L68)
   memória feltötlése adott karakterrel, általános implementáció
  
-[void* pmm_alloc(tcb_t *tcb, uint64_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L185)
+[void* pmm_alloc(tcb_t *tcb, uint64_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L193)
   folyamatos fizikai memória lefoglalása. Ficikai címmel tér vissza
  
-[void* pmm_allocslot(tcb_t *tcb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L251)
+[void* pmm_allocslot(tcb_t *tcb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L259)
   egy egybefüggő, címigazított blokk (2M) lefoglalása. Fizikai címmel tér vissza
  
-[void pmm_free(tcb_t *tcb, phy_t base, size_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L323)
+[void pmm_free(tcb_t *tcb, phy_t base, size_t pages)](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L331)
   fizikai memória felszabadítása és a szabad listához adása
  
-[void pmm_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L54)
+[void pmm_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L53)
   fizikai Memória Kezelő inicializálása
  
-[void pmm_vmem()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L167)
+[void pmm_vmem()](https://gitlab.com/bztsrc/osz/blob/master/src/core/pmm.c#L175)
   inicializálás befejezése, miután lett virtuális memóriánk
  
 [char *sprintf(char *dst,char* fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/libc.c#L279)

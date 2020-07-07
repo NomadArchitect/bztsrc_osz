@@ -32,7 +32,7 @@
 /**
  * x86-on nincs igazi fault_intr(), mivel az IDT más címre adja eleve a vezérlést, lásd faultidt.S
  */
-void fault_intr(uint64_t exc, uint64_t errcode, uint64_t dummy __attribute__((unused)))
+void fault_intr(uint64_t exc, uint64_t errcode, unused uint64_t dummy)
 {
     kpanic("Exception exc=%x errcode=%x", exc, errcode);
 }

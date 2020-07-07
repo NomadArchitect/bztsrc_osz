@@ -30,15 +30,21 @@
 #ifndef _TYPES_H
 #define _TYPES_H    1
 
-/*** láthatóság ***/
+/*** láthatóság és egyéb attribútumok ***/
 /* helyben linkelt, futás időben linkelt (so), hívható más taszkokból és üzenetekből is */
-#define public __attribute__ ((__visibility__("default")))
+#define public __attribute__((__visibility__("default")))
 /* csak helyben linkelt objektumokból elérhető (nem so) */
-#define private __attribute__ ((__visibility__("hidden")))
+#define private __attribute__((__visibility__("hidden")))
 /* helyben linkelt, futás időben linkelt, de másik címtérből nem hivható */
-#define protected __attribute__ ((__visibility__("protected")))
+#define protected __attribute__((__visibility__("protected")))
+/* hívás helyére beillesztett */
+#define inline __in##line__
 /* címigazított, gyors memcpy()-hoz */
-#define alignmem __attribute__ ((aligned(16)))
+#define alignmem __attribute__((aligned(16)))
+/* nem használt */
+#define unused __attribute__((un##used))
+/* fix címigazított mezők, a fordító nem rendezheti át */
+#define packed __attribute__((pack##ed))
 
 /*** általános definíciók ***/
 #ifndef NULL
@@ -98,7 +104,7 @@ typedef struct {
     uint16_t Data2;
     uint16_t Data3;
     uint8_t  Data4[8];
-} __attribute__((packed)) uuid_t;
+} packed uuid_t;
 #define UUID_ACCESS(a) (a.Data4[7])
 
 typedef unsigned char uchar;
@@ -198,10 +204,10 @@ typedef struct {
             uint64_t attr0;
             uint64_t attr1;
             uint64_t attr2;
-        } buffer;
+        } buf;
     } data;
     uint64_t serial;
-} __attribute__((packed)) msg_t;
+} packed msg_t;
 /* bits in evt: (63)TTT..TTT P FFFFFFFFFFFFFFF(0)
  *  where T is a task id or subsystem id, P true if message has a pointer,
  *  F is a function number from 1 to 32766. Function numbers 0 and 32767 are reserved. */

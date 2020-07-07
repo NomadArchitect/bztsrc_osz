@@ -32,8 +32,8 @@
 #include <osZ/fsZ.h>
 
 uint64_t sys_fid;
-uint64_t fs_size;
-virt_t fs_initrd = 0;
+uint64_t fs_size, fstab_size = 0;
+virt_t fs_initrd = 0, fstab = 0;
 
 /**
  * visszaadja az initrd-n lévő fájl tartalmának kezdőcímét és fs_size változóban a méretét

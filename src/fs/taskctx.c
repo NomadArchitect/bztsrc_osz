@@ -325,7 +325,7 @@ bool_t taskctx_validfid(taskctx_t *tc, uint64_t idx)
 /**
  * a soronkövetkező könyvtárbejegyzés (dirent) beolvasása
  */
-dirent_t *taskctx_readdir(taskctx_t *tc, fid_t idx, void *ptr, size_t __attribute__((unused)) size)
+dirent_t *taskctx_readdir(taskctx_t *tc, fid_t idx, void *ptr, unused size_t size)
 {
     fcb_t *fc;
     size_t s;

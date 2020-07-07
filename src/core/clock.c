@@ -60,7 +60,7 @@ void clock_init()
 /**
  * falióra megszakítás kezelője
  */
-void clock_intr(uint16_t __attribute__((unused)) irq)
+void clock_intr(unused uint16_t irq)
 {
     pid_t *pid = irq_routing_table[clock_irq];
 

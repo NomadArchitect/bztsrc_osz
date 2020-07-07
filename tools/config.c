@@ -420,10 +420,16 @@ int mystrlen(const char *s)
     return c;
 }
 
-void *myrealloc(void *ptr, int size) {
+void *myrealloc(void *ptr, int size)
+{
     void *data = realloc(ptr, size);
     if(!data) err(lang[0]);
     return data;
+}
+
+int platsrt(const void *a, const void *b) {
+    int r = strcmp(((plat_t*)a)->arch, ((plat_t*)b)->arch);
+    return r ? r : strcmp(((plat_t*)a)->name, ((plat_t*)b)->name);
 }
 
 void readopts()
@@ -464,6 +470,7 @@ void readopts()
             }
         }
         closedir(dir);
+        qsort(platform, numplatform, sizeof(plat_t), platsrt);
     }
     if((dir = opendir("../etc/lang")) != NULL) {
         while((ent = readdir(dir)) != NULL) {
@@ -1047,7 +1054,7 @@ int main(int argc, char **argv)
             switch(c) {
                 case 1: if(mainitem > 0) mainitem--; else mainitem = 12; break;
                 case 2: if(mainitem < 12) mainitem++; else mainitem = 0; break;
-                case 3: if(mainbtn < 2) mainbtn++; else mainbtn = 0; break;
+                case 3: case 9: if(mainbtn < 2) mainbtn++; else mainbtn = 0; break;
                 case 4: if(mainbtn > 0) mainbtn--; else mainbtn = 2; break;
                 case 10:
                     if(mainbtn) { c = 0x1b; if(mainbtn == 1) confsave = 1; }

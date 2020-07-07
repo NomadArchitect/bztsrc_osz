@@ -83,7 +83,7 @@ void platform_halt()
 /**
  * felébresztés üresjáratból
  */
-void platform_awakecpu(uint16_t cpuid __attribute__((unused)))
+void platform_awakecpu(unused uint16_t cpuid)
 {
     /* nincs lapic, úgyhogy csak egy processzort tudunk kezelni, ami meg fut */
 }

@@ -24,23 +24,60 @@
  *     hozol létre a műből, akkor a létrejött művet ugyanazon licensz-
  *     feltételek mellett kell terjesztened, mint az eredetit.
  *
- * @subsystem eszközmeghajtó
- * @brief eszközmeghajtó diszpécser
+ * @subsystem eszközmeghajtók
+ * @brief eszközmeghajtó diszpécser és alap funkciók
  */
 
 #include <osZ.h>
-#define _DRIVER_C
-#include "include/driver.h"
+#include <driver.h>
+
+drvmem_t drv_phymem = { 0 };            /* rendszerbufferek és rendszertáblák fizikai címei */
+mem_entry_t drv_bufmem[256] = { 0 };    /* leképzett memória listája */
 
 /**
- * fő ciklus
+ * irq üzenetek kérése (csak eszközmeghajtók hívhatják)
  */
-public int main(int argc __attribute__((unused)), char **argv __attribute__((unused)))
+public void drv_regirq(uint16_t irq)                { mq_send1(SRV_CORE, SYS_regirq, irq); }
+
+/**
+ * másodpercenkénti időzítő üzenetek kérése (csak eszközmeghajtók hívhatják, USHRT_MAX irq üzeneteket küld)
+ */
+public void drv_regtmr()                            { mq_send0(SRV_CORE, SYS_regtmr); }
+
+/**
+ * eszközmeghajtóprogram keresése eszközspecifikáció alapján (csak eszközmeghajtók hívhatják)
+ * visszatérési érték: 1 ha van, 0 ha nincs
+ */
+public void drv_find(char *spec, char *drv, int len){ mq_send3(SRV_CORE, SYS_drvfind, (virt_t)spec, (virt_t)drv, len); }
+
+/**
+ * eszközmeghajtóprogram hozzáadása (csak eszközmeghajtók hívhatják)
+ */
+public void drv_add(char *drv, mem_entry_t *memspec){ mq_send2(SRV_CORE, SYS_drvadd, (virt_t)drv, (virt_t)memspec); }
+
+/**
+ * rendszermemória virtuális címének lekérdezése (csak eszközmeghajtók hívhatják)
+ */
+public void *drv_virtmem(phy_t addr)
+{
+    mem_entry_t *mem;
+    virt_t v;
+    if(addr)
+        for(mem = drv_bufmem, v = BUF_ADDRESS; mem->base && mem->size; mem++) {
+            if(addr >= mem->base && addr < mem->base + mem->size)
+                return (void*)(addr - mem->base + v);
+            /* biztonság kedvéért lapra kerekítjük a méretet */
+            v += ((mem->size+__PAGESIZE-1) & ~(__PAGESIZE-1));
+        }
+    return NULL;
+}
+
+/*** fő eseménykezelő ciklus ***/
+public int main(unused int argc, unused char **argv)
 {
     msg_t *msg;
 
-    if(!drv_init())
-        exit(EX_UNAVAILABLE);
+    drv_init();
 
     while(1) {
         msg = mq_recv();
@@ -60,4 +97,6 @@ public int main(int argc __attribute__((unused)), char **argv __attribute__((unu
 #endif
         }
     }
+    /* ide sose juthat el, de biztos, ami biztos */
+    return EX_UNAVAILABLE;
 }

@@ -66,7 +66,7 @@ typedef struct {
     uint64_t sched_delta;   /* ütemező számláló növelése */
     uint64_t numtasks;      /* erre a CPU-ra ütemezett taszkok száma */
     /* a fennmaradó részt a rendszer hívás használja CPU-nkénti veremnek */
-} __attribute__((packed)) ccb_t;
+} packed ccb_t;
 
 c_assert(sizeof(ccb_t) <= __PAGESIZE - CPUSTACK);
 
