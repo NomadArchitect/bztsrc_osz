@@ -185,5 +185,5 @@ egy az egyben lefordíthatók, és ha hiba nélkül lefutnak, akkor a core és l
 Bájtkód átültetése
 ------------------
 
-Az OS/Z támogatja platformfüggetlen [bájtkód](https://gitlab.com/bztsrc/osz/blob/master/docs/bytecode.md) futtatását. Ehhez
-mindössze a [wasmvm](https://gitlab.com/bztsrc/osz/blob/master/usr/wasmvm) alkalmazást kell portolni.
+Az OS/Z támogatja platformfüggetlen WASM [bájtkód](https://gitlab.com/bztsrc/osz/blob/master/docs/bytecode.md) futtatását. Ehhez
+mindössze a [wasi](https://gitlab.com/bztsrc/osz/blob/master/usr/wasi) alkalmazást kell portolni.

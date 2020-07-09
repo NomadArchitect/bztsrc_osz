@@ -33,7 +33,7 @@
 uint32_t task_nextcpu = 0;          /* azt mutatja, melyik CPU-ra kell betölteni a taszkot. Ezt több CPU is növelheti gond nélkül */
 
 interp_t interpreters[] = {         /* bájtkód értelmezők listája */
-    { "\000asm", 0, 4, "/bin/wasmvm" },
+    { "\000asm", 0, 4, "/bin/wasi" },
     { "CSBC", 0, 4, "/bin/csi" }
 };
 

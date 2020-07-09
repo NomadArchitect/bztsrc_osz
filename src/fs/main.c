@@ -50,12 +50,12 @@ extern bool_t rootmounted;          /* azt jelzi, hogy csatoltunk-e már fel roo
 public int main(unused int argc, unused char **argv)
 {
     msg_t *msg;
-/*
     taskctx_t *tc;
-*/
     meminfo_t m;
     uint64_t ret, j, k;
     char *ptr;
+    stat_t *pst;
+    off_t o;
 
     /* inicializálás, hogy tudjuk mknod() hívásokat fogadni */
     mtab_init();
@@ -190,6 +190,7 @@ public int main(unused int argc, unused char **argv)
 #endif
                     mq_send5(df->drivertask, DRV_ioctl|(msg->data.buf.ptr && msg->data.buf.size>0 ? MSG_PTRDATA : 0),
                         msg->data.buf.ptr, msg->data.buf.size, df->device, msg->data.buf.attr0, ctx->pid);
+                    ctx->msg.evt = 0;
                     continue;
                 }
                 break;
@@ -301,7 +302,99 @@ public int main(unused int argc, unused char **argv)
                     ptr = "/";
                 break;
 
+            /*** könyvtárbejegyzések kezelése ***/
+            case SYS_opendir:
+                if(msg->data.buf.type == -1UL) {
+/*dbg_printf("fs opendir(%s,%d)\n", msg->data.buf.ptr,msg->data.buf.type);*/
+                    ret = lookup(msg->data.buf.ptr, false);
+                } else {
+/*dbg_printf("fs opendir(%x[%d],%d)\n", msg->data.buf.ptr,msg->data.buf.size,msg->data.buf.type);*/
+                    if(!taskctx_validfid(ctx, msg->data.buf.type)) {
+                        seterr(EBADF);
+                        ret = -1UL;
+                        break;
+                    } else
+                    if(!(ctx->openfiles[msg->data.buf.type-1].mode & O_READ) ||
+                       !(fcb[ctx->openfiles[msg->data.buf.type-1].fid].mode & O_READ)) {
+                            seterr(EACCES);
+                            ret = -1UL;
+                            break;
+                    }
+                    ret = ctx->openfiles[msg->data.buf.type-1].unionidx;
+                    ctx->openfiles[msg->data.buf.type-1].unionidx = 0;
+                }
+                if(ret != -1UL && !errno()) {
+                    if(fcb[ret].fs != devfsidx && fcb[ret].type != FCB_TYPE_REG_DIR && fcb[ret].type != FCB_TYPE_UNION) {
+                        seterr(ENOTDIR);
+                        ret = -1UL;
+                    } else {
+                        j = -1;
+                        if(fcb[ret].type == FCB_TYPE_UNION) {
+                            j = fcb_unionlist_build(ret, (void*)(msg->data.buf.type == -1UL ? NULL : msg->data.buf.ptr),
+                                msg->data.buf.size);
+                            if(ackdelayed) break;
+                            if(j != -1UL) {
+                                k = ret;
+                                ret = taskctx_open(ctx, j, O_RDONLY, 0, msg->data.buf.type);
+                                if(!ret)
+                                    break;
+                                ctx->openfiles[ret-1].unionidx = k;
+                                pst = statfs(j);
+                                if(!pst || !pst->st_size)
+                                    taskctx_close(ctx, ret, true);
+                                else {
+                                    mq_send5(EVT_SENDER(msg->evt), EVT_ack, ret, SUCCESS, EVT_FUNC(msg->evt),
+                                        msg->serial, pst->st_size);
+                                    ctx->msg.evt = 0;
+                                    continue;
+                                }
+                            }
+                        }
+                        if(msg->data.buf.type != -1UL) {
+                            taskctx_close(ctx, msg->data.buf.type, true);
+/*dbg_printf("opening an union at %d\n",ret,errno());fcb_dump();*/
+                        }
+                        ret = taskctx_open(ctx, ret, O_RDONLY, 0, msg->data.buf.type);
+                        if(ret)
+                            ctx->openfiles[ret-1].mode |= OF_MODE_READDIR;
+                    }
+                }
+/*taskctx_dump();*/
+                break;
+
+            case SYS_readdir:
+/*dbg_printf("fs readdir(%x,%d,%d,%x)\n", msg->data.buf.ptr, msg->data.buf.size, msg->data.buf.type,msg->data.buf.attr0);*/
+                if(!taskctx_validfid(ctx,msg->data.buf.type) ||
+                    (fcb[ctx->openfiles[msg->data.buf.type-1].fid].type != FCB_TYPE_REG_DIR &&
+                    fcb[ctx->openfiles[msg->data.buf.type-1].fid].type != FCB_TYPE_UNION)) {
+                    seterr(EBADF);
+                    ret = 0;
+                } else {
+                    ptr = (char*)taskctx_readdir(ctx, msg->data.buf.type, msg->data.buf.ptr, msg->data.buf.size);
+                    if(ptr && !errno()) {
+                        tskcpy(EVT_SENDER(msg->evt), (void*)msg->data.buf.attr0, ptr, sizeof(dirent_t));
+                        ret = 0;
+                    }
+                }
+                break;
+
             /*** fájl meta adatok kezelése ***/
+            case SYS_readlink:
+/*dbg_printf("fs readlink(%s)\n",msg->ptr);*/
+                ret = lookup(msg->data.buf.ptr, false);
+                if(ret != -1UL && !errno()) {
+                    ptr = fcb_readlink(ret);
+                    if(ptr) {
+                        mq_send4(EVT_SENDER(msg->evt), EVT_ack | MSG_PTRDATA, ptr, fcb[ret].data.reg.filesize,
+                            EVT_FUNC(msg->evt), msg->serial);
+                        ctx->msg.evt = 0;
+                        continue;
+                    }
+                    seterr(EINVAL);
+                }
+                ret = 0;
+                break;
+
             case SYS_realpath:
                 ret = lookup(msg->data.buf.ptr, false);
                 if(ret != -1UL && !errno())
@@ -309,11 +402,9 @@ public int main(unused int argc, unused char **argv)
                 ret = 0;
                 break;
 
-#if 0
             case SYS_dstat:
-                if(msg->data.scalar.arg0 >= 0 && msg->data.scalar.arg0 < nfcb &&
-                    fcb[msg->data.scalar.arg0].type == FCB_TYPE_DEVICE) {
-                    ret = msg->arg0;
+                if(msg->data.scalar.arg0 < nfcb && fcb[msg->data.scalar.arg0].type == FCB_TYPE_DEVICE) {
+                    ret = msg->data.scalar.arg0;
                     goto dostat;
                 }
                 seterr(EINVAL);
@@ -321,54 +412,320 @@ public int main(unused int argc, unused char **argv)
                 break;
 
             case SYS_fstat:
-                if(taskctx_validfid(ctx,msg->arg0)) {
-                    ret=ctx->openfiles[msg->arg0-1].fid;
-                    if(ctx->openfiles[msg->arg0-1].mode & O_FIFO) {
-                        // unnamed pipe
-                        j = ctx->openfiles[msg->arg0-1].mode;
+                if(taskctx_validfid(ctx,msg->data.scalar.arg0)) {
+                    ret=ctx->openfiles[msg->data.scalar.arg0-1].fid;
+                    if(ctx->openfiles[msg->data.scalar.arg0-1].mode & O_FIFO) {
+                        /* névtelen csővezeték */
+                        j = ctx->openfiles[msg->data.scalar.arg0-1].mode;
                         goto dopstat;
                     } else
-                    if(ctx->openfiles[msg->arg0-1].mode & OF_MODE_TTY) {
-                        // tty stdout (no fcb or pipe equivalent, so let's fake it's a pipe)
+                    if(ctx->openfiles[msg->data.scalar.arg0-1].mode & OF_MODE_TTY) {
+                        /* tty stdout (nincs fcb se igazi csővezeték, szóval lehazudjuk csővezetéknek) */
                         memzero(&st,sizeof(stat_t));
-                        st.st_dev=-1;   // named pipes return fid here, but ttys are unnamed
-                        st.st_ino=ret;  // without better place, return windows id in inode field
-                        st.st_mode=O_WRONLY|O_APPEND|S_IFTTY;
+                        st.st_dev = -1UL; /* névvel rendelkező csővezetékek itt a fid-et adnák vissza */
+                        st.st_ino = ret;  /* jobb híjján a window id-t az inode-ban adjuk vissza */
+                        st.st_mode = O_WRONLY|O_APPEND|S_IFTTY;
                         memcpy(st.st_type,"appl",4);
                         memcpy(st.st_mime,"pipe",4);
-                        ptr=&st;
+                        pst = &st;
                         goto statok;
                     }
                     goto dostat;
                 }
                 seterr(EBADF);
-                ret=0;
+                ret = 0;
                 break;
 
             case SYS_lstat:
-                ret=lookup(msg->ptr, false);
-dostat:         if(ret!=-1 && !errno()) {
-                    if(fcb[ret].type!=FCB_TYPE_PIPE)
-                        ptr=statfs(ret);
+                ret = lookup(msg->data.buf.ptr, false);
+dostat:         if(ret != -1UL && !errno()) {
+                    if(fcb[ret].type != FCB_TYPE_PIPE)
+                        pst = statfs(ret);
                     else {
-                        // named pipe
-                        ret=fcb[ret].pipe.idx;
+                        /* neves csővezeték */
+                        ret = fcb[ret].data.pipe.idx;
                         j = O_RDWR|O_APPEND;
-dopstat:                ptr=pipe_stat(ret, j);
-                        // for FIFO TTY (stdin) we store window id in the otherwise unused offs field
+dopstat:                pst = pipe_stat(ret, j);
+                        /* FIFO TTY (stdin) esetén a window id az egyébként használaton kívüli offs-ba kerül */
                         if(j & OF_MODE_TTY)
-                            ((stat_t*)ptr)->st_ino = ctx->openfiles[msg->arg0-1].offs;
+                            (pst)->st_ino = ctx->openfiles[msg->data.scalar.arg0-1].offs;
                     }
-statok:             if(ptr!=NULL)
-                        p2pcpy(EVT_SENDER(msg->evt), (void*)msg->arg2, ptr, sizeof(stat_t));
+statok:             if(pst)
+                        tskcpy(EVT_SENDER(msg->evt), (void*)msg->data.scalar.arg2, pst, sizeof(stat_t));
                     else
                         seterr(ENOENT);
                 }
-                ret=0;
+                ret = 0;
                 break;
 
-            /*** könyvtárbejegyzések kezelése ***/
-#endif
+            /*** csővezetékek ***/
+            case SYS_mkfifo:
+/*dbg_printf("fs mkfifo(%s, %x)\n", msg->data.buf.ptr, msg->data.buf.type);*/
+                ret = fcb_add(msg->data.buf.ptr, FCB_TYPE_PIPE);
+                if(ret != -1UL)
+                    fcb[ret].data.pipe.idx = pipe_add(ret, EVT_SENDER(msg->evt));
+                break;
+
+            case SYS_pipe:
+/*dbg_printf("fs pipe()\n");*/
+                ret = pipe_add(-1, EVT_SENDER(msg->evt));
+                j = taskctx_open(ctx, ret, O_RDONLY|O_FIFO, 0, 0);
+                k = taskctx_open(ctx, ret, O_WRONLY|O_APPEND|O_FIFO, 0, 0);
+                if(errno() == SUCCESS && j && k)
+                    mq_send4(EVT_SENDER(msg->evt), EVT_ack, j, k, EVT_FUNC(msg->evt), msg->serial);
+                else
+                    mq_send4(EVT_SENDER(msg->evt), EVT_ack, -1UL, errno(), EVT_FUNC(msg->evt), msg->serial);
+                ctx->msg.evt = 0;
+                continue;
+
+            case SYS_getty:
+/*dbg_printf("fs getty(%x,%x)\n", msg->arg0, msg->arg1);*/
+                tc = taskctx_get(msg->data.scalar.arg0);
+                if(tc) {
+                    /* stdin, stdout, stderr bezárása */
+                    taskctx_close(tc, STDIN_FILENO, false);
+                    taskctx_close(tc, STDOUT_FILENO, false);
+                    taskctx_close(tc, STDERR_FILENO, false);
+                    ret = pipe_add(-1, msg->data.scalar.arg0);
+                    if(ret != -1UL && !errno()) {
+                        /* taszk sztandard csővezetékeit az UI ablakhoz irányítjuk */
+                        j = taskctx_open(tc, ret, O_RDONLY|O_FIFO|OF_MODE_TTY, 0, STDIN_FILENO);
+                        /* a window id lementése (fid most már egy csővezeték index) */
+                        if(j) tc->openfiles[j-1].offs = msg->data.scalar.arg1;
+                        /* nem igazi csővezeték, a fid egy window id */
+                        taskctx_open(tc, msg->data.scalar.arg1, O_WRONLY|O_APPEND|OF_MODE_TTY, 0, STDOUT_FILENO);
+                        taskctx_open(tc, msg->data.scalar.arg1, O_WRONLY|O_APPEND|OF_MODE_TTY, 0, STDERR_FILENO);
+                    }
+                }
+                ret = 0;
+                break;
+
+            case SYS_evtty:
+/*dbg_printf("fs evtty(%x%x, pid %x) %d\n", msg->arg1, msg->arg0, msg->arg2, errno());*/
+                tc = taskctx_get(msg->data.scalar.arg2);
+                /* írás a sztandard csővezetékébe */
+                if(!taskctx_validfid(tc, STDIN_FILENO)) {
+                    seterr(EBADF);
+                    ret = 0;
+                } else {
+                    j = strlen((char*)&msg->data.scalar.arg0);
+                    if(j)
+                        ret = pipe_write(tc->openfiles[STDIN_FILENO].fid, (virt_t)&msg->data.scalar.arg0, j) ? j : 0;
+                    else
+                        ret = 0;
+                }
+                break;
+
+            /*** fájlműveletek ***/
+            case SYS_tmpfile:
+/*dbg_printf("fs tmpfile()\n");*/
+                ptr = malloc(128);
+                if(!ptr) {
+                    ret = -1UL;
+                    break;
+                }
+                sprintf(ptr, "%s%lx%lx", P_tmpdir, ctx->pid, rand());
+                ret = lookup(ptr, true);
+                if(ret != -1UL && !errno())
+                    ret = taskctx_open(ctx, ret, O_RDWR|O_TMPFILE, 0, -1);
+                free(ptr);
+/*taskctx_dump();*/
+                break;
+
+            case SYS_fopen:
+/*dbg_printf("fs fopen(%s, %x, %d)\n", msg->data.buf.ptr, msg->data.buf.type, msg->data.buf.attr0);*/
+                ret = lookup(msg->data.buf.ptr, msg->data.buf.type & O_CREAT ? true : false);
+                if(ret != -1UL && !errno()) {
+                    if(fcb[ret].type == FCB_TYPE_REG_DIR || fcb[ret].type == FCB_TYPE_UNION) {
+                        seterr(EISDIR);
+                        ret = 0;
+                    } else {
+                        if(msg->data.buf.attr0 != -1UL)
+                            taskctx_close(ctx, msg->data.buf.attr0, true);
+                        /* az elérési út offszet része */
+                        o = getoffs(msg->data.buf.ptr);
+                        if(o < 0) o += fcb[ret].data.reg.filesize;
+                        if(msg->data.buf.type & O_APPEND) o = fcb[ret].data.reg.filesize;
+                        ret = taskctx_open(ctx, ret, msg->data.buf.type, o, msg->data.buf.attr0);
+                    }
+                }
+                if(ret == -1UL) ret = 0;
+/*fcb_dump(); taskctx_dump();*/
+                break;
+
+            /*** műveletek fájlleírókon (fid) ***/
+          /*case SYS_closedir:*/
+            case SYS_fclose:
+/*dbg_printf("fs %s %d\n",ctx->openfiles[msg->data.scalar.arg0-1].mode&OF_MODE_READDIR?"closedir":"fclose",msg->data.scalar.arg0);*/
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    ret = taskctx_close(ctx, msg->data.scalar.arg0, false) ? 0 : -1;
+                }
+/*taskctx_dump();*/
+                break;
+
+            case SYS_fcloseall:
+/*dbg_printf("fs fcloseall\n");*/
+                for(j = 0; j < ctx->nopenfiles; j++)
+                    taskctx_close(ctx, j+1, false);
+                cache_flush(0);
+                fcb_free();
+                ret = 0;
+/*taskctx_dump();*/
+                break;
+
+            case SYS_fseek:
+                ret = taskctx_seek(ctx, msg->data.scalar.arg0, msg->data.scalar.arg1, msg->data.scalar.arg2) ? 0 : -1;
+                if(ret && !errno())
+                    seterr(EINVAL);
+                break;
+
+            case SYS_rewind:
+                /* a taskctx_seek nem jó ide, mert ennek könyvtáraknál is működnie kell */
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    ctx->openfiles[msg->data.scalar.arg0-1].offs = 0;
+                    ctx->openfiles[msg->data.scalar.arg0-1].unionidx = 0;
+                    ret = 0;
+                }
+                break;
+
+            case SYS_ftell:
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = 0;
+                } else
+                    ret = ctx->openfiles[msg->data.scalar.arg0-1].offs;
+                break;
+
+            case SYS_feof:
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    if(ctx->openfiles[msg->data.scalar.arg0-1].mode & O_FIFO)
+                        ret = 0;
+                    else
+                        ret = !fcb[ctx->openfiles[msg->data.scalar.arg0-1].fid].abspath ||
+                            (ctx->openfiles[msg->data.scalar.arg0-1].mode & OF_MODE_EOF) ||
+                            ctx->openfiles[msg->data.scalar.arg0-1].offs >=
+                                fcb[ctx->openfiles[msg->data.scalar.arg0-1].fid].data.reg.filesize;
+                }
+                break;
+
+            case SYS_ferror:
+                if(!msg->data.scalar.arg0 || !ctx || !ctx->openfiles || ctx->nopenfiles <= (uint64_t)msg->data.scalar.arg0) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    j = msg->data.scalar.arg0-1;
+                    ret = (ctx->openfiles[j].fid == -1UL || (ctx->openfiles[j].mode & OF_MODE_EOF) ||
+                        ((ctx->openfiles[j].mode & O_FIFO) && ctx->openfiles[j].fid >= npipe) ||
+                        (ctx->openfiles[j].fid >= nfcb || !fcb[ctx->openfiles[j].fid].abspath) ? 1 : 0);
+                }
+                break;
+
+            case SYS_fclrerr:
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    ctx->openfiles[msg->data.scalar.arg0-1].mode &= 0xffff;
+                    ret = 0;
+                }
+                break;
+
+            case SYS_dup:
+/*dbg_printf("fs dup(%d)\n",msg->data.scalar.arg0);*/
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    ret = taskctx_open(ctx, ctx->openfiles[msg->data.scalar.arg0-1].fid,
+                        ctx->openfiles[msg->data.scalar.arg0-1].mode,
+                        ctx->openfiles[msg->data.scalar.arg0-1].offs, -1);
+/*taskctx_dump();*/
+                }
+                break;
+
+            case SYS_dup2:
+/*dbg_printf("fs dup2(%d,%d)\n",msg->arg0,msg->arg1);*/
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else {
+                    /* ne használj itt task_validfid-et, csak az a lényeg, hogy a leíró ne legyen használatban */
+                    if(ctx->nopenfiles >= msg->data.scalar.arg1 && ctx->openfiles[msg->data.scalar.arg1-1].fid != -1UL) {
+                        taskctx_close(ctx, msg->data.scalar.arg1, true);
+                    }
+                    ret = taskctx_open(ctx, ctx->openfiles[msg->data.scalar.arg0-1].fid,
+                        ctx->openfiles[msg->data.scalar.arg0-1].mode,
+                        ctx->openfiles[msg->data.scalar.arg0-1].offs, msg->data.scalar.arg1);
+/*taskctx_dump();*/
+                }
+                break;
+
+            /*** írás / olvasás ***/
+            case SYS_fread:
+/*dbg_printf("fs fread(%d,%x,%d) offs %d mode %x\n",msg->data.buf.type,msg->ptr,msg->data.buf.size,
+    ctx->openfiles[msg->data.buf.type-1].offs,ctx->openfiles[msg->data.buf.type-1].mode);*/
+                if(MSG_ISPTR(msg->evt)) {
+                    seterr(EINVAL);
+                    ret = 0;
+                } else
+                /* az 1M-nél nagyobb buffereket megosztott memóriában kell átadni */
+                if(msg->data.buf.size >= __BUFFSIZE && (int64_t)msg->data.buf.ptr > 0) {
+                    seterr(ENOTSHM);
+                    ret = 0;
+                } else
+                if(!msg->data.buf.ptr || !msg->data.buf.size) {
+                    if(!msg->data.buf.ptr && msg->data.buf.size > 0)
+                        seterr(EINVAL);
+                    ret = 0;
+                } else
+                    ret = taskctx_read(ctx, msg->data.buf.type, (virt_t)msg->data.buf.ptr, msg->data.buf.size);
+                break;
+
+            case SYS_fwrite:
+/*dbg_printf("fs fwrite(%d,%x,%d)\n",msg->data.buf.type,msg->data.buf.ptr,msg->data.buf.size);*/
+                if(!taskctx_validfid(ctx, msg->data.buf.type) || (!(ctx->openfiles[msg->data.buf.type-1].mode & OF_MODE_TTY) && (
+                   fcb[ctx->openfiles[msg->data.buf.type-1].fid].type == FCB_TYPE_REG_DIR ||
+                   fcb[ctx->openfiles[msg->data.buf.type-1].fid].type == FCB_TYPE_UNION))) {
+                    seterr(EBADF);
+                    ret = 0;
+                } else
+                if(!msg->data.buf.ptr || !msg->data.buf.size) {
+                    if(!msg->data.buf.ptr && msg->data.buf.size > 0)
+                        seterr(EINVAL);
+                    ret = 0;
+                } else
+                    ret = taskctx_write(ctx, msg->data.buf.type, msg->data.buf.ptr, msg->data.buf.size);
+                break;
+
+            case SYS_fflush:
+/*dbg_printf("fs fflush(%d)\n",msg->data.scalar.arg0);*/
+                if(!taskctx_validfid(ctx, msg->data.scalar.arg0)) {
+                    seterr(EBADF);
+                    ret = -1UL;
+                } else
+                if(!(ctx->openfiles[msg->data.scalar.arg0-1].mode & O_WRITE)) {
+                    seterr(EACCES);
+                    ret = -1UL;
+                } else {
+                    /* tty csővezeték lekezelése, a fid egy window id */
+                    if(ctx->openfiles[msg->data.scalar.arg0-1].mode & OF_MODE_TTY) {
+                        mq_send1(SRV_UI, SYS_flush, ctx->openfiles[msg->data.scalar.arg0-1].fid);
+                        ret = 0;
+                    } else
+                        /* egyébként a fid egy fcb id */
+                        ret = fcb_flush(ctx->openfiles[msg->data.scalar.arg0-1].fid) ? 0 : -1;
+                }
+                break;
+
             /*** elvileg ennek sosem szabad bekövetkeznie ***/
             default:
 #if DEBUG
@@ -381,16 +738,16 @@ statok:             if(ptr!=NULL)
 
         /* elébe megyünk az elfogyott a memória helyzeteknek */
         m = meminfo();
-        j=m.free*100/m.total;
-        if(j<cachelimit || errno()==ENOMEM) {
+        j = m.free*100/m.total;
+        if(j < cachelimit || errno() == ENOMEM) {
             fcb_free();
             cache_flush();
-            nomem=true;
+            nomem = true;
         }
         /* válasz küldése, vagy az erdeti üzenet elrakása későbbre */
         if(!ackdelayed) {
             if(!ret && ptr)
-                mq_send3(EVT_SENDER(msg->evt), EVT_ack | MSG_PTRDATA, ptr, strlen(ptr) + 1, msg->serial);
+                mq_send4(EVT_SENDER(msg->evt), EVT_ack | MSG_PTRDATA, ptr, strlen(ptr) + 1, EVT_FUNC(msg->evt), msg->serial);
             else
                 mq_send4(EVT_SENDER(msg->evt), EVT_ack, ret, errno(), EVT_FUNC(msg->evt), msg->serial);
             ctx->msg.evt = 0;

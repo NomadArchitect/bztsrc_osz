@@ -183,5 +183,5 @@ For device drivers, binary distribution is allowed, being open source is not man
 Porting bytecode
 ----------------
 
-OS/Z supports execution of platform-independent [bytecode](https://gitlab.com/bztsrc/osz/blob/master/docs/bytecode.en.md).
-For that, the [wasmvm](https://gitlab.com/bztsrc/osz/blob/master/usr/wasmvm) application has to be ported.
+OS/Z supports execution of platform-independent WASM [bytecode](https://gitlab.com/bztsrc/osz/blob/master/docs/bytecode.en.md).
+For that, the [wasi](https://gitlab.com/bztsrc/osz/blob/master/usr/wasi) application has to be ported.
