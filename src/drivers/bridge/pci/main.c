@@ -82,6 +82,7 @@ public void drv_init()
                     drv[0] = 0;
                     /* először megnézzük a teljes alrendszer modellre van-e egyezés */
                     sprintf(pcipath, "pci%2x:%2x:%2x:%2x", PCI_VENDOR(dev), PCI_DEVICE(dev), PCI_VENDOR(sub), PCI_DEVICE(sub));
+/*syslog(LOG_INFO, pcipath);*/
                     drv_find(pcipath, drv, sizeof(drv));
                     if(!drv[0]) {
                         /* ha nincs, akkor a modellhez van-e meghajtó */

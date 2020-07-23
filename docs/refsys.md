@@ -3,13 +3,13 @@ OS/Z Függvényreferenciák
 
 Prototípusok
 ------------
-Összesen 210 függvény van definiálva.
+Összesen 211 függvény van definiálva.
 
 ### Konzol
 [void kpanic(char *reason, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L239)
   pánik képernyő, ha van, akkor meghívja a debuggert
  
-[void kprintf(char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L940)
+[void kprintf(char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L939)
   segédfüggvény a változó paraméterszámú változathoz
  
 [void kprintf_bg(uint32_t color)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L93)
@@ -87,7 +87,7 @@ Prototípusok
 [void syslog(int pri, char* fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/core/syslog.c#L37)
   korai RFC5424 kompatíbilis naplózó
  
-[void vkprintf(char *fmt, va_list args, bool_t asciiz)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L789)
+[void vkprintf(char *fmt, va_list args, bool_t asciiz)](https://gitlab.com/bztsrc/osz/blob/master/src/core/kprintf.c#L788)
   szöveg megjelenítése a korai konzolon
  
 ### Fájlrendszer
@@ -345,7 +345,7 @@ Prototípusok
 [void platform_dbginit()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/ibmpc/platform.c#L91)
   soros vonali debug konzol inicializálása
  
-[void platform_dbgputc(uint8_t c)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/ibmpc/platform.c#L114)
+[void platform_dbgputc(uint8_t c)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/ibmpc/platform.c#L113)
   egy bájt küldése a debug konzolra
  
 [void platform_env()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/ibmpc/platform.c#L33)
@@ -357,7 +357,7 @@ Prototípusok
 [void platform_idle()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L39)
   CPU üresjárata
  
-[void platform_load()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L227)
+[void platform_load()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L228)
   CPU állapotának visszatöltése
  
 [bool_t platform_memfault(void *ptr)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L118)
@@ -372,10 +372,10 @@ Prototípusok
 [void platform_reset()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/ibmpc/platform.c#L67)
   számítógép újraindítása, kprintf_reboot() hívja
  
-[void platform_save()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L192)
+[void platform_save()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L193)
   CPU állapotának lementése
  
-[void platform_srand()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L264)
+[void platform_srand()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L265)
   véletlenszám generátor inicializálása
  
 [void platform_syscall()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L132)
@@ -388,7 +388,7 @@ Prototípusok
      visszatérési érték: rdx:rax
      hibakód: rdi
  
-[void platform_waitkey()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L304)
+[void platform_waitkey()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/platform.S#L305)
   korai konzol implementáció, a kprintf használja
  
 ### Futtathatók
@@ -411,34 +411,31 @@ Prototípusok
   kiszedi az ELF objektumokat az aktuális címtérből, és ha kell, a gyorsítótárból is
  
 ### Taszk
-[void drivers_add(char *drv, pmm_entry_t *devspec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L240)
+[void drivers_add(char *drv, pmm_entry_t *devspec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L166)
   új eszközmeghajtó taszk hozzáadása
  
-[char *drivers_find(char *spec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L131)
+[char *drivers_find(char *spec)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L57)
   visszaadja az eszközspec-hez tartozó első meghajtó fájlnevét. Tipikus eszközspec "pciVVVV:MMMM" vagy "clsCC:SS"
  
-[void drivers_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L57)
-  az idle taszk és az eszközmeghajtók inicializálása
+[void drivers_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L304)
+  az idle és FS taszk inicializálása és az eszközmeghajtók betöltése
  
-[void drivers_intr(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L219)
+[void drivers_intr(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L145)
   üzenet küldése a megszakításkezelő taszkoknak
  
-[void drivers_ready()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L404)
+[void drivers_ready()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L387)
   akkor hívódik, amikor az összes eszközmeghajtó taszk incializálódott és blokkolódott teendőre várva
  
-[void drivers_regintr(uint16_t irq, pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L150)
+[void drivers_regintr(uint16_t irq, pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L76)
   megszakításkezelő taszk hozzáadása a listához
  
-[void drivers_start()](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L378)
-  kooperatív ütemezés, eszközmeghajtó és rendszerszolgáltatás taszkok futtatása
- 
-[void drivers_unregintr(pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L183)
+[void drivers_unregintr(pid_t task)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L109)
   megszakításkezelő taszk eltávolítása a listából
  
 [bool_t msg_allowed(tcb_t *sender, pid_t dest, evt_t event)](https://gitlab.com/bztsrc/osz/blob/master/src/core/security.c#L56)
   ellenőrzi, hogy az aktuális taszk elküldhet-e egy bizonyos üzenetet
  
-[msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d,](https://gitlab.com/bztsrc/osz/blob/master/src/core/msgcore.c#L47)
+[msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e, uint64_t f, evt_t event)](https://gitlab.com/bztsrc/osz/blob/master/src/core/msgcore.c#L47)
   az SRV_CORE taszknak küldött üzenetek feldolgozása
  
 [void msg_notify(pid_t pid, evt_t event, uint64_t a)](https://gitlab.com/bztsrc/osz/blob/master/src/core/msg.c#L261)
@@ -481,7 +478,7 @@ Prototípusok
 [void sched_remove(tcb_t *tcb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/sched.c#L122)
   taszk kivétele prioritási sorból
  
-[void service_add(int srv, char *cmd)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L305)
+[void service_add(int srv, char *cmd)](https://gitlab.com/bztsrc/osz/blob/master/src/core/drivers.c#L231)
   új rendszerszolgáltatás taszk hozzáadása. Kicsit kilóg a sorból, de sok a közös elem az eszközmeghajtókkal, itt a helye
  
 [bool_t task_allowed(tcb_t *tcb, char *grp, uint8_t access)](https://gitlab.com/bztsrc/osz/blob/master/src/core/security.c#L36)
@@ -504,34 +501,40 @@ Prototípusok
   létrehoz egy új taszkot
  
 ### Debugger
-[void dbg_brk(virt_t o, uint8_t m, uint8_t l)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L138)
+[void dbg_brk(virt_t o, uint8_t m, uint8_t l)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L163)
   listázza a breakpointokat vagy beállít egy új breakpointot O címen, M módra, L hosszan
  
-[virt_t dbg_disasm(virt_t addr, char *str)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L117)
+[virt_t dbg_disasm(virt_t addr, char *str)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L142)
   dekódol vagy hexában dumpol egy utasítást
  
-[void dbg_dumpccb(ccb_t *ccb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L91)
+[void dbg_dumpccb(ccb_t *ccb)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L116)
   CPU Kontroll Blokk architektúrafüggő mezőinek dumpolása
  
-[void dbg_dumpregs()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L81)
-  speciális regiszterek dumpolása, fault address cím lekérdezése
+[void dbg_dumpregs()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L107)
+  speciális regiszterek dumpolása
  
-[void dbg_pagingflags(uint64_t p)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L72)
+[void dbg_fini()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L66)
+  Platform specifikus debugger visszaállítás
+ 
+[void dbg_init()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L54)
+  Platform specifikus debugger inicializálás
+ 
+[void dbg_pagingflags(uint64_t p)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L98)
   a P lapcímtárbejegyzés attribútumainak dumpolása
  
-[void dbg_paginghelp()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L50)
+[void dbg_paginghelp()](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L76)
   kiírja, hogy a lapcímtáblában melyik bit milyen attribútumot takar
  
-[int dbg_parsecmd(char *cmd, uint64_t cmdlast)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L708)
+[int dbg_parsecmd(char *cmd, uint64_t cmdlast)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L722)
   parancsértelmező
  
-[virt_t dbg_previnst(virt_t addr)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L108)
+[virt_t dbg_previnst(virt_t addr)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L133)
   visszaadja az előző utasítás címét
  
-[void dbg_singlestep(bool_t enable)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L99)
+[void dbg_singlestep(bool_t enable)](https://gitlab.com/bztsrc/osz/blob/master/src/core/x86_64/dbg.c#L124)
   ki/bekapcsolja a lépésenkénti utasításvégrehajtást
  
-[void dbg_start(char *header, bool_t ispanic)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L805)
+[void dbg_start(char *header, bool_t ispanic)](https://gitlab.com/bztsrc/osz/blob/master/src/core/dbg.c#L819)
   beépített debugger
  
 ### Memória

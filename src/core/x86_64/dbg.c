@@ -30,6 +30,10 @@
 
 #include <arch.h>
 #include "disasm.h"
+#ifndef NOPS2
+#include "../../drivers/include/x86_64/drvplatform.h"   /* inb, outb */
+#include "../../drivers/input/ps2_8042/ps2.h"           /* ps2_cmd0, ps2_cmd1, ps2_read */
+#endif
 
 /* külső erőforrások */
 extern void dbg_setpos();
@@ -44,8 +48,30 @@ extern virt_t dbg_faultaddr;
 char *dbg_systables[] = { "dma", "acpi", "smbi", "efi", "pcie", "dsdt", "apic", "ioapic", "hpet", NULL }; /* lásd arch.h */
 char *dbg_regs[]={ "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rbp", NULL };
 char *dbg_fareg = "cr2"; /* fault address, lapfordítási hiba címét tartalmazó regiszter neve */
-
+uint8_t ps2_orig;
 uint64_t dr6, numbrk=0;
+
+/**
+ * Platform specifikus debugger inicializálás
+ */
+void dbg_init()
+{
+    __asm__ __volatile__( "movq %%cr2, %0" : "=a"(dbg_faultaddr));
+#ifndef NOPS2
+    ps2_cmd0(0x20); ps2_orig = ps2_read();  /* konfigurációs bájt kiolvasása */
+    ps2_cmd1(0x60, ps2_orig | (1<<6));      /* scancode fordítás bekapcsolása */
+#endif
+}
+
+/**
+ * Platform specifikus debugger visszaállítás
+ */
+void dbg_fini()
+{
+#ifndef NOPS2
+    ps2_cmd1(0x60, ps2_orig);               /* konfigurációs bájt visszaállítása */
+#endif
+}
 
 /**
  * kiírja, hogy a lapcímtáblában melyik bit milyen attribútumot takar
@@ -79,12 +105,11 @@ void dbg_pagingflags(uint64_t p)
 }
 
 /**
- * speciális regiszterek dumpolása, fault address cím lekérdezése
+ * speciális regiszterek dumpolása
  */
 void dbg_dumpregs()
 {
     tcb_arch_t *tcb = (tcb_arch_t*)0;
-    __asm__ __volatile__( "movq %%cr2, %0" : "=a"(dbg_faultaddr));
     kprintf("cr2 %8x cr3 %8x rip 0%1x:%6x flg %8x\n", dbg_faultaddr, tcb->common.memroot, tcb->cs, tcb->pc, tcb->rflags);
 }
 

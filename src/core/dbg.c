@@ -32,6 +32,8 @@
 
 /* architektúrafüggő részben implementált */
 extern char *dbg_systables[], *dbg_regs[], *dbg_fareg;  /* architectúra definíciós sztringek, regiszternevek stb. */
+void dbg_init();                                        /* platform specifikus inicializálás */
+void dbg_fini();                                        /* platform specifikus visszaállítás */
 void dbg_paginghelp();                                  /* lapcímtár attribútumainak leírása */
 void dbg_pagingflags(uint64_t p);                       /* egy lapcímtárbejegyzés attribútumainak dumpolása */
 void dbg_dumpregs();                                    /* speciális regiszterek dumpolása (pl. cr2) */
@@ -477,7 +479,19 @@ void dbg_data(virt_t ptr)
         else
             kprintf("%8x: ", p);
         if(platform_memfault(p)) {
-            dbg_settheme(dbg_theme[2]); kprintf(" * not available *\n"); dbg_settheme(dbg_theme[3]);
+            dbg_settheme(dbg_theme[2]);
+            kprintf(" * not available *");
+            offs = ky*font->height*bootboot.fb_scanline + kx*(font->width+1)*4;
+            for(y=0;y<font->height;y++){
+                line=offs;
+                for(x=kx*(font->width+1);x<bootboot.fb_width;x++){
+                    *((uint32_t*)(FBUF_ADDRESS + line)) = bg;
+                    line+=4;
+                }
+                offs+=bootboot.fb_scanline;
+            }
+            kprintf("\n");
+            dbg_settheme(dbg_theme[3]);
             p += dbg_unit==4? 8 : 16;
         } else {
             dbg_indump = 2;
@@ -820,6 +834,9 @@ void dbg_start(char *header, bool_t ispanic)
     dbg_indump = true;
     cnt = reent = 0;
 
+    /* platform specifikus dolgok */
+    dbg_init();
+
     for(x=0; x<7; x++) {
         kprintf_fg(ispanic? theme_panic[x] : theme_debug[x]);
         dbg_theme[x] = fg;
@@ -990,7 +1007,7 @@ getcmd: dbg_putchar('\r');
                 } else {
                     switch(dbg_tab) {
                         case tab_code: dbg_codepos = dbg_previnst(dbg_codepos); break;
-                        case tab_data: dbg_datapos -= (dbg_unit? 16 : 8); break;
+                        case tab_data: dbg_datapos -= (dbg_unit == 4? 8 : 16); break;
                         case tab_msg: dbg_mqpos--; if(!dbg_mqpos) dbg_mqpos = MQ_MAX - 1; continue;
                         case tab_sched: if(!dbg_cpuid) dbg_cpuid = numcores - 1; else dbg_cpuid--; continue;
                         case tab_ram: if(dbg_rampos) dbg_rampos--; continue;
@@ -1026,7 +1043,7 @@ getcmd: dbg_putchar('\r');
                 } else {
                     switch(dbg_tab) {
                         case tab_code: dbg_codepos = disasm(dbg_codepos, NULL); break;
-                        case tab_data: dbg_datapos += (dbg_unit? 16 : 8); break;
+                        case tab_data: dbg_datapos += (dbg_unit == 4? 8 : 16); break;
                         case tab_msg: dbg_mqpos++; if(dbg_mqpos >= MQ_MAX) dbg_mqpos = 1; continue;
                         case tab_sched: dbg_cpuid++; if(dbg_cpuid >= numcores) dbg_cpuid = 0; continue;
                         case tab_ram: if(dbg_rampos+1 < pmm_size) dbg_rampos++; continue;
@@ -1100,6 +1117,7 @@ getcmd: dbg_putchar('\r');
 quitdbg:
     if(ispanic) { dbg_err = "Unable to continue"; goto getcmd; }                    /* a pánikot nem lehet folytatni */
     vmm_switch(memroot);                                                            /* visszakapcsolunk az eredeti taszkra */
+    dbg_fini();                                                                     /* platform spec. dolgok visszaállítása */
     dbg_indump = false;                                                             /* debugger jelző törlése */
     dbg_putchar('\n');                                                              /* soros vonali terminál "törlése" */
     if(services[-SRV_UI]) msg_notify(SRV_UI, SYS_flush, 0); else kprintf_init();    /* képernyő törlése */

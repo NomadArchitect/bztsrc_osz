@@ -67,6 +67,7 @@ extern int errno();
 /* muszáj az utolsó errno-nak lennie */
 #define ENOTIMPL    29  /* nincs implementálva */
 
+#define ERETRY      254 /* syscall automatikus újrahívása */
 #define EUNKWN      255 /* ismeretlen ok */
 
 #endif /* errno.h */

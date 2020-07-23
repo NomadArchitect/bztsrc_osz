@@ -47,8 +47,7 @@ typedef struct {
 /**
  * az SRV_CORE taszknak küldött üzenetek feldolgozása
  */
-msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d,
-    unused uint64_t e, unused uint64_t f, evt_t event)
+msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d, unused uint64_t e, unused uint64_t f, evt_t event)
 {
     tcb_t *tcb = (tcb_t*)0;
     msgret_t ret = {0,0};
@@ -75,14 +74,15 @@ msgret_t msg_core(uint64_t a, uint64_t b, uint64_t c, uint64_t d,
 #endif
 
     seterr(SUCCESS);
+    /* ERETRY esetén a felhasználói szint újrahívja ezt a syscall-t */
     switch(evt) {
 /*      case SYS_yield:  assemblyben van lekezelve  */
 
         case SYS_log:
             /* ez trükkös, mert ha még nem inicializált a syslog, akkor a korai konzolt kell használni */
-            if(services[-SRV_syslog]) {
+            if(!services[-SRV_syslog]) {
                 if(runlevel == RUNLVL_COOP)
-                    syslog(c,(char*)a);
+                    syslog(c, "  %s", (char*)a);
                 else
                     seterr(EACCES);
             } else

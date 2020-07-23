@@ -125,7 +125,7 @@ func platform_memfault
     movb    $0, sys_fault
     lodsb
     xorq    %rax, %rax
-    movb    %al, sys_fault
+    xchgb   %al, sys_fault
     ret
 endf
 
@@ -154,34 +154,35 @@ func platform_syscall
     pushq   %rax
     /* üzenet fogadás? */
     orq     %rax, %rax
-    jnz     1f
+    jnz     3f
     call    msg_recv
     /* ha nem volt üzenet, akkor blokkolunk és yield() */
     orq     %rax, %rax
-    jnz     6f
-    subq    $2, TCBFLD_PC
+    jnz     7f
+1:  subq    $2, TCBFLD_PC
     xor     %rdi, %rdi
     call    sched_block
-    jmp     2f
-1:  cmpq    $SYS_yield, %rax
-    jne     3f
 2:  call    sched_pick
-    jmp     5f
-3:  /* a core-nak szól az üzenet? */
+    jmp     6f
+3:  cmpq    $SYS_yield, %rax
+    je      2b
+4:  /* a core-nak szól az üzenet? */
     cmpq    $0xFFFF, %rax
-    ja      4f
+    ja      5f
     call    msg_core
-    jmp     5f
-4:  call    msg_send
-5:  /* csak akkor szabad betölteni az állapotot, ha történt taszkkapcsolás */
+    cmpq    $ERETRY, LDYN_ccb + ccb_core_errno
+    jne     6f
+    jmp     1b
+5:  call    msg_send
+6:  /* csak akkor szabad betölteni az állapotot, ha történt taszkkapcsolás */
     cmpb    $0, LDYN_ccb + ccb_flags
-    jz      6f
+    jz      7f
     movb    $0, LDYN_ccb + ccb_flags
     /* át kell kapcsolnunk taszkonkénti core veremre */
     movq    $TCBFLD_PC, %rsp
     call    platform_load
     iretq
-6:  call    platform_load2
+7:  call    platform_load2
     movq    LDYN_ccb + ccb_core_errno, %rdi
     movq    TCBFLD_PC, %rcx
     movq    TCBFLD_FLAGS, %r11
@@ -309,12 +310,18 @@ func platform_waitkey
 0:  xorb    %al, %al
     xorb    %cl, %cl
     /* van leütött billentyű? */
-1:  inb     $0x64, %al
+1:
+#ifndef NOPS2
+    inb     $0x64, %al
+    /* van egyáltalán PS2 portunk? */
+    cmpb    $0xFF, %al
+    je      8f
     bt      $5, %ax
     jc      1b
     bt      $0, %ax
     jc      2f
     pause
+#endif
 #if DEBUG
     movw    $0x3fd, %dx
     inb     %dx, %al
@@ -333,6 +340,7 @@ func platform_waitkey
 #else
     jmp     1b
 #endif
+#ifndef NOPS2
     /* igen, karakterkód (scancode) kiolvasása */
 2:  inb     $0x60, %al
     orb     %al, %al
@@ -382,6 +390,7 @@ func platform_waitkey
     pause
     inb     $0x60, %al
     jmp     1b
+#endif
 7:  movb    %dl, %al
 8:  /* kiterjesztett karakterkód ax-ban */
     ret

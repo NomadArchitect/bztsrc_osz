@@ -61,6 +61,8 @@ Mindkét fájl újsor (0x0A) határolt szólista. A devices fájlban a következ
 | pciXXXX:XXXX:XXXX:XXXX | PCI vendor és device id pár alrendszer vendor id és alrendszer id párral |
 | pciXXXX:XXXX | PCI vendor és device id pár, alrendszer azonosítók nélkül |
 | clsXX:XX | PCI osztály definíció |
+| usbXXXX:XXXX:XXXX | USB vendor, device id és interfész hármas |
+| usbXXXX:XXXX | USB vendor és device id pár |
 | FS    | fájlrendszer meghajtó |
 | UI    | felhasználói felület meghajtó |
 | inet  | hálózati protokoll meghajtó |

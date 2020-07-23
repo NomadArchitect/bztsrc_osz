@@ -93,7 +93,7 @@ void platform_awakecpu(unused uint16_t cpuid)
  */
 void platform_dbginit()
 {
-    /* ha DEBUG nélkül fordítjuk, akkor ennek egy üres függvénynek kell lennie */
+    /* ha DEBUG nélkül fordítjuk, akkor a soros vonalat nem kell inicializálni */
 #if DEBUG
     __asm__ __volatile__(
         "movw $0x3f9, %%dx;"
@@ -108,7 +108,6 @@ void platform_dbginit()
     :::"rax","rdx");
     /* debug regiszterek törlése */
     __asm__ __volatile__("xorq %%rax, %%rax; movq %%rax, %%dr6":::"rax");
-
 }
 
 /**

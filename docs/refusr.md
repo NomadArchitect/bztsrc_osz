@@ -9,7 +9,7 @@ Prototípusok
 [void drv_add(char *drv, mem_entry_t *memspec)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/driver.c#L53)
   eszközmeghajtóprogram hozzáadása (csak eszközmeghajtók hívhatják)
  
-[void drv_close(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L169)
+[void drv_close(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L170)
   amikor bezárják az eszközfájlt (eszközmeghajtók implementálják)
  
 [void drv_find(char *spec, char *drv, int len)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/driver.c#L47)
@@ -19,16 +19,16 @@ Prototípusok
 [void drv_init()](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L59)
   busz pásztázása, eszközök detektálása vagy eszköz inicializálás (eszközmeghajtók implementálják)
  
-[void drv_ioctl(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L190)
+[void drv_ioctl(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L191)
   eszközparancs (eszközmeghajtók implementálják)
  
-[void drv_irq(uint16_t irq, uint64_t ticks)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L155)
+[void drv_irq(uint16_t irq, uint64_t ticks)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L156)
   drv_regirq() vagy drv_regtmr() esetén hívódik, utóbbinál irq == USHRT_MAX (eszközmeghajtók implementálják)
  
-[void drv_open(dev_t device, uint64_t mode)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L162)
+[void drv_open(dev_t device, uint64_t mode)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L163)
   akkor hívódik, ha valaki megnyitja a mknod() által kreált fájlt (eszközmeghajtók implementálják)
  
-[void drv_read(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L176)
+[void drv_read(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L177)
   olvasás az eszközfájlból (eszközmeghajtók implementálják)
  
 [void drv_regirq(uint16_t irq)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/driver.c#L37)
@@ -40,7 +40,7 @@ Prototípusok
 [void *drv_virtmem(phy_t addr)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/driver.c#L58)
   rendszermemória virtuális címének lekérdezése (csak eszközmeghajtók hívhatják)
  
-[void drv_write(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L183)
+[void drv_write(dev_t device)](https://gitlab.com/bztsrc/osz/blob/master/src/drivers/bridge/pci/main.c#L184)
   írás az eszközfájlba (eszközmeghajtók implementálják)
  
 [bool_t env_bool(char *key, bool_t def)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/env.c#L63)
@@ -472,7 +472,7 @@ Prototípusok
 [uint32_t strtolower(uint8_t **s)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/string.c#L94)
   lépteti a sztringmutatót a következő utf-8 karakterre és visszaadja a kisbetűs változatot
  
-[void syslog(int pri, char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/syslog.c#L86)
+[void syslog(int pri, char *fmt, ...)](https://gitlab.com/bztsrc/osz/blob/master/src/libc/syslog.c#L89)
   formázott üzenet küldése a rendszernaplózónak, változó számú paraméterrel
  
 [uint64_t time()](https://gitlab.com/bztsrc/osz/blob/master/src/libc/stdlib.c#L289)

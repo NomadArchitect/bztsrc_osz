@@ -775,7 +775,6 @@ void kprintf_clearline()
     if(dbg_indump)
         return;
 #endif
-    /* clear the row */
     for(y=0;y<font->height;y++){
         line=tmp;
         for(x=0;x<bootboot.fb_width;x+=2){

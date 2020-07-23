@@ -49,6 +49,23 @@ char *dbg_fareg = "far"; /* fault address, lapfordítási hiba címét tartalmaz
 uint64_t spsr, esr, numbrk=0, numwtp=0;
 
 /**
+ * Platform specifikus debugger inicializálás
+ */
+void dbg_init()
+{
+    __asm__ __volatile__ ("mrs %0, far_el1" : "=r" (dbg_faultaddr));
+    __asm__ __volatile__ ("mrs %0, esr_el1" : "=r" (esr));
+    __asm__ __volatile__ ("mrs %0, spsr_el1" : "=r" (spsr));
+}
+
+/**
+ * Platform specifikus debugger visszaállítás
+ */
+void dbg_fini()
+{
+}
+
+/**
  * kiírja, hogy a lapcímtáblában melyik bit milyen attribútumot takar
  */
 void dbg_paginghelp()
@@ -87,9 +104,6 @@ void dbg_pagingflags(uint64_t p)
  */
 void dbg_dumpregs()
 {
-    __asm__ __volatile__ ("mrs %0, far_el1" : "=r" (dbg_faultaddr));
-    __asm__ __volatile__ ("mrs %0, esr_el1" : "=r" (esr));
-    __asm__ __volatile__ ("mrs %0, spsr_el1" : "=r" (spsr));
     kprintf("far %8x tbr %8x esr %8x spsr %4x\n", dbg_faultaddr, ((tcb_t*)0)->memroot, esr, spsr);
 }
 

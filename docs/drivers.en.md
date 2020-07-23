@@ -62,6 +62,8 @@ Both files are newline (0x0A) separated list of words. The devices file has the 
 | pciXXXX:XXXX:XXXX:XXXX | A PCI vendor and device id pair with subsystem vendor id and subsystem id |
 | pciXXXX:XXXX | A PCI vendor and device id pair, without subsystem identifiers |
 | clsXX:XX | A PCI Class definition |
+| usbXXXX:XXXX:XXXX | An USB vendor, device id, interface triplet |
+| usbXXXX:XXXX | An USB vendor and device id pair |
 | FS    | File system driver |
 | UI    | User interface driver |
 | inet  | Networking protocol driver |

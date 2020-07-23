@@ -43,11 +43,10 @@ void fault_dbg()
 
 void fault_pagefault(unused int16_t exc, uint64_t errcode, virt_t addr)
 {
-    if(vmm_notpresent(errcode) && (
+    if(vmm_notpresent(errcode) && ((addr > __PAGESIZE && addr < TEXT_ADDRESS) ||
         (addr >= DYN_ADDRESS  && addr < BUF_ADDRESS) || (addr >= SDYN_ADDRESS && addr < LDYN_ADDRESS) ||
         (addr >= CDYN_ADDRESS && addr < CDYN_TOP) ||     addr > (virt_t)&pmm_entries_buf) ) {
             vmm_map((tcb_t*)0, addr, 0, __PAGESIZE, PG_USER_RW);
-            return;
-    }
-    kpanic("page fault: notpresent %d addr %x", vmm_notpresent(errcode), addr);
+    } else
+        kpanic("page fault: notpresent %d addr %x", vmm_notpresent(errcode), addr);
 }

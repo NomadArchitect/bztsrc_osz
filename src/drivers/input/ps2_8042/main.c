@@ -59,7 +59,7 @@ public void drv_init()
     ret |= 3;                           /* irq-k engedélyezése */
     ret &= ~(1<<6);                     /* scancode fordítás kikapcsolása */
     ps2_cmd1(0x60, ret);
-    drv_regirq(12); drv_regirq(1); /*drv_regtmr();*/    /* irq feliratkozások */
+    drv_regirq(12); drv_regirq(1); drv_regtmr();    /* irq feliratkozások */
     devices = 0; lastirq = 0;           /* hotplug */
     mouse_init();
     keyboard_init();

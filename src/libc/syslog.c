@@ -36,7 +36,7 @@ int syslog_facility = LOG_USER, syslog_option = 0, syslog_pri = LOG_UPTO(LOG_NOT
 /**
  * rendszernaplózóhoz küldött üzenetek beállítása
  */
-void openlog(char *ident, int option, int facility)
+public void openlog(char *ident, int option, int facility)
 {
     syslog_ident = ident;
     syslog_option = option;
@@ -46,7 +46,7 @@ void openlog(char *ident, int option, int facility)
 /**
  * rendszernaplózóhoz küldött üzenetek alaphelyzetbe állítása
  */
-void closelog()
+public void closelog()
 {
     syslog_ident = NULL;
     syslog_option = 0;
@@ -57,7 +57,7 @@ void closelog()
 /**
  * prioritás beállítása
  */
-int setlogmask(int mask)
+public int setlogmask(int mask)
 {
     if(mask) syslog_pri = mask;
     return syslog_pri;
@@ -66,17 +66,20 @@ int setlogmask(int mask)
 /**
  * formázott üzenet küldése a rendszernaplózónak, paraméterlistával
  */
-void vsyslog(int pri, char *fmt, va_list ap)
+public void vsyslog(int pri, char *fmt, va_list ap)
 {
-    char buf[__PAGESIZE];
+    char buf[1024], *c;
     size_t s;
     if(!fmt || !*fmt || !(syslog_pri & LOG_MASK(pri))) return;
     s = vsnprintf(buf, sizeof(buf)-1, fmt, ap);
+    /* nem lehetnek vezérlőkarakterek az üzenetben, kivéve a tab-ot */
+    for(c = buf; *c && c < buf + sizeof(buf); c++)
+        if(*c < 32 && *c != 9) *c = ' ';
     /* ez trükkös, mert ha még nem inicializált a syslog, akkor a korai konzolt kell használni */
-    mq_send3(SRV_CORE, SYS_log|MSG_PTRDATA, buf, s+1, pri);
+    mq_send3(SRV_CORE, SYS_log|MSG_PTRDATA, buf, s + 1, pri);
     if(errno() == EACCES) {
         /* üzenet küldése a rendszernaplózó szolgáltatásnak */
-        mq_send5(SRV_syslog, SYS_syslog|MSG_PTRDATA, buf, s, pri, syslog_facility, syslog_ident ? syslog_ident : "user");
+        mq_send5(SRV_syslog, SYS_syslog|MSG_PTRDATA, buf, s + 1, pri, syslog_facility, syslog_ident ? syslog_ident : "user");
         /* ha kérték, akkor a sztandard hibakimenetre is */
         if(syslog_option & LOG_PERROR)
             fwrite(stderr, buf, s);
@@ -86,7 +89,7 @@ void vsyslog(int pri, char *fmt, va_list ap)
 /**
  * formázott üzenet küldése a rendszernaplózónak, változó számú paraméterrel
  */
-void syslog(int pri, char *fmt, ...)
+public void syslog(int pri, char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);

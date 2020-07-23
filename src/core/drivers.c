@@ -55,80 +55,6 @@ extern uint32_t task_nextcpu;           /* annak a cpu-nak a száma, ahová a k�
 extern uint64_t kprintf_lck;            /* egyszerűség kedvéért a kprintf lockot használjuk, egyetlen utasításról van szó */
 
 /**
- * az idle taszk és az eszközmeghajtók inicializálása
- */
-void drivers_init()
-{
-    char *c, *f;
-
-    syslog(LOG_INFO, "Device Drivers");
-
-    /* az idle (rendszer) taszk inicializálása (részben a vmm már megtette), azért
-     * is speciális, mert ez az egyetlen taszk, ami minden CPU-n egyszerre futhat */
-    idle_tcb.state = TCB_STATE_RUNNING;
-    idle_tcb.priority = PRI_IDLE+1;
-    idle_tcb.cpuid = MAXCPUS;
-    memcpy(&idle_tcb.owner, "system", 7);
-    idle_tcb.owner.Data4[7] = A_EXEC;
-    memcpy(&idle_tcb.padding, "IDLE", 5);
-    idle_tcb.cmdline = (uint32_t)((virt_t)&idle_tcb.padding - (virt_t)&idle_tcb);
-    ((tcb_arch_t*)&idle_tcb)->pc = (virt_t)&platform_idle;
-    /* a címtér legelső lapjának is leképezzük az idle tcb-t, mert az ütemező ott keresi */
-    vmm_free(&idle_tcb, 0, __PAGESIZE);
-    vmm_map(&idle_tcb, 0, idle_tcb.pid << __PAGEBITS, __PAGESIZE, PG_CORE_RW);
-
-    /* megszakításkezelők inicializálása */
-    irq_max = intr_init();
-    if(irq_max < 4) irq_max = 4;
-    syslog(LOG_INFO, " proc/intr %d core(s), %s %d IRQs pid %x", numcores, intr_name, irq_max, idle_tcb.pid);
-
-    /* falióra inicializálása */
-    clock_init();
-
-    /* IRQ átirányító tábla lefoglalása */
-    irq_routing_table = (pid_t**)kalloc(irq_max * sizeof(pid_t*));
-    if(!irq_routing_table)
-        kpanic("IRT: %s", TXT_outofram);
-
-    /* környezeti változók összeszerkesztése */
-    envp[0] = env;
-    sprintf(envp[0], "LANG=%s", lang);
-    envp[1] = env + strlen(env)+1;
-    sprintf(envp[1], "DISPLAY=%s", display_env[0] ? display_env : "0");
-    envp[2] = NULL;
-
-    /* az eszköz - meghajtóprogram adatbázis betöltése */
-    drvs = (char*)fs_locate(drvs_db); drvs_end = drvs + fs_size;
-    if(!drvs) kpanic("%s: %s", drvs_db, TXT_missing);
-
-    /* eszközök keresése és betöltése. Néhány eszközmeghajtó további eszközmeghajtókat tölthet be (pl PCI vagy ACPI) */
-    for(c = drvs; c + 3 < drvs_end && *c; c++) {
-        f = c; while(c<drvs_end && *c && *c!='\n') c++;     /* megkeressük a sor végét */
-        if(f + 3 < c && f[0] == '*' && f[1] == 9) {
-#if DEBUG
-            if(debug&DBG_DEVICES)
-                kprintf("DEV * driver %S\n", f+2);
-#endif
-            drivers_add(f+2, NULL);                         /* taszk a '*' eszközspecifikációjú meghajtóknak */
-        }
-    }
-
-    /* ha nincs videokártya meghajtó, akkor az univerzálist használjuk */
-    if(!display_drv[0]) strncpy(display_drv, "/sys/drv/display/fb.so", 128);
-    /* levágjuk a kiterjesztést a fájlnév végéről és naplózzuk */
-    for(f=NULL,c = display_drv+9; *c && *c!='.'; c++);
-    if(*c == '.') { f=c; *c=0; }
-    syslog(LOG_INFO, " %s (%s) pid %d", display_drv + 9, display_env[0]? display_env :
-        (display == PBT_MONO_MONO?"mono mono":(display == PBT_MONO_COLOR?"mono color":
-        (display == PBT_STEREO_MONO?"stereo mono":"stereo color"))), (int64_t)SRV_UI);
-    if(f) *c='.';
-
-    syslog(LOG_INFO, "Services");
-    /* fontos, hogy a legelső rendszertaszk, az FS taszk a BSP processzorra töltődjön be, mivel a drivers_start() átkapcsol rá */
-    task_nextcpu = 0;
-}
-
-/**
  * visszaadja az eszközspec-hez tartozó első meghajtó fájlnevét. Tipikus eszközspec "pciVVVV:MMMM" vagy "clsCC:SS"
  */
 char *drivers_find(char *spec)
@@ -310,8 +236,8 @@ void service_add(int srv, char *cmd)
     elfctx_t *elfctx = (elfctx_t*)(BUF_ADDRESS + __PAGESIZE);
     tcb_t *tcb = task_new(PRI_SRV);
     virt_t v;
-    char *c, *f, *name = (srv == SRV_FS? "FS" : (srv == SRV_UI? "UI" : cmd+4));
-    uint l = strlen(name);
+    char *c, *f;
+    uint l = strlen(cmd + 1);
     uint64_t s;
 
     if(task_execinit(tcb, cmd, NULL, envp)) {
@@ -323,7 +249,7 @@ void service_add(int srv, char *cmd)
         memcpy(drvpath, "/sys/drv/", 9);
         for(c = drvs; c<drvs_end && *c; c++) {
             f = c; while(c<drvs_end && *c && *c!='\n') c++; /* megkeressük a sor végét */
-            if(f + 3 < c && f[l] == 9 && !memcmp(f, name, l)) {              /* ehhez a szolgáltatáshoz tartozó meghajtók */
+            if(f + 3 < c && f[l] == 9 && !memcmp(f, cmd + 1, l)) {           /* ehhez a szolgáltatáshoz tartozó meghajtók */
                 f += l+1;
                 memcpy(drvpath+9, f, c-f); drvpath[9+c-f] = 0;
                 if(!elf_load(drvpath, 0, 0, 0)) {
@@ -361,7 +287,7 @@ void service_add(int srv, char *cmd)
                     }
             }
             /* naplózás és ütemezőhöz hozzáadás */
-            syslog(LOG_INFO, " %s -%d pid %x", name, -srv, tcb->pid);
+            syslog(LOG_INFO, " %s (service -%d) pid %x", cmd + 1, -srv, tcb->pid);
             services[-srv] = tcb->pid;
             sched_add(tcb);
         } else goto err;
@@ -376,14 +302,71 @@ err:    if(!((ccb_t*)LDYN_ccb)->core_errno) seterr(ENOEXEC);
 }
 
 /**
- * kooperatív ütemezés, eszközmeghajtó és rendszerszolgáltatás taszkok futtatása
+ * az idle és FS taszk inicializálása és az eszközmeghajtók betöltése
  */
-void drivers_start()
+void drivers_init()
 {
+    char *c, *f;
+
+    syslog(LOG_INFO, "System Services");
+
+    /* az idle (rendszer) taszk inicializálása (részben a vmm már megtette), azért
+     * is speciális, mert ez az egyetlen taszk, ami minden CPU-n egyszerre futhat */
+    idle_tcb.state = TCB_STATE_RUNNING;
+    idle_tcb.priority = PRI_IDLE+1;
+    idle_tcb.cpuid = MAXCPUS;
+    memcpy(&idle_tcb.owner, "system", 7);
+    idle_tcb.owner.Data4[7] = A_EXEC;
+    memcpy(&idle_tcb.padding, "IDLE", 5);
+    idle_tcb.cmdline = (uint32_t)((virt_t)&idle_tcb.padding - (virt_t)&idle_tcb);
+    ((tcb_arch_t*)&idle_tcb)->pc = (virt_t)&platform_idle;
+    /* a címtér legelső lapjának is leképezzük az idle tcb-t, mert az ütemező ott keresi */
+    vmm_free(&idle_tcb, 0, __PAGESIZE);
+    vmm_map(&idle_tcb, 0, idle_tcb.pid << __PAGEBITS, __PAGESIZE, PG_CORE_RW);
+
+    /* megszakításkezelők inicializálása */
+    irq_max = intr_init();
+    if(irq_max < 4) irq_max = 4;
+    syslog(LOG_INFO, " proc/intr %d core(s), %d IRQs, %s pid %x", numcores, irq_max, intr_name, idle_tcb.pid);
+
+    /* falióra inicializálása */
+    clock_init();
+
+    /* IRQ átirányító tábla lefoglalása */
+    irq_routing_table = (pid_t**)kalloc(irq_max * sizeof(pid_t*));
+    if(!irq_routing_table)
+        kpanic("IRT: %s", TXT_outofram);
+
+    /* az eszköz - meghajtóprogram adatbázis betöltése */
+    drvs = (char*)fs_locate(drvs_db); drvs_end = drvs + fs_size;
+    if(!drvs) kpanic("%s: %s", drvs_db, TXT_missing);
+
+    /* környezeti változók összeszerkesztése */
+    envp[0] = env;
+    sprintf(envp[0], "LANG=%s", lang);
+    envp[1] = env + strlen(env)+1;
+    sprintf(envp[1], "DISPLAY=%s", display_env[0] ? display_env : "0");
+    envp[2] = NULL;
+
+    /* fontos, hogy a legelső rendszertaszk, az FS taszk a BSP processzorra töltődjön be, mivel direktben átkapcsolunk rá */
+    task_nextcpu = 0;
+    /* "FS" taszk betöltése. Azért ez a legelső, hogy a meghajtók használni tudják a mknod() hívást */
+    service_add(SRV_FS, "/sys/fs");
+
+    /* eszközök keresése és betöltése. Néhány eszközmeghajtó további eszközmeghajtókat tölthet be (pl PCI vagy ACPI) */
+    for(c = drvs; c + 3 < drvs_end && *c; c++) {
+        f = c; while(c<drvs_end && *c && *c!='\n') c++;     /* megkeressük a sor végét */
+        if(f + 3 < c && f[0] == '*' && f[1] == 9) {
+#if DEBUG
+            if(debug&DBG_DEVICES)
+                kprintf("DEV * driver %S\n", f+2);
+#endif
+            drivers_add(f+2, NULL);                         /* taszk a '*' eszközspecifikációjú meghajtóknak */
+        }
+    }
+
     /* betöltjük az első taszk, az FS szolgáltatás TCB-jét */
     vmm_page(0, LDYN_tmpmap1, services[-SRV_FS] << __PAGEBITS, PG_CORE_RONOCACHE|PG_PAGE);
-
-    syslog(LOG_INFO, "Initializing");
 
     /* lehazudunk egy megszakításvisszatérést, és ezzel átkapcsolunk a legelső taszkra */
     vmm_switch(((tcb_t*)LDYN_tmpmap1)->memroot);
@@ -407,6 +390,7 @@ void drivers_start()
 void drivers_ready()
 {
     uint16_t i, j, k;
+    char *f, *c;
 
     /* nem hozunk be új mutexet meg szinkronizációs primitíveket egyetlen kritikus utasítás miatt, K.I.S.S. */
     lockacquire(1, &kprintf_lck);
@@ -417,6 +401,34 @@ void drivers_ready()
         do{ cpu_relax; } while(runlevel != RUNLVL_NORM);            /* ha AP-n futunk, bevárjuk a BSP-t */
     } else {
         do{ cpu_relax; } while(numinit < numcores);                 /* ha a BSP-n futunk, bevárjuk a többi CPU-t */
+
+        /* ha nincs videokártya meghajtó, akkor az univerzálist használjuk */
+        if(!display_drv[0]) strncpy(display_drv, "/sys/drv/display/fb.so", 128);
+        /* levágjuk a kiterjesztést a fájlnév végéről és naplózzuk */
+        for(f=NULL,c = display_drv+9; *c && *c!='.'; c++);
+        if(*c == '.') { f=c; *c=0; }
+        syslog(LOG_INFO, " %s (%s) pid %d", display_drv + 9, display_env[0]? display_env :
+            (display == PBT_MONO_MONO?"mono mono":(display == PBT_MONO_COLOR?"mono color":
+            (display == PBT_STEREO_MONO?"stereo mono":"stereo color"))), (int64_t)SRV_UI);
+        if(f) *c='.';
+
+#if 0
+        /* az "UI" taszk betöltése a felhasználi interakciók kezelésére */
+        service_add(SRV_UI, "/sys/ui");
+        /* egyéb, opcionális kommunikációs lehetőségek támogatása */
+/*
+        if(flags & FLAG_SYSLOG) service_add(SRV_syslog, "/sys/syslog");
+        if(flags & FLAG_INET)   service_add(SRV_inet,   "/sys/inet");
+        if(flags & FLAG_SOUND)  service_add(SRV_sound,  "/sys/sound");
+        if(flags & FLAG_PRINT)  service_add(SRV_print,  "/sys/print");
+*/
+        /* a felhasználói szolgáltatásokat kezelő rendszerszolgáltatás betöltése */
+        service_add(SRV_init, flags & FLAG_RESCUESH ? "/sys/bin/sh" : (
+#if DEBUG
+            debug&DBG_TESTS? "/sys/bin/test" :
+#endif
+            "/sys/init"));
+#endif
 
         /* az IRQ útirányó tábla naplózása */
         syslog(LOG_INFO, "IRQ Routing Table (%d IRQs)", irq_max);
@@ -435,12 +447,13 @@ void drivers_ready()
             if(i == sched_irq || i == clock_irq || (i<irq_max && irq_routing_table[i]))
                 intr_enable(i);
         }
+
         /* naplózzuk, hogy kész vagyunk */
         syslog(LOG_INFO, "Ready. Memory %d of %d pages free.", pmm_freepages, pmm_totalpages);
         /* kikapcsljuk az indító konzol szkrollozását, ezután nincs várakozás, ha betelne a képernyő */
         kprintf_scrolloff();
 
-        /* küldünk egy falióra visszaigazolást, hogy biztosan nullázuk a interrupt jelzőjét */
+        /* küldünk egy falióra visszaigazolást, hogy biztosan nullázzuk a interrupt jelzőjét */
         clock_ack();
 
         /* üzenetet küldünk az FS tasznak, hogy most már felcsatolhatja a fájlrendszereket */

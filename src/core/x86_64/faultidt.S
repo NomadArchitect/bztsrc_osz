@@ -67,7 +67,7 @@ xchg %bx, %bx
     xorq    %rsi, %rsi
 .endif
 .if \num == 14
-    movq    %rdx, %cr2
+    movq    %cr2, %rdx
 .endif
     /* átkapcsolunk taszk független, CPU-nkénti core veremre */
     movq    $LDYN_ccb + __PAGESIZE, %rsp

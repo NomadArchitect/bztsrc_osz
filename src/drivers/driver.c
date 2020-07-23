@@ -77,6 +77,9 @@ public int main(unused int argc, unused char **argv)
 {
     msg_t *msg;
 
+    openlog(argv[0] + 9, 0, LOG_CORE);
+    setlogmask(LOG_UPTO(LOG_DEBUG));
+
     drv_init();
 
     while(1) {

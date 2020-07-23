@@ -63,4 +63,4 @@
 /* vezérlés átadása az adott címtérre */
 #define vmm_enable(t) __asm__ __volatile__( \
         "movq %0, %%rsp; xor %%rbp, %%rbp; iretq" : : \
-        "a"(&(t)->pc) : "rsp","rbp", "memory")
+        "a"(&(t)->pc) : "rsp", "memory")

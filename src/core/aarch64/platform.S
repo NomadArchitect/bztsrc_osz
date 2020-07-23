@@ -123,37 +123,43 @@ endf
  *    hibakód: x0
  */
 func platform_syscall
+    /* nem mentünk teljes állapotot */
+    ldr     x29, =TCBFLD_GPR
+    stp     x0, x1,   [x29, #16 * 0]
     /* átkapcsolunk taszk független, CPU-nkénti core veremre */
     ldr     x29, =LDYN_ccb + __PAGESIZE
     mov     sp, x29
     /* üzenet fogadás? */
-    cbnz    x6, 1f
+    cbnz    x6, 3f
     bl      msg_recv
     /* ha nem volt üzenet, akkor blokkolunk és yield() */
-    cbnz    x0, 6f
-    ldr     x4, =TCBFLD_PC
+    cbnz    x0, 7f
+1:  ldr     x4, =TCBFLD_PC
     ldr     x3, [x4]
     sub     x3, x3, #4
     str     x3, [x4]
     bl      sched_block
-    b       2f
-1:  cmp     x6, #SYS_yield
-    b.ne    3f
 2:  bl      sched_pick
-    b       5f
-3:  /* a core-nak szól az üzenet? */
+    b       6f
+3:  cmp     x6, #SYS_yield
+    b.eq    2b
+4:  /* a core-nak szól az üzenet? */
     lsr     x27, x6, #16
-    cbnz    x27, 4f
+    cbnz    x27, 5f
     bl      msg_core
-    b       5f
-4:  bl      msg_send
+    ldr     x4, =LDYN_ccb + ccb_core_errno
+    ldr     x4, [x4]
+    cmp     x4, #ERETRY
+    b.ne    6f
+    b       1b
+5:  bl      msg_send
     /* csak akkor szabad felülírni az állapotot, ha történt taszkkapcsolás */
-5:  ldr     x4, =LDYN_ccb + ccb_flags
+6:  ldr     x4, =LDYN_ccb + ccb_flags
     mov     w3, wzr
     ldrb    w3, [x4]
     strb    wzr, [x4]
     cbnz    w3, handler_back
-6:  ldr     x29, =TCBFLD_GPR
+7:  ldr     x29, =TCBFLD_GPR
     stp     x0, x1, [x29, #8]
     ldr     x0, =LDYN_ccb + ccb_core_errno
     ldr     x0, [x0]
