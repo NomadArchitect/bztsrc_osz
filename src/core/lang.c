@@ -92,7 +92,7 @@ void lang_init()
     }
     /* beépített core sztringek átírása lefordított verziókkal */
     sprintf((char*)&osver, OSZ_NAME " " OSZ_VER " " OSZ_ARCH "-" OSZ_PLATFORM " (build " OSZ_BUILD ")\n"
-        "Copyright (c) 2016-2019 bzt, CC-by-nc-sa\n%s\n\n", TXT_legalnotice);
+        "Copyright (c) 2016-2020 bzt, CC-by-nc-sa\n%s\n\n", TXT_legalnotice);
     /* pániküzenet fordítása, és középreigazítása szóközökkel */
     memset(kpanicsuffix2+110,' ',54);
     k = mbstrlen(TXT_restart);

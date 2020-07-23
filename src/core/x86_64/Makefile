@@ -4,6 +4,12 @@ include ../../../Config
 SRCS = $(filter-out dbg.c,$(wildcard *.c))
 ifeq ($(DEBUG),1)
 SRCS += dbg.c
+ifeq ($(NOPS2),1)
+CFALGS += -DNOPS2=1
+endif
+ifeq ($(NOBOCHSCONSOLE),1)
+CFALGS += -DNOBOCHSCONSOLE=1
+endif
 endif
 SRCS+= $(wildcard *.S)
 TMP = $(SRCS:.c=.o)

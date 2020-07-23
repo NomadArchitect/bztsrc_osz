@@ -91,8 +91,8 @@ char **lang, *lang_en[] = {
     /* 26 */ "Internal debugger and debug console",
     /* 27 */ "Compile with debug symbols",
     /* 28 */ "Use optimized code and utilize SIMD",
-    /* 29 */ "",
-    /* 30 */ "",
+    /* 29 */ "Don't use PS2 port",
+    /* 30 */ "Don't use bochs output",
     /* 31 */ "",
     /* 32 */ "",
     /* 33 */ "",
@@ -192,8 +192,8 @@ char **lang, *lang_en[] = {
     /* 26 */ "Beépített debugger és debug konzol",
     /* 27 */ "Debug szimbólumokkal fordítás",
     /* 28 */ "Optimalizált és SIMD kód generálás",
-    /* 29 */ "",
-    /* 30 */ "",
+    /* 29 */ "Ne használjon PS2 portokat",
+    /* 30 */ "Ne használja a bochs kimenetet",
     /* 31 */ "",
     /* 32 */ "",
     /* 33 */ "",
@@ -275,7 +275,7 @@ char *screens[] = {
     "640x480", "768x576", "800x600", "1024x768", "1280x720", "1368x768", "1280x800", "1152x864", "1152x900", "1440x900",
     "1280x960", "1280x1024", "1400x1050", "1680x1050", "1600x1200", "1920x1200", "1792x1344", "1856x1392", "1920x1440"
 };
-list_t compopts[] = { { 0, "DEBUG", 26 }, { 0, "DBGSYM", 27 }, { 1, "OPTIMIZE", 28 } };
+list_t compopts[] = { { 0, "DEBUG", 26 }, { 0, "DBGSYM", 27 }, { 1, "OPTIMIZE", 28 }, { 0, "NOPS2", 29 }, { 0, "NOBOCHSCONSOLE", 30 } };
 list_t srvopts[] = { { 0, "spacemode", 43 }, { 0, "rescueshell", 44 }, { 1, "syslog", 45 }, { 1, "inet", 46 }, { 1, "sound", 47 },
     { 1, "print", 48 } };
 list_t visopts[] = { { 0, "mm", 56 }, { 0, "mc", 57 }, { 0, "sm", 58 }, { 0, "sc", 59 } };
@@ -536,7 +536,6 @@ void readconfig()
                         !memcmp(s, platform[i].name, e - s)) { selplat = i; break; }
             } else
             if(!memcmp(s, "DEBUG", 5)) { s += 5; while(*s == ' ' || *s == '=') { s++; } if(*s == '1') compopts[0].val = 1; } else
-            if(!memcmp(s, "OPTIMIZE", 8)) { s += 8; while(*s == ' ' || *s == '=') { s++; } if(*s == '1') compopts[2].val = 1; } else
             if(!memcmp(s, "NOINITRD", 8)) { s += 8; while(*s == ' ' || *s == '=') { s++; } if(*s == '1') noinitrd = 1; } else
             if(!memcmp(s, "ESPSIZE", 7)) { s += 7; while(*s == ' ' || *s == '=') { s++; } espsize = atoi(s); } else
             if(!memcmp(s, "USRSIZE", 7)) { s += 7; while(*s == ' ' || *s == '=') { s++; } usrsize = atoi(s); } else
@@ -549,7 +548,11 @@ void readconfig()
                         if(!memcmp(s, compilers[i].name, strlen(compilers[i].name))) { cmplr = i; break; }
                 }
                 if(cmplr == -1) cmplr = 0;
-            }
+            } else
+            for(i = 2; i < sizeof(compopts) / sizeof(compopts[0]); i++)
+                if(!memcmp(s, compopts[i].name, strlen(compopts[i].name))) {
+                    s += strlen(compopts[i].name); while(*s == ' ' || *s == '=') { s++; } compopts[i].val = *s == '1' ? 1 : 0;
+                }
         }
     }
     data = readfileall("../etc/config");
@@ -653,8 +656,11 @@ void writeconfig()
             "# --- common configuration ---\n"
             "ARCH = %s\n"
             "PLATFORM = %s\n"
-            "DEBUG = %d\n"
-            "OPTIMIZE = %d\n"
+            "DEBUG = %d\n",
+            platform[selplat].arch,platform[selplat].name,compopts[0].val);
+        for(i = 2; i < sizeof(compopts) / sizeof(compopts[0]); i++)
+            if(compopts[i].val || i == 2) fprintf(f, "%s = %d\n",compopts[i].name,compopts[i].val);
+        fprintf(f,
             "\n"
             "# --- disk layout ---\n"
             "NOINITRD = %d\n"
@@ -666,7 +672,6 @@ void writeconfig()
             "CFLAGS = %s-O2 -fno-plt -fvisibility=hidden -ansi -pedantic -Wall -Wextra\n"
             "include $(dir $(lastword $(MAKEFILE_LIST)))src/core/$(ARCH)/$(PLATFORM)/Makefile.opt\n"
             "%s\n",
-            platform[selplat].arch,platform[selplat].name,compopts[0].val,compopts[2].val,
             noinitrd,espsize,usrsize,varsize,homesize,
             compopts[1].val?"-g ":"",compilers[cmplr].setup);
         fclose(f);

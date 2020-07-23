@@ -100,7 +100,7 @@ void dbg_pagingflags(uint64_t p)
 }
 
 /**
- * speciális regiszterek dumpolása, fault address cím lekérdezése
+ * speciális regiszterek dumpolása
  */
 void dbg_dumpregs()
 {

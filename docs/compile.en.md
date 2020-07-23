@@ -23,6 +23,16 @@ Valid combinations are (note: the configurator collects these by examining direc
 | aarch64 | rpi3     | Raspberry Pi 3+ |
 | aarch64 | rpi4     | Raspberry Pi 4+ |
 
+Other options
+
+| Define         | Description |
+| -------------- | ----------- |
+| DEBUG          | compile with debugger and debug console |
+| DBGSYM         | compile with debug symbols |
+| OPTIMIZE       | compile optimized code (mostly take advantage of SIMD) |
+| NOPS2          | don't use PS2 port. On Apple machines it's missing, but it is usually emulated |
+| NOBOCHSCONSOLE | don't use the E9 port hack for output |
+
 You can run the following to get a nice ncurses based interface.
 
 ```shell

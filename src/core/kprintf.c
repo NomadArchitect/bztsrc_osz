@@ -59,7 +59,7 @@ char kpanicsuffix[] =
 char kpanicsuffix2[] =
     "                                                      \n"
     "                       KEEP CALM                      \n"  /* ez egy mém, ne fordítsd le */
-    "               AND RESTART YOUR COMPUTER              \n"  /* ezt a lang_init() fordítja és igaztja középre */
+    "               AND RESTART YOUR COMPUTER              \n"  /* ezt a lang_init() fordítja és igazítja középre */
     "                                                      \n"
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"; /* a középreigazítás hosszabb 3-4 bájtos karakterekkel */

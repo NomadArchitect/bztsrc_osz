@@ -23,6 +23,16 @@ Az érvényes kombinációk a következők (megjegyyés: ezeket az src/core mapp
 | aarch64 | rpi3     | Raspberry Pi 3+ |
 | aarch64 | rpi4     | Raspberry Pi 4+ |
 
+Egyéb opciók
+
+| Define         | Leírás |
+| -------------- | ------ |
+| DEBUG          | belefordítsa-e a debuggert és a debug konzolt |
+| DBGSYM         | debug szimbólumokkal fordítson-e |
+| OPTIMIZE       | optimalizált kódot fordítson-e (főként SIMD kihasználása) |
+| NOPS2          | ne használjon PS2 portokat. Apple gépeken pl. nincs, de általában emulálva van |
+| NOBOCHSCONSOLE | ne használja az E9 port hacket kimenetre íráshoz |
+
 A következő parancs egy kényelmes ncurses alapú felülettel segíti a beállítást:
 
 ```shell

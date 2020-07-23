@@ -12,7 +12,7 @@ nrmqmax=1
 quantum=1000
 
 // --- UI options ---
-lang=hu
+lang=en
 keyboard=pc105,en_us
 display=mc
 dblbuf=false
